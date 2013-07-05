@@ -12,3 +12,5 @@ cd ~
 curl -O https://raw.github.com/BrianGilbert/OSXAegirInstaller/master/aegir.sh
 chmod +x aegir.sh
 sudo ./aegir.sh
+
+Warning: I have tested this script extensivley on a clean install of OSX, but I take no responsability for anything that happens to your computer using the script.

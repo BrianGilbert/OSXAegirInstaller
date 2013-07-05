@@ -9,4 +9,4 @@ It is known to not work on Mavericks 10.9 at this stage.
 
 Execute the following in terminal to run the installer:
 
-sudo "$(curl -fsSL https://raw.github.com/BrianGilbert/OSXAegirInstall/aegir.sh)"
+sudo "$(curl -fsSL https://raw.github.com/BrianGilbert/OSXAegirInstaller/master/aegir.sh)"

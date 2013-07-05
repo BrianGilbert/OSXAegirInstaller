@@ -8,14 +8,14 @@ Warning: I have tested this script extensivley on a clean install of OSX, but I 
 
 It should be fine to install on any machine that doesn't have a webserver already running on port 80 or a DB server already running on 3306.
 
-This script installs the following via Homebrew on OSX
--wget
--gzip
--drush 6
--dnsmasq
--nginx
--mariadb
--php
+This script installs the following via Homebrew on OSX:
+* wget
+* gzip
+* drush 6
+* dnsmasq
+* nginx
+* mariadb
+* php
 
 And then installs Aegir 6.x-2.x branch
 
@@ -29,3 +29,4 @@ chmod +x aegir.sh
 sudo ./aegir.sh
 
 
+This is the largest script I've written to date, so any improvements gladly accepted as pull requests!

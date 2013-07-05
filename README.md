@@ -23,10 +23,11 @@ Once installed you can access the Aegir dashboard at http://aegir.ld
 Any site you create that ends in .ld or has an alias ending in .ld will resolve to localhost and work within your browser.
 
 Execute the following in terminal to run the installer:
-  cd ~
-  curl -O https://raw.github.com/BrianGilbert/OSXAegirInstaller/master/aegir.sh
-  chmod +x aegir.sh
-  sudo ./aegir.sh
+
+    cd ~
+    curl -O https://raw.github.com/BrianGilbert/OSXAegirInstaller/master/aegir.sh
+    chmod +x aegir.sh
+    sudo ./aegir.sh
 
 
 This is the largest script I've written to date, so any improvements gladly accepted as pull requests!

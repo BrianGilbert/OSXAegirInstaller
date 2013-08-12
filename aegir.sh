@@ -106,6 +106,12 @@ if [ $solr != n -o $solr != N ] ; then
   read solrboot
 fi
 
+echo "
+########
+# What address should aegirs email notifications get sent to?
+########"
+read email
+
 echo "########
 # I'd like to set up postfix so you receive emails from Aegir
 #
@@ -153,16 +159,12 @@ smtp_sasl_security_options=
 smtp_use_tls=yes
 smtp_tls_security_level=encrypt
 tls_random_source=dev:/dev/urandom" >> /etc/postfix/main.cf'
+  echo  "$email" >> ~/.forward
   sudo launchctl load -w /System/Library/LaunchDaemons/org.postfix.master.plist
 else
   printf "\n> Mail sending from aegir won't actually work until you configure postfix properly..\n"
   printf "\n> See: http://realityloop.com/blog/2011/06/05/os-x-ditching-mamp-pro-part-2-gmail-email-relay\n"
 fi
-echo "
-########
-# What address should aegirs email notifications get sent to?
-########"
-read email
 
 printf "> Checking OS version..\n"
 if [ $osx = 10.8.4 -o $osx = 10.8.5 -o $osx = 10.9 ] ; then

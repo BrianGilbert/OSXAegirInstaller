@@ -1,8 +1,7 @@
 OSXAegirInstaller
 =================
 
-This has been tested on 10.8.4, I expect it will work fine on 10.8.5 when that is released.
-It doesn't work on Mavericks 10.9 at this stage, as I'm waiting on a fix to homebrew-php.
+This has been tested on Mountain Lion 10.8.4 & Mavericks 10.9 DP5, I expect it will work fine on 10.8.5 when that is released.
 
 __Warning:__ I have tested this script extensivley on a clean install of OSX, but I take no responsability for anything that happens to your computer using the script.
 
@@ -13,9 +12,10 @@ This script installs the following via Homebrew on OSX:
 * gzip
 * drush 6
 * dnsmasq
-* nginx
+* nginx (with geoip and uploadprogress)
 * mariadb
-* php
+* php (with uploadprogress, xhprof and xdebug)
+* solr4 (optional)
 
 And then installs Aegir 6.x-2.x branch
 

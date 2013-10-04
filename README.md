@@ -7,6 +7,9 @@ __Warning:__ I have tested this script extensivley on a clean install of OSX, bu
 
 It should be fine to install on any machine that doesn't have a webserver already running on port 80 or a DB server already running on 3306.
 
+Requirements:
+* XCode installed and run at least once
+
 This script installs the following via Homebrew on OSX:
 * wget
 * gzip

@@ -171,16 +171,8 @@ if [ $osx = 10.8.4 -o $osx = 10.8.5 -o $osx = 10.9 ] ; then
   printf "> Your OS is new enough, so let's go!\n"
 fi
 
-printf "> Checking if the Command Line Tools are installed..\n"
-if type "/usr/bin/clang" > /dev/null 2>&1; then
-  printf "> Woot! They're installed.\n"
-else
-  printf "> Nope. You need the Command Line tools installed before this script will work\n\n"
-  printf "> You will need to install them via the Xcode Preferences/Downloads tab:\n"
-  printf ">    http://itunes.apple.com/au/app/xcode/id497799835?mt=12\n\n"
-  printf "> Run the script again after you've installed them.\n"
-  exit
-fi
+printf "> Making sure the Command Line Tools are installed..\n"
+xcode-select --install
 
 printf "> Checking if Homebrew is installed..\n"
 if type "brew" > /dev/null 2>&1; then

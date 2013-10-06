@@ -142,7 +142,7 @@ if [ $gmail != n -o $gmail != N ] ; then
   sudo postmap /etc/postfix/sasl_passwd
   sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
   echo "
-myhostname = " . $hname . "
+myhostname =" $hname"
 
 # Minimum Postfix-specific configurations.
 mydomain_fallback = localhost

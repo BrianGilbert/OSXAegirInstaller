@@ -199,6 +199,8 @@ brew tap josegonzalez/homebrew-php
 
 # Install required formula's
 printf "> Installing required brew formulas..\n"
+printf "> Installing gcc..\n"
+brew install apple-gcc42
 printf "> Installing wget..\n"
 brew install wget
 printf "> Installing gzip..\n"

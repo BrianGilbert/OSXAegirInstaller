@@ -141,8 +141,8 @@ if [ $gmail != n -o $gmail != N ] ; then
   echo "smtp.gmail.com:587 $gmailaddress:$gmailpass"  | sudo tee -a  /etc/postfix/sasl_passwd
   sudo postmap /etc/postfix/sasl_passwd
   sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
-  sudo sh -c 'echo "
-myhostname = $hname
+  echo "
+myhostname = " . $hname . "
 
 # Minimum Postfix-specific configurations.
 mydomain_fallback = localhost
@@ -158,7 +158,7 @@ smtp_sasl_security_options=
 # Enable Transport Layer Security (TLS), i.e. SSL.
 smtp_use_tls=yes
 smtp_tls_security_level=encrypt
-tls_random_source=dev:/dev/urandom" >> /etc/postfix/main.cf'
+tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf
   echo  "$email" >> ~/.forward
   sudo launchctl load -w /System/Library/LaunchDaemons/org.postfix.master.plist
 else

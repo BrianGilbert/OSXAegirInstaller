@@ -101,7 +101,7 @@ read solr
 
 if [ $solr != n -o $solr != N ] ; then
   echo "########
-# Do you want solr to run automatically on boot:
+# Do you want solr to run automatically on boot [Y/n]:
 ########"
   read solrboot
 fi

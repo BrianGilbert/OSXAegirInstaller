@@ -324,6 +324,9 @@ sed -i '' '/pid = run/ a\
 pid = /usr/local/var/run/php-fpm.pid\
 ' /usr/local/etc/php/5.3/php-fpm.conf
 
+#Increase maximum function nesting level
+echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
+
 sudo ln -s /usr/local/etc/php/5.3/php.ini /etc/php.ini
 sudo ln -s $(brew --prefix josegonzalez/php/php53)/var/log/php-fpm.log /var/log/nginx/php-fpm.log
 

@@ -9,69 +9,150 @@ osx=`sw_vers -productVersion`
 
 # Make sure that the script wasn't run as root.
 if [ $username = "root" ] ; then
-  printf "> This script should not be run as sudo or root. exiting.\n"
+  printf "# This script should not be run as sudo or root. exiting.\n"
   exit
+fi
+
+printf "# Checking OS version..\n"
+if [ $osx = 10.8.4 -o $osx = 10.8.5 -o $osx = 10.9 ] ; then
+  printf "# Your OS is new enough, so let's go!\n"
 fi
 
 # Check Aegir isn't already installed.
 if [ -e "/var/aegir/config/includes/global.inc" ] ; then
-  printf "> You already have aegir installed.. exiting.\n"
-  exit # Remove this line when uninstall block below is fixed.
+  printf "> You already have aegir installed..\n"
+  #exit # Remove this line when uninstall block below is fixed.
   # Possibly I'll allow reinstallations in the future..
   #
-  # printf "Should I remove it and do a clean install? [Y/n]\n"
-  # read CLEAN
-  # if [ $CLEAN != n -o $CLEAN != N ] ; then
-  #   printf "There is no turning back..\nThis will unusinstall aegir and all related homebrew compononets before running a clean install, are you sure? [Y/n]\n"
-  #   read FORSURE
-  #   if [ $FORSURE != n -o $FORSURE != N ] ; then
-  #     printf "Don't say I didn't warn you, cleaning everything before running clean install..\n"
+  printf "# Should I remove it and do a clean install? [Y/n]\n"
+  read CLEAN
+  if [ $CLEAN = y -o $CLEAN = Y ] ; then
+    printf "# There is no turning back..\n# This will unusinstall aegir and all related homebrew compononets before running a clean install, are you sure? [Y/n]\n"
+    read FORSURE
+    if [ $FORSURE != n -o $FORSURE != N ] ; then
+      printf "# Don't say I didn't warn you, cleaning everything before running clean install..\n"
 
-  #     printf "Stopping and deleting any services that are already installed..\n"
-  #     if [ -e "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist" ] ; then
-  #       launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
-  #       rm /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
-  #     fi
+      printf "# Stopping and deleting any services that are already installed..\n"
+      if [ -e "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist" ] ; then
+        sudo launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
+        rm /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
+      fi
 
-  #     if [ -e "/Library/LaunchDaemons/homebrew.mxcl.nginx.plist" ] ; then
-  #     sudo -u $USERNAME launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
-  #     sudo -u $USERNAME rm /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
-  #     fi
+      if [ -e "/Library/LaunchDaemons/homebrew.mxcl.nginx.plist" ] ; then
+      sudo -u $USERNAME launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+      sudo -u $USERNAME rm /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+      fi
 
-  #     if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
-  #     sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
-  #     sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
-  #     fi
+      if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
+      sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+      sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+      fi
 
-  #     if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist" ] ; then
-  #     sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-  #     sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-  #     fi
-  #     printf "Removing Aegir folder..\n"
-  #     rm -rf /var/aegir
-  #     printf "Uninstalling related brews..\n"
-  #     sudo -u $USERNAME brew uninstall php53-uploadprogress
-  #     sudo -u $USERNAME brew uninstall php53-xdebug
-  #     sudo -u $USERNAME brew uninstall php53-xhprof
-  #     sudo -u $USERNAME brew uninstall php53
-  #     sudo -u $USERNAME brew uninstall nginx
-  #     sudo -u $USERNAME brew uninstall pcre geoip
-  #     sudo -u $USERNAME brew uninstall dnsmasq
-  #     sudo -u $USERNAME brew uninstall drush
-  #     sudo -u $USERNAME brew uninstall gzip
-  #     sudo -u $USERNAME brew uninstall wget
-  #     printf "Removing related configurations..\n"
-  #     rm -rf /usr/local/etc/nginx
-  #     rm -rf /usr/local/etc/php
-  #     rm -rf /usr/local/etc/dnsmasq.conf
-  #   else
-  #     printf "Exiting..\n"
-  #     exit
-  #   fi
-  # else
-  #   printf "Exiting..\n"
-  #   exit
-  # fi
+      if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
+      sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+      sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+      fi
+
+      if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist" ] ; then
+      sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+      sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+      fi
+
+      if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist" ] ; then
+      sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+      sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+      fi
+
+      if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist" ] ; then
+      sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+      sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+      fi
+
+      printf "# Uninstalling related brews..\n"
+      brew uninstall php53-uploadprogress
+      brew uninstall php53-xdebug
+      brew uninstall php53-xhprof
+      brew uninstall php53
+      brew uninstall php54-uploadprogress
+      brew uninstall php54-xdebug
+      brew uninstall php54-xhprof
+      brew uninstall php54
+      brew uninstall php55-uploadprogress
+      brew uninstall php55-xdebug
+      brew uninstall php55-xhprof
+      brew uninstall php55
+      brew uninstall php-version
+      rm -rf /usr/local/etc/php
+
+      brew uninstall nginx
+      rm -rf /usr/local/etc/nginx
+      rm -rf /usr/local/var/run/nginx
+      sudo rm /var/log/nginx/error.log
+
+      brew uninstall pcre geoip
+      brew uninstall dnsmasq
+      sudo rm /etc/resolv.dnsmasq.conf
+      rm -rf /usr/local/etc/dnsmasq.conf
+      sudo rm /etc/resolver/default
+      sudo networksetup -setdnsservers AirPort empty
+			sudo networksetup -setdnsservers Ethernet empty
+			sudo networksetup -setdnsservers 'Thunderbolt Ethernet' empty
+			sudo networksetup -setdnsservers Wi-Fi empty
+
+      brew uninstall drush
+      brew uninstall gzip
+      brew uninstall wget
+      printf "# Removing related configurations..\n"
+      sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist
+      sudo rm /etc/postfix/sasl_passwd
+      sudo rm /etc/postfix/main.cf
+      sudo cp /etc/postfix/main.cf.orig /etc/postfix/main.cf
+      rm ~/.forward
+
+			brew unistall mariadb
+      rm /usr/local/etc/my-drupal.cnf
+      rm /usr/local/etc/my.cnf
+      rm -rf /usr/local/etc/my.cnf.d
+      sudo rm /etc/my.cnf
+      rm -rf /usr/local/var/mysql
+
+      rm ~/Desktop/YourAegirSetup.txt
+
+      printf "# Removing Aegir folder..\n"
+      sudo rm -rf /var/aegir
+
+    else
+      printf "# Exiting..\n"
+      exit
+    fi
+  else
+    printf "# Exiting..\n"
+    exit
+  fi
+fi
+
+printf "# Checking if the Command Line Tools are installed..\n"
+if [ $osx = 10.9 ] ; then
+  printf "# Your using 10.9 so I'll just install them for you..\n"
+  xcode-select --install
+else
+  if type "/usr/bin/clang" > /dev/null 2>&1; then
+    printf "# Woot! They're installed.\n"
+  else
+    printf "# Nope. You need the Command Line tools installed before this script will work\n\n"
+    printf "# You will need to install them via the Xcode Preferences/Downloads tab:\n"
+    printf "#    http://itunes.apple.com/au/app/xcode/id497799835?mt=12\n\n"
+    printf "# Continue the script after you've installed them.\n"
+    exit
+  fi
+fi
+
+echo "########
+# The Command Line Tools are now installed [Y/n]:
+########"
+read CLT
+if [ $CLT = n -o $CLT = N ] ; then
+	exit
 fi
 
 clear
@@ -95,15 +176,15 @@ printf "\n> Your hostname will be set to: $hname \n"
 echo "########
 # I can also setup ApacheSolr which is best used in conjunction with:
 # https://drupal.org/project/search_api_solr
-# Set up solr [Y/N]:
+# Set up solr [Y/n]:
 ########"
-read solr
+read SOLR
 
-if [ $solr != n -o $solr != N ] ; then
+if [ $SOLR != n -o $SOLR != N ] ; then
   echo "########
 # Do you want solr to run automatically on boot [Y/n]:
 ########"
-  read solrboot
+  read SOLRBOOT
 fi
 
 echo "
@@ -162,76 +243,55 @@ tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf
   echo  "$email" >> ~/.forward
   sudo launchctl load -w /System/Library/LaunchDaemons/org.postfix.master.plist
 else
-  printf "\n> Mail sending from aegir won't actually work until you configure postfix properly..\n"
-  printf "\n> See: http://realityloop.com/blog/2011/06/05/os-x-ditching-mamp-pro-part-2-gmail-email-relay\n"
+  printf "\n# Mail sending from aegir won't actually work until you configure postfix properly..\n"
+  printf "\n# See: http://realityloop.com/blog/2011/06/05/os-x-ditching-mamp-pro-part-2-gmail-email-relay\n"
 fi
 
-printf "> Checking OS version..\n"
-if [ $osx = 10.8.4 -o $osx = 10.8.5 -o $osx = 10.9 ] ; then
-  printf "> Your OS is new enough, so let's go!\n"
-fi
-
-printf "> Checking if the Command Line Tools are installed..\n"
-if [ $osx = 10.9 ] ; then
-  printf "> Your using 10.9 so I'll just install them for you..\n"
-  xcode-select --install
-else
-  if type "/usr/bin/clang" > /dev/null 2>&1; then
-    printf "> Woot! They're installed.\n"
-  else
-    printf "> Nope. You need the Command Line tools installed before this script will work\n\n"
-    printf "> You will need to install them via the Xcode Preferences/Downloads tab:\n"
-    printf ">    http://itunes.apple.com/au/app/xcode/id497799835?mt=12\n\n"
-    printf "> Run the script again after you've installed them.\n"
-    exit
-  fi
-fi
-
-printf "> Checking if Homebrew is installed..\n"
+printf "# Checking if Homebrew is installed..\n"
 if type "brew" > /dev/null 2>&1; then
-  printf "> Affirmative! Lets make sure everything is up to date..\n"
-  printf "> Just so you know, this may throw a few warnings..\n"
+  printf "# Affirmative! Lets make sure everything is up to date..\n"
+  printf "# Just so you know, this may throw a few warnings..\n"
   export PATH=/usr/local/bin:/usr/local/sbin:$PATH
   brew prune
   brew update
   brew doctor
 else
-  printf "> Nope! Installing Homebrew now..\n"
-  ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
-  echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.bashrc
+  printf "# Nope! Installing Homebrew now..\n"
+  ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
+  echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.bash_profile
   echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.zshrc
   export PATH=/usr/local/bin:/usr/local/sbin:$PATH
   brew doctor
 fi
 
 # Tap required kegs
-printf "> Now we'll tap some extra kegs we need..\n"
-printf "> I will throw errors if they're already tapped, nothing to worry about..\n"
+printf "# Now we'll tap some extra kegs we need..\n"
+printf "# I will throw errors if they're already tapped, nothing to worry about..\n"
 brew tap homebrew/dupes
 brew tap josegonzalez/homebrew-php
 
 # Install required formula's
-printf "> Installing required brew formulas..\n"
-printf "> Installing gcc..\n"
+printf "# Installing required brew formulas..\n"
+printf "# Installing gcc..\n"
 brew install apple-gcc42
-printf "> Installing wget..\n"
+printf "# Installing wget..\n"
 brew install wget
-printf "> Installing gzip..\n"
+printf "# Installing gzip..\n"
 brew install gzip
-printf "> Installing drush..\n"
+printf "# Installing drush..\n"
 brew install drush
-printf "> Installing dnsmasq..\n"
+printf "# Installing dnsmasq..\n"
 brew install dnsmasq
-printf "> Configuring dnsmasq..\n"
+printf "# Configuring dnsmasq..\n"
 mkdir -p /usr/local/etc
 
 # Configure dnsmasq
 if [ -e "/usr/local/etc/dnsmasq.conf" ] ; then
-  printf "> You already have a dnsmasq.conf file..\n> So this all works proerly I'm going to delete and recreate it..\n"
+  printf "# You already have a dnsmasq.conf file..\n> So this all works proerly I'm going to delete and recreate it..\n"
   rm /usr/local/etc/dnsmasq.conf
 fi
 
-printf "> Setting dnsmasq config..\n"
+printf "# Setting dnsmasq config..\n"
 cp $(brew --prefix dnsmasq)/dnsmasq.conf.example /usr/local/etc/dnsmasq.conf
 echo '# Edited by MEMPAE script' | cat - /usr/local/etc/dnsmasq.conf > temp && mv temp /usr/local/etc/dnsmasq.conf
 echo "resolv-file=/etc/resolv.dnsmasq.conf" >> /usr/local/etc/dnsmasq.conf
@@ -241,11 +301,11 @@ echo "addn-hosts=/usr/local/etc/dnsmasq.hosts" >> /usr/local/etc/dnsmasq.conf
 touch /usr/local/etc/dnsmasq.hosts
 
 if [ -e "/etc/resolv.dnsmasq.conf" ] ; then
-  printf "> You already have a resolv.conf set..\n> So this all works proerly I'm going to delete and recreate it..\n"
+  printf "# You already have a resolv.conf set..\n> So this all works proerly I'm going to delete and recreate it..\n"
   sudo rm /etc/resolv.dnsmasq.conf
 fi
 
-printf "> Setting OpenDNS and Google DNS servers as fallbacks..\n"
+printf "# Setting OpenDNS and Google DNS servers as fallbacks..\n"
 sudo sh -c 'echo "# OpenDNS IPv6:
 nameserver 2620:0:ccd::2
 nameserver 2620:0:ccc::2
@@ -260,103 +320,168 @@ nameserver 8.8.8.8
 nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
 
 if [ -e "/etc/resolver/default" ] ; then
-  printf "> You already have a resolver set for when you are offline..\n> So this all works proerly I'm going to delete and recreate it..\n"
+  printf "# You already have a resolver set for when you are offline..\n> So this all works proerly I'm going to delete and recreate it..\n"
   sudo rm /etc/resolver/default
 fi
 
-printf "> Making local domains resolve when your disconnected from net..\n"
+printf "# Making local domains resolve when your disconnected from net..\n"
 sudo mkdir -p /etc/resolver
 sudo sh -c 'echo "nameserver 127.0.0.1
 domain ." >> /etc/resolver/default'
 
-printf "> Setting network interfaces to use 127.0.0.1 for DNS lookups, this will error on nonexistent interfaces..\n"
+printf "# Setting network interfaces to use 127.0.0.1 for DNS lookups, this will error on nonexistent interfaces..\n"
 sudo networksetup -setdnsservers AirPort 127.0.0.1
 sudo networksetup -setdnsservers Ethernet 127.0.0.1
 sudo networksetup -setdnsservers 'Thunderbolt Ethernet' 127.0.0.1
 sudo networksetup -setdnsservers Wi-Fi 127.0.0.1
 
-printf "> Setting hostname to $hname..\n"
+printf "# Setting hostname to $hname..\n"
 sudo scutil --set HostName $hname
 
 # Start dnsmasq
-printf "> Copying dnsmasq launch daemon into place..\n"
+printf "# Copying dnsmasq launch daemon into place..\n"
 sudo cp $(brew --prefix dnsmasq)/homebrew.mxcl.dnsmasq.plist /Library/LaunchDaemons
-printf "> Starting dnsmasq..\n"
+printf "# Starting dnsmasq..\n"
 sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 
-printf "> Installing nginx..\n"
+printf "# Installing nginx..\n"
 brew install pcre geoip
-brew install https://gist.github.com/BrianGilbert/5908548/raw/4e36bff848c4552062861ff66e30b841605ad4e0/nginx.rb --with-realip --with-gzip --with-stub --with-webdav --with-flv --with-mp4 --with-geoip --with-upload --with-ssl
-printf "> Configuring nginx..\n"
+brew install nginx --with-realip --with-gzip --with-stub --with-webdav --with-flv --with-mp4 --with-geoip --with-upload-progress --with-ssl
+printf "# Configuring nginx..\n"
 if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
 mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
 fi
 curl https://gist.github.com/BrianGilbert/5908352/raw/26e5943ec52c1d43c867fc16c4960e291b17f7d2/nginx.conf > /usr/local/etc/nginx/nginx.conf
 sed -i '' 's/\[username\]/'$username'/' /usr/local/etc/nginx/nginx.conf
+
+sudo mkdir -p $(brew --prefix nginx)/logs
 sudo mkdir -p /var/log/nginx
+sudo ln -s $(brew --prefix nginx)/logs/error.log /var/log/nginx/error.log
 sudo mkdir -p /var/lib/nginx
 
-printf "> Installing mariadb..\n"
+printf "# Installing mariadb..\n"
 brew install cmake
 brew install mariadb
 unset TMPDIR
-printf "> Configuring mariadb..\n"
+printf "# Configuring mariadb..\n"
 mysql_install_db --user=$username --basedir="$(brew --prefix mariadb)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
 curl https://gist.github.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my-drupal.cnf
 sudo ln -s /usr/local/etc/my-drupal.cnf /etc/my.cnf
 
-printf "> Installing php..\n"
+printf "# Installing php53..\n"
 brew install php53 --without-apache --with-mysql --with-fpm --with-imap
 brew install php53-xhprof
 brew install php53-xdebug
 brew install php53-uploadprogress
 
-printf "> Configuring php..\n"
-sed -i '' '/timezone =/ a\
-date.timezone = Australia/Melbourne\
-' /usr/local/etc/php/5.3/php.ini
-sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.3/php.ini
-sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.3/php.ini
-sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.3/php.ini
-sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.3/php.ini
-sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.3/php.ini
-sed -i '' '/pid = run/ a\
-pid = /usr/local/var/run/php-fpm.pid\
-' /usr/local/etc/php/5.3/php-fpm.conf
+	printf "# Configuring php..\n"
+	sed -i '' '/timezone =/ a\
+	date.timezone = Australia/Melbourne\
+	' /usr/local/etc/php/5.3/php.ini
+	sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.3/php.ini
+	sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.3/php.ini
+	sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.3/php.ini
+	sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.3/php.ini
+	sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.3/php.ini
+	sed -i '' '/pid = run/ a\
+	pid = /usr/local/var/run/php-fpm.pid\
+	' /usr/local/etc/php/5.3/php-fpm.conf
 
-#Increase maximum function nesting level
-echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
+	#Increase maximum function nesting level
+	echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
+	#sudo ln -s /usr/local/etc/php/5.3/php.ini /etc/php.ini
+	sudo ln -s $(brew --prefix josegonzalez/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
+brew unlink php53
 
-sudo ln -s /usr/local/etc/php/5.3/php.ini /etc/php.ini
-sudo ln -s $(brew --prefix josegonzalez/php/php53)/var/log/php-fpm.log /var/log/nginx/php-fpm.log
+
+printf "# Installing php54..\n"
+brew install php54 --without-apache --with-mysql --with-fpm --with-imap
+brew install php54-xhprof
+brew install php54-xdebug
+brew install php54-uploadprogress
+
+	printf "# Configuring php54..\n"
+	sed -i '' '/timezone =/ a\
+	date.timezone = Australia/Melbourne\
+	' /usr/local/etc/php/5.4/php.ini
+	sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.4/php.ini
+	sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.4/php.ini
+	sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.4/php.ini
+	sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.4/php.ini
+	sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.4/php.ini
+	sed -i '' '/pid = run/ a\
+	pid = /usr/local/var/run/php-fpm.pid\
+	' /usr/local/etc/php/5.4/php-fpm.conf
+
+	#Increase maximum function nesting level
+	echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.4/conf.d/ext-xdebug.ini
+	#sudo ln -s /usr/local/etc/php/5.4/php.ini /etc/php.ini
+	sudo ln -s $(brew --prefix josegonzalez/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
+brew unlink php54
+
+printf "# Installing php55..\n"
+brew install php55 --without-apache --with-mysql --with-fpm --with-imap
+brew install php55-xhprof
+brew install php55-xdebug
+brew install php55-uploadprogress
+
+	printf "# Configuring php55..\n"
+	sed -i '' '/timezone =/ a\
+	date.timezone = Australia/Melbourne\
+	' /usr/local/etc/php/5.5/php.ini
+	sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.5/php.ini
+	sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.5/php.ini
+	sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.5/php.ini
+	sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.5/php.ini
+	sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.5/php.ini
+	sed -i '' '/pid = run/ a\
+	pid = /usr/local/var/run/php-fpm.pid\
+	' /usr/local/etc/php/5.5/php-fpm.conf
+
+	#Increase maximum function nesting level
+	echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
+	#sudo ln -s /usr/local/etc/php/5.5/php.ini /etc/php.ini
+	sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
+#brew unlinnk php55
+
+printf "# Installing php-version..\n"
+brew install php-version
+echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.bash_profile
+echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.zshrc
+
+
 
 #Solr
-if [ $solr != n -o $solr != N ] ; then
-printf "> Installing solr..\n"
+if [ $SOLR != n -o $SOLR != N ] ; then
+printf "# Installing solr..\n"
 brew install solr
 mkdir -p ~/Library/LaunchAgents
-printf "> Downloading solr launch daemon..\n"
+printf "# Downloading solr launch daemon..\n"
 curl https://gist.github.com/BrianGilbert/6208150/raw/dfe9d698aee2cdbe9eeae88437c5ec844774bdb4/com.apache.solr.plist > ~/Library/LaunchAgents/com.apache.solr.plist
 sed -i '' 's/\[username\]/'$username'/' ~/Library/LaunchAgents/com.apache.solr.plist
 fi
 
-printf "> Setting up launch daemons..\n"
+printf "# Setting up launch daemons..\n"
 sudo cp $(brew --prefix nginx)/homebrew.mxcl.nginx.plist /Library/LaunchDaemons/
 sudo chown root:wheel /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
 
 mkdir -p ~/Library/LaunchAgents
 cp $(brew --prefix mariadb)/homebrew.mxcl.mariadb.plist ~/Library/LaunchAgents/
 cp $(brew --prefix josegonzalez/php/php53)/homebrew-php.josegonzalez.php53.plist ~/Library/LaunchAgents/
+cp $(brew --prefix josegonzalez/php/php54)/homebrew-php.josegonzalez.php54.plist ~/Library/LaunchAgents/
+cp $(brew --prefix josegonzalez/php/php55)/homebrew-php.josegonzalez.php55.plist ~/Library/LaunchAgents/
 
-printf "> Launching daemons now..\n"
+printf "# Launching daemons now..\n"
 sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-if [ $solrboot != n -o $solrboot != N ] ; then
+launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+if [ $SOLRBOOT != n -o $SOLRBOOT != N ] ; then
   launchctl load -w ~/Library/LaunchAgents/com.apache.solr.plist
 fi
 
-printf "> Finishing mariadb setup..\n"
+printf "# Finishing mariadb setup..\n"
 echo "########
 # Enter the following when prompted..
 #
@@ -394,7 +519,7 @@ sudo PATH="/usr/local/bin:/usr/local/sbin:$PATH" $(brew --prefix mariadb)/bin/my
 #   send \"y\r\"
 #   expect eof"
 
-printf "> Doing some setup ready for Aegir install..\n"
+printf "# Doing some setup ready for Aegir install..\n"
 sudo mkdir -p /var/aegir
 sudo chown $username /var/aegir
 sudo chgrp staff /var/aegir
@@ -402,16 +527,16 @@ sudo dscl . append /Groups/_www GroupMembership $username
 echo "$username ALL=NOPASSWD: /usr/local/bin/nginx" | sudo tee -a  /etc/sudoers
 ln -s /var/aegir/config/nginx.conf /usr/local/etc/nginx/aegir.conf
 
-printf "> Adding aegir.conf include to ngix.conf..\n"
+printf "# Adding aegir.conf include to ngix.conf..\n"
 ed -s /usr/local/etc/nginx/nginx.conf <<< $'g/#aegir/s!!include /usr/local/etc/nginx/aegir.conf;!\nw'
 
-printf "> Aegir time..\n"
-printf "> Downloading provision..\n"
+printf "# Aegir time..\n"
+printf "# Downloading provision..\n"
 DRUSH='drush --php=/usr/local/bin/php'
 $DRUSH dl --destination=/users/$username/.drush provision-6.x-2.x
-printf "> Clearing drush caches..\n"
+printf "# Clearing drush caches..\n"
 $DRUSH cache-clear drush
-printf "> Installing hostmaster..\n"
+printf "# Installing hostmaster..\n"
 
 $DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.x-dev' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld #remove this line when/if expects block below is enabled again.
 
@@ -424,12 +549,12 @@ $DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaste
 #   send \"y\r\"
 #   expect eof"
 
-printf "> Symlinking platforms to ~/Sites/aegir..\n"
+printf "# Symlinking platforms to ~/Sites/Aegir..\n"
 mkdir -p /Users/$username/Sites/Aegir
 rmdir /var/aegir/platforms
 ln -s /Users/$username/Sites/Aegir /var/aegir/platforms
 
-printf "> Saving some notes to ~/Desktop/YourAegirSetup.txt..\n"
+printf "# Saving some notes to ~/Desktop/YourAegirSetup.txt..\n"
 sudo sh -c 'echo "Hi fellow Drupaler,
 
 Here is some important information about your local Aegir setup.
@@ -437,8 +562,13 @@ Here is some important information about your local Aegir setup.
 The date.timezone value is set to Melbourne/Australia you may want
 to change it to something that suits you better.
 
-To change it type this in a terminal and search for Melbourne:
+To change it type one of these in terminal and search for Melbourne:
 nano /usr/local/etc/php/5.3/php.ini
+nano /usr/local/etc/php/5.4/php.ini
+nano /usr/local/etc/php/5.5/php.ini
+
+php55 is currently active, to swicth the active version of php use
+the php-version command.
 
 I have tried to set DNS for commonly named network interfaces check
 all of your interfaces to ensure that the DNS server is set to:
@@ -464,6 +594,12 @@ launchctl load ~/Library/LaunchAgents/com.apache.solr.plist
 To stop it:
 launchctl unload ~/Library/LaunchAgents/com.apache.solr.plist
 
+If things are not working after an OS update update then try the
+following steps, reset DNS to 127.0.0.1 and run following command:
+sudo mkdir -p /var/log/nginx
+
+Then start nginx: sudo /usr/local/bin/nginx
+
 After using this script please take the time to say thanks:
 http://twitter.com/BrianGilbert_
 
@@ -471,12 +607,12 @@ http://twitter.com/BrianGilbert_
 1. https://drupal.org/project/barracuda
 " >> ~/Desktop/YourAegirSetup.txt'
 
-printf "> Attempting to email it to you as well..\n"
+printf "# Attempting to email it to you as well..\n"
 mail -s 'Your local Aegir setup' $email < ~/Desktop/YourAegirSetup.txt
 
-printf "> The date.timezone value in /usr/local/etc/php/[version]/php.ini\n> Is set to Melbourne/Australia\n> You may want to change it to something that suits you better.\n"
+printf "# The date.timezone value in /usr/local/etc/php/[version]/php.ini\n# Is set to Melbourne/Australia\n# You may want to change it to something that suits you better.\n"
 # printf "The mysql root password is set to 'mysql' and login is only possible from localhost..\n"
-printf "> Double check your network interfaces to ensure their DNS server is set to 127.0.0.1 as we only tried to set commonly named interfaces.\n"
-printf "> Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n"
-printf "Finished..\n"
+printf "# Double check your network interfaces to ensure their DNS server is set to 127.0.0.1 as we only tried to set commonly named interfaces.\n"
+printf "# Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n"
+printf "# Finished..\n"
 exit

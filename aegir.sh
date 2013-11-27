@@ -278,7 +278,11 @@ printf "# Installing wget..\n"
 brew install wget
 printf "# Installing gzip..\n"
 brew install gzip
+printf "# Installing libpng..\n"
+brew install libpng
 printf "# Installing drush..\n"
+printf "# To ensure we get the latest version uninstalling it first..\n"
+brew uninstall drush
 brew install drush
 printf "# Installing dnsmasq..\n"
 brew install dnsmasq
@@ -368,32 +372,6 @@ mysql_install_db --user=$username --basedir="$(brew --prefix mariadb)" --datadir
 curl https://gist.github.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my-drupal.cnf
 sudo ln -s /usr/local/etc/my-drupal.cnf /etc/my.cnf
 
-printf "# Installing php53..\n"
-brew install php53 --without-apache --with-mysql --with-fpm --with-imap
-brew install php53-xhprof
-brew install php53-xdebug
-brew install php53-uploadprogress
-
-	printf "# Configuring php..\n"
-	sed -i '' '/timezone =/ a\
-	date.timezone = Australia/Melbourne\
-	' /usr/local/etc/php/5.3/php.ini
-	sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.3/php.ini
-	sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.3/php.ini
-	sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.3/php.ini
-	sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.3/php.ini
-	sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.3/php.ini
-	sed -i '' '/pid = run/ a\
-	pid = /usr/local/var/run/php-fpm.pid\
-	' /usr/local/etc/php/5.3/php-fpm.conf
-
-	#Increase maximum function nesting level
-	echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
-	#sudo ln -s /usr/local/etc/php/5.3/php.ini /etc/php.ini
-	sudo ln -s $(brew --prefix josegonzalez/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
-brew unlink php53
-
-
 printf "# Installing php54..\n"
 brew install php54 --without-apache --with-mysql --with-fpm --with-imap
 brew install php54-xhprof
@@ -442,14 +420,37 @@ brew install php55-uploadprogress
 	echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
 	#sudo ln -s /usr/local/etc/php/5.5/php.ini /etc/php.ini
 	sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
-#brew unlinnk php55
+brew unlinnk php55
+
+printf "# Installing php53..\n"
+brew install php53 --without-apache --with-mysql --with-fpm --with-imap
+brew install php53-xhprof
+brew install php53-xdebug
+brew install php53-uploadprogress
+
+  printf "# Configuring php..\n"
+  sed -i '' '/timezone =/ a\
+  date.timezone = Australia/Melbourne\
+  ' /usr/local/etc/php/5.3/php.ini
+  sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.3/php.ini
+  sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.3/php.ini
+  sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.3/php.ini
+  sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.3/php.ini
+  sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.3/php.ini
+  sed -i '' '/pid = run/ a\
+  pid = /usr/local/var/run/php-fpm.pid\
+  ' /usr/local/etc/php/5.3/php-fpm.conf
+
+  #Increase maximum function nesting level
+  echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
+  #sudo ln -s /usr/local/etc/php/5.3/php.ini /etc/php.ini
+  sudo ln -s $(brew --prefix josegonzalez/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
+#brew unlink php53
 
 printf "# Installing php-version..\n"
 brew install php-version
 echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.bash_profile
 echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.zshrc
-
-
 
 #Solr
 if [ $SOLR != n -o $SOLR != N ] ; then
@@ -475,8 +476,8 @@ printf "# Launching daemons now..\n"
 sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
-launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+#launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+#launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
 if [ $SOLRBOOT != n -o $SOLRBOOT != N ] ; then
   launchctl load -w ~/Library/LaunchAgents/com.apache.solr.plist
 fi

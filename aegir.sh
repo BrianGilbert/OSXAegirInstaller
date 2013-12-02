@@ -7,10 +7,17 @@
 username=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
 osx=`sw_vers -productVersion`
 
+echo "########
+# This script is designed to be run by the primary account on a
+# computer, it has not been tested on a multi user setup.
+########"
+
 # Make sure that the script wasn't run as root.
 if [ $username = "root" ] ; then
   printf "# This script should not be run as sudo or root. exiting.\n"
   exit
+else
+  chmod -R $username:admin /usr/local
 fi
 
 printf "# Checking OS version..\n"
@@ -109,7 +116,7 @@ if [ -e "/var/aegir/config/includes/global.inc" ] ; then
       sudo cp /etc/postfix/main.cf.orig /etc/postfix/main.cf
       rm ~/.forward
 
-			brew unistall mariadb
+			brew uninstall mariadb
       rm /usr/local/etc/my-drupal.cnf
       rm /usr/local/etc/my.cnf
       rm -rf /usr/local/etc/my.cnf.d
@@ -167,11 +174,8 @@ echo "########
 # -an email address to receive notifications from aegir
 # -attention to what is being requested via the script
 ########
-# What you would like your machines hostname to be?
-# It must end in .ld, eg: realityloop.ld
+# Your hostname will be set to aegir.ld
 ########"
-read hname
-printf "\n> Your hostname will be set to: $hname \n"
 
 echo "########
 # I can also setup ApacheSolr which is best used in conjunction with:
@@ -223,7 +227,7 @@ if [ $gmail != n -o $gmail != N ] ; then
   sudo postmap /etc/postfix/sasl_passwd
   sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
   echo "
-myhostname =" $hname"
+myhostname =" aegir.ld"
 
 # Minimum Postfix-specific configurations.
 mydomain_fallback = localhost
@@ -263,6 +267,10 @@ else
   export PATH=/usr/local/bin:/usr/local/sbin:$PATH
   brew doctor
 fi
+
+# Uninstall drush if it was previously installed via homebrew
+printf "# I'll be installing the latest version of drush so making sure you don't have it installed..\n"
+brew uninstall drush
 
 # Tap required kegs
 printf "# Now we'll tap some extra kegs we need..\n"
@@ -305,7 +313,7 @@ echo "addn-hosts=/usr/local/etc/dnsmasq.hosts" >> /usr/local/etc/dnsmasq.conf
 touch /usr/local/etc/dnsmasq.hosts
 
 if [ -e "/etc/resolv.dnsmasq.conf" ] ; then
-  printf "# You already have a resolv.conf set..\n> So this all works proerly I'm going to delete and recreate it..\n"
+  printf "# You already have a resolv.conf set..\n> So this all works properly I'm going to delete and recreate it..\n"
   sudo rm /etc/resolv.dnsmasq.conf
 fi
 
@@ -324,7 +332,7 @@ nameserver 8.8.8.8
 nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
 
 if [ -e "/etc/resolver/default" ] ; then
-  printf "# You already have a resolver set for when you are offline..\n> So this all works proerly I'm going to delete and recreate it..\n"
+  printf "# You already have a resolver set for when you are offline..\n> So this all works properly I'm going to delete and recreate it..\n"
   sudo rm /etc/resolver/default
 fi
 
@@ -339,8 +347,8 @@ sudo networksetup -setdnsservers Ethernet 127.0.0.1
 sudo networksetup -setdnsservers 'Thunderbolt Ethernet' 127.0.0.1
 sudo networksetup -setdnsservers Wi-Fi 127.0.0.1
 
-printf "# Setting hostname to $hname..\n"
-sudo scutil --set HostName $hname
+printf "# Setting hostname to aegir.ld\n"
+sudo scutil --set HostName aegir.ld
 
 # Start dnsmasq
 printf "# Copying dnsmasq launch daemon into place..\n"
@@ -555,6 +563,12 @@ mkdir -p /Users/$username/Sites/Aegir
 rmdir /var/aegir/platforms
 ln -s /Users/$username/Sites/Aegir /var/aegir/platforms
 
+mkdir -p /usr/local/etc/ssl/private;
+openssl req -x509 -nodes -days 7300 -subj "/C=US/ST=New York/O=Aegir/OU=Cloud/L=New York/CN=*.aegir.ld" -newkey rsa:2048 -keyout /usr/local/etc/ssl/private/nginx-wild-ssl.key -out /usr/local/etc/ssl/private/nginx-wild-ssl.crt -batch 2> /dev/null;
+cd /var/aegir/config/server_master/nginx/pre.d/;
+wget https://gist.github.com/BrianGilbert/7760457/raw/fa9163ecc533ae14ea1332b38444e03be00dd329/nginx_wild_ssl.conf;
+sudo /usr/local/bin/nginx -s reload;
+
 printf "# Saving some notes to ~/Desktop/YourAegirSetup.txt..\n"
 sudo sh -c 'echo "Hi fellow Drupaler,
 
@@ -563,12 +577,18 @@ Here is some important information about your local Aegir setup.
 The date.timezone value is set to Melbourne/Australia you may want
 to change it to something that suits you better.
 
+Your Aegir sites are accesible using http and https, though you
+will need to trush the certificate in your browser.
+
 To change it type one of these in terminal and search for Melbourne:
 nano /usr/local/etc/php/5.3/php.ini
 nano /usr/local/etc/php/5.4/php.ini
 nano /usr/local/etc/php/5.5/php.ini
 
-php55 is currently active, to swicth the active version of php use
+Then restart nginx using:
+sudo /usr/local/bin/nginx -s reload
+
+php53 is currently active, to swicth the active version of php use
 the php-version command.
 
 I have tried to set DNS for commonly named network interfaces check

@@ -1,9 +1,10 @@
 OSXAegirInstaller
 =================
 
-This has been tested on Mountain Lion 10.8.4 & Mavericks 10.9 DP5, I expect it will work fine on 10.8.5 when that is released.
+This has been tested on Mountain Lion 10.8.4 & Mavericks 10.9, I expect it will work fine on 10.8.5 as well.
 
 __Warning:__ I have tested this script extensivley on a clean install of OSX, but I take no responsability for anything that happens to your computer using the script.
+I'd reccomend you use Dick Utility to repair permissions on your primary drive before running this script.
 
 It should be fine to install on any machine that doesn't have a webserver already running on port 80 or a DB server already running on 3306.
 
@@ -30,6 +31,16 @@ Execute the following in terminal to run the installer:
     cd ~
     curl -O https://raw.github.com/BrianGilbert/OSXAegirInstaller/master/aegir.sh
     chmod +x aegir.sh
+    ./aegir.sh
+
+
+__SSL Support:__ This is part of main script since Dec 3 2013, so you only need the commends below if you installed prior.
+
+This will enable access to your aegir sites using https, you will need to trust the certificate in your browser though.
+
+    cd ~
+    curl -O https://raw.github.com/BrianGilbert/OSXAegirInstaller/master/enablessl.sh
+    chmod +x enablessl.sh
     ./aegir.sh
 
 

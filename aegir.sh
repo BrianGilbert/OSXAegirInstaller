@@ -10,7 +10,30 @@ osx=`sw_vers -productVersion`
 echo "########
 # This script is designed to be run by the primary account on a
 # computer, it has not been tested on a multi user setup.
+########
+# You cannot use this script if you have macports installed
+# so we will uninstall it automatically
+########
+# OS X's inbuilt apache uses port 80 we need to disable it due to a
+# conflict with nginx, we'll disable it for you during install.
 ########"
+
+printf "# Attempting to uninstall macports now..\n"
+sudo port -fp uninstall installed
+sudo rm -rf \
+    /opt/local \
+    /Applications/DarwinPorts \
+    /Applications/MacPorts \
+    /Library/LaunchDaemons/org.macports.* \
+    /Library/Receipts/DarwinPorts*.pkg \
+    /Library/Receipts/MacPorts*.pkg \
+    /Library/StartupItems/DarwinPortsStartup \
+    /Library/Tcl/darwinports1.0 \
+    /Library/Tcl/macports1.0 \
+    ~/.macports
+
+printf "# Disabling OS X's inbuilt apache..\n"
+sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist
 
 # Make sure that the script wasn't run as root.
 if [ $username = "root" ] ; then
@@ -18,6 +41,7 @@ if [ $username = "root" ] ; then
   exit
 else
   chmod -R $username:admin /usr/local
+  chown 775 /usr/local
 fi
 
 printf "# Checking OS version..\n"

@@ -428,7 +428,7 @@ brew install php55-uploadprogress
 	echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
 	#sudo ln -s /usr/local/etc/php/5.5/php.ini /etc/php.ini
 	sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
-brew unlinnk php55
+brew unlink php55
 
 printf "# Installing php53..\n"
 brew install php53 --without-apache --with-mysql --with-fpm --with-imap

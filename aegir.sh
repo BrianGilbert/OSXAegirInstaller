@@ -18,7 +18,7 @@ echo "########
 # conflict with nginx, we'll disable it for you during install.
 ########"
 
-printf "# Attempting to uninstall macports now..\n"
+printf "# Attempting to uninstall macports now, this will error if it's not installed..\n"
 sudo port -fp uninstall installed
 sudo rm -rf \
     /opt/local \
@@ -32,7 +32,7 @@ sudo rm -rf \
     /Library/Tcl/macports1.0 \
     ~/.macports
 
-printf "# Disabling OS X's inbuilt apache..\n"
+printf "# Disabling OS X's inbuilt apache, this will error if it's already disabled..\n"
 sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist
 
 # Make sure that the script wasn't run as root.
@@ -40,7 +40,7 @@ if [ $username = "root" ] ; then
   printf "# This script should not be run as sudo or root. exiting.\n"
   exit
 else
-  chmod -R $username:admin /usr/local
+  sudo chmod -R $username:admin /usr/local
   chown 775 /usr/local
 fi
 

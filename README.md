@@ -4,7 +4,7 @@ OSXAegirInstaller
 This has been tested on Mountain Lion 10.8.4 & Mavericks 10.9, I expect it will work fine on 10.8.5 as well.
 
 __Warning:__ I have tested this script extensivley on a clean install of OSX, but I take no responsability for anything that happens to your computer using the script.
-I'd reccomend you use Dick Utility to repair permissions on your primary drive before running this script.
+I'd reccomend you use Disk Utility to repair permissions on your primary drive before running this script.
 
 It should be fine to install on any machine that doesn't have a webserver already running on port 80 or a DB server already running on 3306.
 

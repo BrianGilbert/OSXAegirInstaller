@@ -40,7 +40,7 @@ if [ $username = "root" ] ; then
   printf "# This script should not be run as sudo or root. exiting.\n"
   exit
 else
-  sudo chmod -R $username:admin /usr/local
+  sudo chown -R $username:admin /usr/local
   chown 775 /usr/local
 fi
 

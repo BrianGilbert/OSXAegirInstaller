@@ -57,10 +57,11 @@ if [ -e "/var/aegir/config/includes/global.inc" ] ; then
   #
   printf "# Should I remove it and do a clean install? [Y/n]\n"
   read CLEAN
-  if [ $CLEAN = y -o $CLEAN = Y ] ; then
+
+  if [[ $CLEAN =~ ^(y|yes)$ ]]; then
     printf "# There is no turning back..\n# This will unusinstall aegir and all related homebrew compononets before running a clean install, are you sure? [Y/n]\n"
     read FORSURE
-    if [ $FORSURE != n -o $FORSURE != N ] ; then
+    if [[ $FORSURE =~ ^(y|yes)$ ]]; then
       printf "# Don't say I didn't warn you, cleaning everything before running clean install..\n"
 
       printf "# Stopping and deleting any services that are already installed..\n"
@@ -72,11 +73,6 @@ if [ -e "/var/aegir/config/includes/global.inc" ] ; then
       if [ -e "/Library/LaunchDaemons/homebrew.mxcl.nginx.plist" ] ; then
       sudo -u $USERNAME launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
       sudo -u $USERNAME rm /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
-      fi
-
-      if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
-      sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
-      sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
       fi
 
       if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
@@ -100,18 +96,33 @@ if [ -e "/var/aegir/config/includes/global.inc" ] ; then
       fi
 
       printf "# Uninstalling related brews..\n"
+      brew uninstall php53-geoip
+      brew uninstall php53-imagick
+      brew uninstall php53-mcrypt
       brew uninstall php53-uploadprogress
       brew uninstall php53-xdebug
       brew uninstall php53-xhprof
       brew uninstall php53
+      rm /usr/local/bin/go53
+
+      brew uninstall php54-geoip
+      brew uninstall php54-imagick
+      brew uninstall php54-mcrypt
       brew uninstall php54-uploadprogress
       brew uninstall php54-xdebug
       brew uninstall php54-xhprof
       brew uninstall php54
+      rm /usr/local/bin/go54
+
+      brew uninstall php55-geoip
+      brew uninstall php55-imagick
+      brew uninstall php55-mcrypt
       brew uninstall php55-uploadprogress
       brew uninstall php55-xdebug
       brew uninstall php55-xhprof
       brew uninstall php55
+      rm /usr/local/bin/go55
+
       brew uninstall php-version
       rm -rf /usr/local/etc/php
 
@@ -182,7 +193,7 @@ echo "########
 # The Command Line Tools are now installed [Y/n]:
 ########"
 read CLT
-if [ $CLT = n -o $CLT = N ] ; then
+if ! [[ $CLT =~ ^(y|yes)$ ]]; then
 	exit
 fi
 
@@ -208,7 +219,7 @@ echo "########
 ########"
 read SOLR
 
-if [ $SOLR != n -o $SOLR != N ] ; then
+if [[ $SOLR =~ ^(y|yes)$ ]]; then
   echo "########
 # Do you want solr to run automatically on boot [Y/n]:
 ########"
@@ -232,7 +243,7 @@ echo "########
 # Do you have a gmail account you can use? [Y/n]:
 ########"
 read gmail
-if [ $gmail != n -o $gmail != N ] ; then
+if [[ $gmail =~ ^(y|yes)$ ]]; then
   printf "\nOK, I'll attempt to set up postfix..\n"
   echo "########
 # Whats the full gmail address? (eg. aegir@gmail.com)
@@ -382,7 +393,7 @@ sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 
 printf "# Installing nginx..\n"
 brew install pcre geoip
-brew install nginx --with-realip --with-gzip --with-stub --with-webdav --with-flv --with-mp4 --with-geoip --with-upload-progress --with-ssl
+brew install nginx --with-debug --with-flv --with-geoip --with-http_dav_module --with-mp4 --with-spdy --with-ssl --with-upload-progress
 printf "# Configuring nginx..\n"
 if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
 mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
@@ -405,10 +416,13 @@ curl https://gist.github.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1
 sudo ln -s /usr/local/etc/my-drupal.cnf /etc/my.cnf
 
 printf "# Installing php54..\n"
-brew install php54 --without-apache --with-mysql --with-fpm --with-imap
-brew install php54-xhprof
-brew install php54-xdebug
+brew install php54 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+brew install php54-geoip
+brew install php54-imagick
+brew install php54-mcrypt
 brew install php54-uploadprogress
+brew install php54-xdebug
+brew install php54-xhprof
 
 	printf "# Configuring php54..\n"
 	sed -i '' '/timezone =/ a\
@@ -431,13 +445,27 @@ brew install php54-uploadprogress
   mkdir -p ~/Library/LaunchAgents
   cp $(brew --prefix josegonzalez/php/php54)/homebrew-php.josegonzalez.php54.plist ~/Library/LaunchAgents/
 
+echo "#!/bin/sh
+# Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
+# of Realityloop @Realityloop http://realitylop.com/
+
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
+launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+php-version 5.4
+sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go54
+
 brew unlink php54
 
 printf "# Installing php55..\n"
-brew install php55 --without-apache --with-mysql --with-fpm --with-imap
-brew install php55-xhprof
-brew install php55-xdebug
+brew install php55 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+brew install php55-geoip
+brew install php55-imagick
+brew install php55-mcrypt
 brew install php55-uploadprogress
+brew install php55-xdebug
+brew install php55-xhprof
 
 	printf "# Configuring php55..\n"
 	sed -i '' '/timezone =/ a\
@@ -459,26 +487,40 @@ brew install php55-uploadprogress
 
   cp $(brew --prefix josegonzalez/php/php55)/homebrew-php.josegonzalez.php55.plist ~/Library/LaunchAgents/
 
+echo "#!/bin/sh
+# Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
+# of Realityloop @Realityloop http://realitylop.com/
+
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
+launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+php-version 5.5
+sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
+
 brew unlink php55
 
 printf "# Installing php53..\n"
-brew install php53 --without-apache --with-mysql --with-fpm --with-imap
-brew install php53-xhprof
-brew install php53-xdebug
+brew install php53 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+brew install php53-geoip
+brew install php53-imagick
+brew install php53-mcrypt
 brew install php53-uploadprogress
+brew install php53-xdebug
+brew install php53-xhprof
 
   printf "# Configuring php..\n"
-  sed -i '' '/timezone =/ a\
-  date.timezone = Australia/Melbourne\
-  ' /usr/local/etc/php/5.3/php.ini
-  sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.3/php.ini
-  sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.3/php.ini
-  sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.3/php.ini
-  sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.3/php.ini
-  sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.3/php.ini
-  sed -i '' '/pid = run/ a\
-  pid = /usr/local/var/run/php-fpm.pid\
-  ' /usr/local/etc/php/5.3/php-fpm.conf
+sed -i '' '/timezone =/ a\
+date.timezone = Australia/Melbourne\
+' /usr/local/etc/php/5.3/php.ini
+sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.3/php.ini
+sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.3/php.ini
+sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.3/php.ini
+sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.3/php.ini
+sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.3/php.ini
+sed -i '' '/pid = run/ a\
+pid = /usr/local/var/run/php-fpm.pid\
+' /usr/local/etc/php/5.3/php-fpm.conf
 
   #Increase maximum function nesting level
   echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
@@ -487,6 +529,17 @@ brew install php53-uploadprogress
 
   cp $(brew --prefix josegonzalez/php/php53)/homebrew-php.josegonzalez.php53.plist ~/Library/LaunchAgents/
 
+echo "#!/bin/sh
+# Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
+# of Realityloop @Realityloop http://realitylop.com/
+
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
+launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+php-version 5.3
+sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
+
 #brew unlink php53
 
 printf "# Installing php-version..\n"
@@ -494,8 +547,10 @@ brew install php-version
 echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.bash_profile
 echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.zshrc
 
+#php-version 5.3
+
 #Solr
-if [ $SOLR != n -o $SOLR != N ] ; then
+if [[ $SOLR =~ ^(y|yes)$ ]]; then
 printf "# Installing solr..\n"
 brew install solr
 mkdir -p ~/Library/LaunchAgents
@@ -515,9 +570,7 @@ printf "# Launching daemons now..\n"
 sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-#launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
-#launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
-if [ $SOLRBOOT != n -o $SOLRBOOT != N ] ; then
+if [[ $SOLRBOOT =~ ^(y|yes)$ ]]; then
   launchctl load -w ~/Library/LaunchAgents/com.apache.solr.plist
 fi
 
@@ -611,7 +664,8 @@ to change it to something that suits you better.
 Your Aegir sites are accesible using http and https, though you
 will need to trush the certificate in your browser.
 
-To change it type one of these in terminal and search for Melbourne:
+To change it, depending on what versions of php you installed,
+type each of these in terminal and search for Melbourne:
 nano /usr/local/etc/php/5.3/php.ini
 nano /usr/local/etc/php/5.4/php.ini
 nano /usr/local/etc/php/5.5/php.ini
@@ -619,7 +673,7 @@ nano /usr/local/etc/php/5.5/php.ini
 Then restart nginx using:
 sudo /usr/local/bin/nginx -s reload
 
-php53 is currently active, to swicth the active version of php use
+php53 is currently active, to switch the active version of php use
 the php-version command.
 
 I have tried to set DNS for commonly named network interfaces check

@@ -21,7 +21,7 @@ This script installs the following via Homebrew on OSX:
 * php (with uploadprogress, xhprof and xdebug)
 * solr4 (optional)
 
-And then installs Aegir 6.x-2.x branch
+And then installs Aegir 6.x-2.0 stable
 
 Once installed you can access the Aegir dashboard at http://aegir.ld
 Any site you create that ends in .ld or has an alias ending in .ld will resolve to localhost and work within your browser.
@@ -43,5 +43,9 @@ This will enable access to your aegir sites using https, you will need to trust 
     chmod +x enablessl.sh
     ./aegir.sh
 
+After installation change php versions (and restart nginx) by running the following commands:
+    go53
+    go54
+    go54
 
 This is the largest script I've written to date, so any improvements gladly accepted as pull requests!

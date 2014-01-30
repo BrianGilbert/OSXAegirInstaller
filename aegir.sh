@@ -41,7 +41,7 @@ if [ $username = "root" ] ; then
   exit
 else
   sudo chown -R $username:admin /usr/local
-  chown 775 /usr/local
+  chmod 775 /usr/local
 fi
 
 printf "# Checking OS version..\n"
@@ -141,6 +141,7 @@ if [ -e "/var/aegir/config/includes/global.inc" ] ; then
 			sudo networksetup -setdnsservers 'Thunderbolt Ethernet' empty
 			sudo networksetup -setdnsservers Wi-Fi empty
 
+      printf "# Removing previously drush installation, this may error..\n"
       brew uninstall drush
       brew uninstall gzip
       brew uninstall wget
@@ -382,6 +383,12 @@ sudo networksetup -setdnsservers Ethernet 127.0.0.1
 sudo networksetup -setdnsservers 'Thunderbolt Ethernet' 127.0.0.1
 sudo networksetup -setdnsservers Wi-Fi 127.0.0.1
 
+echo "########
+# Open your network settings now and confirm the DNS for
+# your active device is set to 127.0.0.1, or else things
+# will not work properly later in the script.
+########"
+
 printf "# Setting hostname to aegir.ld\n"
 sudo scutil --set HostName aegir.ld
 
@@ -445,7 +452,7 @@ brew install php54-xhprof
   mkdir -p ~/Library/LaunchAgents
   cp $(brew --prefix josegonzalez/php/php54)/homebrew-php.josegonzalez.php54.plist ~/Library/LaunchAgents/
 
-echo "#!/bin/sh
+echo "#!/usr/bin/env bash
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
 # of Realityloop @Realityloop http://realitylop.com/
 
@@ -455,6 +462,7 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
 php-version 5.4
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go54
+chmod 755 /usr/local/bin/go54
 
 brew unlink php54
 
@@ -487,7 +495,7 @@ brew install php55-xhprof
 
   cp $(brew --prefix josegonzalez/php/php55)/homebrew-php.josegonzalez.php55.plist ~/Library/LaunchAgents/
 
-echo "#!/bin/sh
+echo "#!/usr/bin/env bash
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
 # of Realityloop @Realityloop http://realitylop.com/
 
@@ -497,6 +505,7 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
 php-version 5.5
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
+chmod 755 /usr/local/bin/go55
 
 brew unlink php55
 
@@ -529,7 +538,7 @@ pid = /usr/local/var/run/php-fpm.pid\
 
   cp $(brew --prefix josegonzalez/php/php53)/homebrew-php.josegonzalez.php53.plist ~/Library/LaunchAgents/
 
-echo "#!/bin/sh
+echo "#!/usr/bin/env bash
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
 # of Realityloop @Realityloop http://realitylop.com/
 
@@ -539,15 +548,12 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
 php-version 5.3
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
-
-#brew unlink php53
+chmod 755 /usr/local/bin/go53
 
 printf "# Installing php-version..\n"
 brew install php-version
 echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.bash_profile
 echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.zshrc
-
-#php-version 5.3
 
 #Solr
 if [[ $SOLR =~ ^(y|yes)$ ]]; then
@@ -626,12 +632,12 @@ ed -s /usr/local/etc/nginx/nginx.conf <<< $'g/#aegir/s!!include /usr/local/etc/n
 printf "# Aegir time..\n"
 printf "# Downloading provision..\n"
 DRUSH='drush --php=/usr/local/bin/php'
-$DRUSH dl --destination=/users/$username/.drush provision-6.x-2.x
+$DRUSH dl --destination=/users/$username/.drush provision-6.x-2.0
 printf "# Clearing drush caches..\n"
 $DRUSH cache-clear drush
 printf "# Installing hostmaster..\n"
 
-$DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.x-dev' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld #remove this line when/if expects block below is enabled again.
+$DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.0' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld #remove this line when/if expects block below is enabled again.
 
 # This expect block works but the previous expect block doesn't so can't use this yet.
 # expect -c "

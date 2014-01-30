@@ -44,6 +44,7 @@ This will enable access to your aegir sites using https, you will need to trust 
     ./aegir.sh
 
 After installation change php versions (and restart nginx) by running the following commands:
+
     go53
     go54
     go54

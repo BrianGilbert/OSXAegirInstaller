@@ -40,6 +40,7 @@ if [ $username = "root" ] ; then
   printf "# This script should not be run as sudo or root. exiting.\n"
   exit
 else
+  mkdir -p /usr/local #fresh installations of mac osx (I think after tiger version) is not creating empty directories like /user/local, so we need to create it first, if it is not there
   sudo chown -R $username:admin /usr/local
   chmod 775 /usr/local
 fi

@@ -41,7 +41,7 @@ if [ $username = "root" ] ; then
   exit
 else
   sudo chown -R $username:admin /usr/local
-  chown 775 /usr/local
+  chmod 775 /usr/local
 fi
 
 printf "# Checking OS version..\n"

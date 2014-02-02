@@ -40,6 +40,8 @@ if [ $username = "root" ] ; then
   printf "# This script should not be run as sudo or root. exiting.\n"
   exit
 else
+  #fresh installations of mac osx does not have /user/local, so we need to create it first in case it's not there.
+  mkdir -p /usr/local
   sudo chown -R $username:admin /usr/local
   chmod 775 /usr/local
 fi

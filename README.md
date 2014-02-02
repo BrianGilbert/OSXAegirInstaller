@@ -18,7 +18,7 @@ This script installs the following via Homebrew on OSX:
 * dnsmasq
 * nginx (with geoip and uploadprogress)
 * mariadb
-* php (with uploadprogress, xhprof and xdebug)
+* php 5.3/5.4/5.5 (with uploadprogress, xhprof and xdebug)
 * solr4 (optional)
 
 And then installs Aegir 6.x-2.0 stable
@@ -33,6 +33,11 @@ Execute the following in terminal to run the installer:
     chmod +x aegir.sh
     ./aegir.sh
 
+After installation change php versions (and restart nginx) by running the following commands:
+
+    go53
+    go54
+    go54
 
 __SSL Support:__ This is part of main script since Dec 3 2013, so you only need the commends below if you installed prior.
 
@@ -42,11 +47,5 @@ This will enable access to your aegir sites using https, you will need to trust 
     curl -O https://raw.github.com/BrianGilbert/OSXAegirInstaller/master/enablessl.sh
     chmod +x enablessl.sh
     ./aegir.sh
-
-After installation change php versions (and restart nginx) by running the following commands:
-
-    go53
-    go54
-    go54
 
 This is the largest script I've written to date, so any improvements gladly accepted as pull requests!

@@ -557,6 +557,23 @@ brew install php-version
 echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.bash_profile
 echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.zshrc
 
+echo "########
+# Please set the live php version to 5.3 by executing the following command in
+# a new terminal windows: php-version 5.3
+# I've set the php version to 5.3 [Y/n]:
+########"
+read PHPV
+if ! [[ $PHPV =~ ^(y|yes)$ ]]; then
+  echo "########
+  # The script won't finish properly if you don't do this.
+  # OK I've set the php version to 5.3 [Y/n]:
+  ########"
+  read PHPV2
+  if ! [[ $PHPV2 =~ ^(y|yes)$ ]]; then
+    exit
+  fi
+fi
+
 #Solr
 if [[ $SOLR =~ ^(y|yes)$ ]]; then
 printf "# Installing solr..\n"
@@ -649,6 +666,9 @@ $DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaste
 #   expect \"Do you really want to proceed with the install (y/n):\"
 #   send \"y\r\"
 #   expect eof"
+
+printf "# Grabbing registry_rebuild drush module\n"
+drush dl registry_rebuild
 
 printf "# Symlinking platforms to ~/Sites/Aegir..\n"
 mkdir -p /Users/$username/Sites/Aegir

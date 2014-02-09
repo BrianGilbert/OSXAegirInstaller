@@ -462,7 +462,7 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
-php-version 5.4
+source $(brew --prefix php-version)/php-version.sh && php-version 5.4
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go54
 chmod 755 /usr/local/bin/go54
 
@@ -505,7 +505,7 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
-php-version 5.5
+source $(brew --prefix php-version)/php-version.sh && php-version 5.5
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
 chmod 755 /usr/local/bin/go55
 
@@ -548,7 +548,7 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-php-version 5.3
+source $(brew --prefix php-version)/php-version.sh && php-version 5.3
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
 chmod 755 /usr/local/bin/go53
 

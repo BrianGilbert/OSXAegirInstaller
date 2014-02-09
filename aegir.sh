@@ -554,8 +554,8 @@ chmod 755 /usr/local/bin/go53
 
 printf "# Installing php-version..\n"
 brew install php-version
-echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.bash_profile
-echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5' >> ~/.zshrc
+echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5.3' >> ~/.bash_profile
+echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5.3' >> ~/.zshrc
 
 echo "########
 # Please set the live php version to 5.3 by executing the following command in
@@ -594,6 +594,8 @@ cp $(brew --prefix mariadb)/homebrew.mxcl.mariadb.plist ~/Library/LaunchAgents/
 printf "# Launching daemons now..\n"
 sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
 if [[ $SOLRBOOT =~ ^(y|yes)$ ]]; then
   launchctl load -w ~/Library/LaunchAgents/com.apache.solr.plist

@@ -558,24 +558,6 @@ brew link php53
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
 chmod 755 /usr/local/bin/go53
 
-
-# echo "########
-# # Please set the live php version to 5.3 by executing the following command in
-# # a new terminal windows: php-version 5.3
-# # I've set the php version to 5.3 [Y/n]:
-# ########"
-# read PHPV
-# if ! [[ $PHPV =~ ^(y|yes)$ ]]; then
-#   echo "########
-#   # The script won't finish properly if you don't do this.
-#   # OK I've set the php version to 5.3 [Y/n]:
-#   ########"
-#   read PHPV2
-#   if ! [[ $PHPV2 =~ ^(y|yes)$ ]]; then
-#     exit
-#   fi
-# fi
-
 #Solr
 if [[ $SOLR =~ ^(y|yes)$ ]]; then
 printf "# Installing solr..\n"
@@ -706,7 +688,11 @@ Then restart nginx using:
 sudo /usr/local/bin/nginx -s reload
 
 php53 is currently active, to switch the active version of php use
-the php-version command.
+the following commands:
+
+go53
+go54
+go55
 
 I have tried to set DNS for commonly named network interfaces check
 all of your interfaces to ensure that the DNS server is set to:

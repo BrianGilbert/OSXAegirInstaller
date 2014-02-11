@@ -454,7 +454,7 @@ brew install php54-xhprof
   mkdir -p ~/Library/LaunchAgents
   cp $(brew --prefix josegonzalez/php/php54)/homebrew-php.josegonzalez.php54.plist ~/Library/LaunchAgents/
 
-echo "#!/usr/bin/env bash
+echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
 # of Realityloop @Realityloop http://realitylop.com/
 
@@ -462,7 +462,9 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
-source $(brew --prefix php-version)/php-version.sh && php-version 5.4
+brew unlink php53
+brew unlink php55
+brew link php54
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go54
 chmod 755 /usr/local/bin/go54
 
@@ -497,7 +499,7 @@ brew install php55-xhprof
 
   cp $(brew --prefix josegonzalez/php/php55)/homebrew-php.josegonzalez.php55.plist ~/Library/LaunchAgents/
 
-echo "#!/usr/bin/env bash
+echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
 # of Realityloop @Realityloop http://realitylop.com/
 
@@ -505,7 +507,9 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
-source $(brew --prefix php-version)/php-version.sh && php-version 5.5
+brew unlink php53
+brew unlink php54
+brew link php55
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
 chmod 755 /usr/local/bin/go55
 
@@ -540,7 +544,7 @@ pid = /usr/local/var/run/php-fpm.pid\
 
   cp $(brew --prefix josegonzalez/php/php53)/homebrew-php.josegonzalez.php53.plist ~/Library/LaunchAgents/
 
-echo "#!/usr/bin/env bash
+echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
 # of Realityloop @Realityloop http://realitylop.com/
 
@@ -548,16 +552,12 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
 launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-source $(brew --prefix php-version)/php-version.sh && php-version 5.3
+brew unlink php54
+brew unlink php55
+brew link php53
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
 chmod 755 /usr/local/bin/go53
 
-printf "# Installing php-version..\n"
-brew install php-version
-echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5.3' >> ~/.bash_profile
-echo  'source $(brew --prefix php-version)/php-version.sh && php-version 5.3' >> ~/.zshrc
-
-source $(brew --prefix php-version)/php-version.sh && php-version 5.3
 
 # echo "########
 # # Please set the live php version to 5.3 by executing the following command in

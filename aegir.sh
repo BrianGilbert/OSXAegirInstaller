@@ -446,8 +446,24 @@ brew install php54-xhprof
 	pid = /usr/local/var/run/php-fpm.pid\
 	' /usr/local/etc/php/5.4/php-fpm.conf
 
-	#Increase maximum function nesting level
-	echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.4/conf.d/ext-xdebug.ini
+  # Additions for xdebug to work with PHPStorm
+  echo "xdebug.max_nesting_level = 200
+
+xdebug.profiler_enable = 1
+xdebug.profiler_enable_trigger = 1
+xdebug.profiler_output_name = xdebug-profile-cachegrind.out-%H-%R
+xdebug.profiler_output_dir = "/tmp/xdebug/"
+
+xdebug.remote_autostart = 0
+xdebug.remote_enable=1
+xdebug.remote_connect_back = 1
+xdebug.remote_port = 9001
+xdebug.remote_host = localhost
+
+xdebug.var_display_max_children = 128
+xdebug.var_display_max_data = 2048
+xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.4/conf.d/ext-xdebug.ini
+
 	#sudo ln -s /usr/local/etc/php/5.4/php.ini /etc/php.ini
 	sudo ln -s $(brew --prefix josegonzalez/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
 
@@ -492,8 +508,23 @@ brew install php55-xhprof
 	pid = /usr/local/var/run/php-fpm.pid\
 	' /usr/local/etc/php/5.5/php-fpm.conf
 
-	#Increase maximum function nesting level
-	echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
+  # Additions for xdebug to work with PHPStorm
+  echo "xdebug.max_nesting_level = 200
+
+xdebug.profiler_enable = 1
+xdebug.profiler_enable_trigger = 1
+xdebug.profiler_output_name = xdebug-profile-cachegrind.out-%H-%R
+xdebug.profiler_output_dir = "/tmp/xdebug/"
+
+xdebug.remote_autostart = 0
+xdebug.remote_enable=1
+xdebug.remote_connect_back = 1
+xdebug.remote_port = 9001
+xdebug.remote_host = localhost
+
+xdebug.var_display_max_children = 128
+xdebug.var_display_max_data = 2048
+xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
 	#sudo ln -s /usr/local/etc/php/5.5/php.ini /etc/php.ini
 	sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
 
@@ -537,8 +568,23 @@ sed -i '' '/pid = run/ a\
 pid = /usr/local/var/run/php-fpm.pid\
 ' /usr/local/etc/php/5.3/php-fpm.conf
 
-  #Increase maximum function nesting level
-  echo "xdebug.max_nesting_level = 200" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
+  # Additions for xdebug to work with PHPStorm
+  echo "xdebug.max_nesting_level = 200
+
+xdebug.profiler_enable = 1
+xdebug.profiler_enable_trigger = 1
+xdebug.profiler_output_name = xdebug-profile-cachegrind.out-%H-%R
+xdebug.profiler_output_dir = "/tmp/xdebug/"
+
+xdebug.remote_autostart = 0
+xdebug.remote_enable=1
+xdebug.remote_connect_back = 1
+xdebug.remote_port = 9001
+xdebug.remote_host = localhost
+
+xdebug.var_display_max_children = 128
+xdebug.var_display_max_data = 2048
+xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
   #sudo ln -s /usr/local/etc/php/5.3/php.ini /etc/php.ini
   sudo ln -s $(brew --prefix josegonzalez/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
 
@@ -557,6 +603,9 @@ brew unlink php55
 brew link php53
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
 chmod 755 /usr/local/bin/go53
+
+printf "# Installing php code sniffer..\n"
+brew install drupal-code-sniffer
 
 #Solr
 if [[ $SOLR =~ ^(y|yes)$ ]]; then

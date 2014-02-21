@@ -1,6 +1,8 @@
 OSXAegirInstaller
 =================
 
+I am now accepting donations via GitTip! https://www.gittip.com/realityloop/
+
 This has been tested on Mountain Lion 10.8.4 & Mavericks 10.9, I expect it will work fine on 10.8.5 as well.
 
 __Warning:__ I have tested this script extensivley on a clean install of OSX, but I take no responsability for anything that happens to your computer using the script.

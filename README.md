@@ -1,7 +1,7 @@
 OSXAegirInstaller
 =================
 
-I am now accepting donations via GitTip! https://www.gittip.com/realityloop/
+I am now accepting donations via GitTip! https://www.gittip.com/Brian%20Gilbert/
 
 This has been tested on Mountain Lion 10.8.4 & Mavericks 10.9, I expect it will work fine on 10.8.5 as well.
 

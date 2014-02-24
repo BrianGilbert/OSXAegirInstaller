@@ -197,18 +197,18 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
         say "Exiting."
         exit
       fi
-    else
-      printf "# Should I attempt an upgrade? [Y/n]\n########\n"
-      say "Should I remove it and do, a clean install?"
-      read UPGRADE
-      if [[ $UPGRADE =~ ^(y|yes)$ ]]; then
-        say "Upgrade isn't implemented yet"
-        exit
-      else
-        printf "# Exiting..\n########\n"
-        say "Exiting."
-        exit
-      fi
+    # else
+    #   printf "# Should I attempt an upgrade? [Y/n]\n########\n"
+    #   say "Should I remove it and do, a clean install?"
+    #   read UPGRADE
+    #   if [[ $UPGRADE =~ ^(y|yes)$ ]]; then
+    #     say "Upgrade isn't implemented yet"
+    #     exit
+    #   else
+    #     printf "# Exiting..\n########\n"
+    #     say "Exiting."
+    #     exit
+    #   fi
     fi
   fi
 

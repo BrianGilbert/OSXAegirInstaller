@@ -79,11 +79,11 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
     say "Should I remove it and do, a clean install?"
     read CLEAN
 
-    if [[ $CLEAN =~ ^(y|yes)$ ]]; then
+    if [[ $CLEAN =~ ^(y|Y)$ ]]; then
       printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew compononets before running a clean install, are you sure? [Y/n]\n########\n"
       say "There is no turning back.. This will uninstall a gir and all related homebrew compononents including any existing databases before running a clean install, are you sure?"
       read FORSURE
-      if [[ $FORSURE =~ ^(y|yes)$ ]]; then
+      if [[ $FORSURE =~ ^(y|Y)$ ]]; then
         printf "\n########\n# Don't say I didn't warn you, cleaning everything before running clean install..\n########\n"
         say "Don't say I didn't warn you, cleaning everything before running clean install.."
 
@@ -205,7 +205,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
     #   printf "# Should I attempt an upgrade? [Y/n]\n########\n"
     #   say "Should I remove it and do, a clean install?"
     #   read UPGRADE
-    #   if [[ $UPGRADE =~ ^(y|yes)$ ]]; then
+    #   if [[ $UPGRADE =~ ^(y|Y)$ ]]; then
     #     say "Upgrade isn't implemented yet"
     #     exit
     #   else
@@ -233,7 +233,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
       printf "# Continue the script after you've installed them.\n########\n"
       say "You will need to install the Command Line Tools before this script will work, You can install them now and come back to this terminal and press Y to continue"
       read CLT
-      if ! [[ $CLT =~ ^(y|yes)$ ]]; then
+      if ! [[ $CLT =~ ^(y|Y)$ ]]; then
         exit
       fi
     fi
@@ -255,7 +255,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
   say "Should I install ApacheSolr?"
   read SOLR
 
-  if [[ $SOLR =~ ^(y|yes)$ ]]; then
+  if [[ $SOLR =~ ^(y|Y)$ ]]; then
     echo "
 ########
 # Do you want solr to run automatically on boot [Y/n]:
@@ -284,7 +284,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
 ########"
   say "Do you have a gee mail address you can use to relay the messages?"
   read gmail
-  if [[ $gmail =~ ^(y|yes)$ ]]; then
+  if [[ $gmail =~ ^(y|Y)$ ]]; then
     printf "\n########\n# OK, I'll attempt to set up postfix..\n"
     echo "########
 # Whats the full gmail address? (eg. aegir@gmail.com):
@@ -692,7 +692,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   brew install drupal-code-sniffer
 
   #Solr
-  if [[ $SOLR =~ ^(y|yes)$ ]]; then
+  if [[ $SOLR =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing solr..\n########\n"
   say "installing solr"
   brew install solr
@@ -717,7 +717,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
   launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
   launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-  if [[ $SOLRBOOT =~ ^(y|yes)$ ]]; then
+  if [[ $SOLRBOOT =~ ^(y|Y)$ ]]; then
     launchctl load -w ~/Library/LaunchAgents/com.apache.solr.plist
   fi
 
@@ -931,6 +931,6 @@ http://twitter.com/BrianGilbert_
   printf "\n########\n# Creating and maintaining this takes a lot of time, please help:\n#  https://www.gittip.com/realityloop/\n########\n"
   say "Development and maintenance of this script takes a lot of time, if it makes life easier for you please support me with a donation"
   printf "\n########\n# Finished..\n########\n"
-} 2>&1 | tee -a ~/Desktop/aegir-install-logfile.log
+} 2>&1 | tee -a ~/Desktop/aegir-install-logfile$(date +"%Y-%m-%d.%H:%M:%S").log
 sleep 5;open https://www.gittip.com/Brian%20Gilbert/
 exit

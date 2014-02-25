@@ -4,7 +4,7 @@
 # I'm by no means a bash scripter, please submit pull requests/issues for improvements. :)
 
 # Set some variables for username installing aegir and the OS X version
-username=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
+USERNAME=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
 osx=`sw_vers -productVersion`
 
 # set volume so say text can be heard
@@ -50,14 +50,14 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
   sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist
 
   # Make sure that the script wasn't run as root.
-  if [ $username = "root" ] ; then
+  if [ $USERNAME = "root" ] ; then
     printf "# This script should not be run as sudo or root. exiting.\n"
     say "This script should not be run as sudo or root. exiting."
     exit
   else
     #fresh installations of mac osx does not have /user/local, so we need to create it first in case it's not there.
     sudo mkdir -p /usr/local
-    sudo chown -R $username:admin /usr/local
+    sudo chown -R $USERNAME:admin /usr/local
     chmod 775 /usr/local
   fi
 
@@ -91,32 +91,32 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
         say "Stopping and deleting any services that are already installed.."
         if [ -e "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist" ] ; then
           sudo launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
-          rm /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
+          sudo rm /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
         fi
 
         if [ -e "/Library/LaunchDaemons/homebrew.mxcl.nginx.plist" ] ; then
-        sudo -u $USERNAME launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
-        sudo -u $USERNAME rm /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+          sudo launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+          sudo rm /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
         fi
 
         if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
-        sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
-        sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+          launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+          rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
         fi
 
         if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist" ] ; then
-        sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-        sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+          launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+          rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
         fi
 
         if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist" ] ; then
-        sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
-        sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+          launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+          rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
         fi
 
         if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist" ] ; then
-        sudo -u $USERNAME launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
-        sudo -u $USERNAME rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+          launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+          rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
         fi
 
         printf "# Uninstalling related brews..\n########\n"
@@ -452,7 +452,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
   fi
   curl https://gist.github.com/BrianGilbert/5908352/raw/26e5943ec52c1d43c867fc16c4960e291b17f7d2/nginx.conf > /usr/local/etc/nginx/nginx.conf
-  sed -i '' 's/\[username\]/'$username'/' /usr/local/etc/nginx/nginx.conf
+  sed -i '' 's/\[username\]/'$USERNAME'/' /usr/local/etc/nginx/nginx.conf
 
   say "You may be prompted for your password"
   sudo mkdir -p $(brew --prefix nginx)/logs
@@ -466,7 +466,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   brew install mariadb
   unset TMPDIR
   printf "\n########\n# Configuring mariadb..\n########\n"
-  mysql_install_db --user=$username --basedir="$(brew --prefix mariadb)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
+  mysql_install_db --user=$USERNAME --basedir="$(brew --prefix mariadb)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
   curl https://gist.github.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my-drupal.cnf
   say "You may be prompted for your password"
   sudo ln -s /usr/local/etc/my-drupal.cnf /etc/my.cnf
@@ -695,7 +695,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   mkdir -p ~/Library/LaunchAgents
   printf "\n########\n# Downloading solr launch daemon..\n########\n"
   curl https://gist.github.com/BrianGilbert/6208150/raw/dfe9d698aee2cdbe9eeae88437c5ec844774bdb4/com.apache.solr.plist > ~/Library/LaunchAgents/com.apache.solr.plist
-  sed -i '' 's/\[username\]/'$username'/' ~/Library/LaunchAgents/com.apache.solr.plist
+  sed -i '' 's/\[username\]/'$USERNAME'/' ~/Library/LaunchAgents/com.apache.solr.plist
   fi
 
   printf "\n########\n# Setting up launch daemons..\n########\n"
@@ -760,10 +760,10 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   printf "\n########\n# Doing some setup ready for Aegir install..\n########\n"
   say "preflight setup for a gir install"
   sudo mkdir -p /var/aegir
-  sudo chown $username /var/aegir
+  sudo chown $USERNAME /var/aegir
   sudo chgrp staff /var/aegir
-  sudo dscl . append /Groups/_www GroupMembership $username
-  echo "$username ALL=NOPASSWD: /usr/local/bin/nginx" | sudo tee -a  /etc/sudoers
+  sudo dscl . append /Groups/_www GroupMembership $USERNAME
+  echo "$USERNAME ALL=NOPASSWD: /usr/local/bin/nginx" | sudo tee -a  /etc/sudoers
   ln -s /var/aegir/config/nginx.conf /usr/local/etc/nginx/aegir.conf
 
   printf "\n########\n# Adding aegir.conf include to ngix.conf..\n########\n"
@@ -772,7 +772,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   printf "\n########\n# Aegir time..\n########\n"
   printf "\n########\n# Downloading provision..\n########\n"
   DRUSH='drush --php=/usr/local/bin/php'
-  $DRUSH dl --destination=/users/$username/.drush provision-6.x-2.0
+  $DRUSH dl --destination=/users/$USERNAME/.drush provision-6.x-2.0
   printf "\n########\n# Clearing drush caches..\n########\n"
   $DRUSH cache-clear drush
   printf "\n########\n# Installing hostmaster..\n########\n"
@@ -812,9 +812,9 @@ server {
 
   printf "\n########\n# Symlinking platforms to ~/Sites/Aegir..\n########\n"
   say "symbolic linking a gir platforms directory to your Sites slash Aegir directory"
-  mkdir -p /Users/$username/Sites/Aegir
+  mkdir -p /Users/$USERNAME/Sites/Aegir
   rmdir /var/aegir/platforms
-  ln -s /Users/$username/Sites/Aegir /var/aegir/platforms
+  ln -s /Users/$USERNAME/Sites/Aegir /var/aegir/platforms
 
   mkdir -p /usr/local/etc/ssl/private;
   openssl req -x509 -nodes -days 7300 -subj "/C=US/ST=New York/O=Aegir/OU=Cloud/L=New York/CN=*.aegir.ld" -newkey rsa:2048 -keyout /usr/local/etc/ssl/private/nginx-wild-ssl.key -out /usr/local/etc/ssl/private/nginx-wild-ssl.crt -batch 2> /dev/null;

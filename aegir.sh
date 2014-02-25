@@ -148,8 +148,9 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
         brew uninstall php55
         rm /usr/local/bin/go55
 
-        brew uninstall php-version
         rm -rf /usr/local/etc/php
+
+        brew uninstall phpcs
 
         brew uninstall nginx
         rm -rf /usr/local/etc/nginx

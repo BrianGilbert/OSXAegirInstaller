@@ -303,10 +303,9 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
     say "Setting up postfix"
     sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist
     echo "smtp.gmail.com:587 $gmailaddress:$gmailpass"  | sudo tee -a  /etc/postfix/sasl_passwd 2&>1 >/dev/null
-    sudo postmap /etc/postfix/sasl_passwd
     sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
     echo "
-myhostname =" aegir.ld"
+myhostname = aegir.ld
 
 # Minimum Postfix-specific configurations.
 mydomain_fallback = localhost
@@ -324,6 +323,7 @@ smtp_use_tls=yes
 smtp_tls_security_level=encrypt
 tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf 2&>1 >/dev/null
     echo  "$email" >> ~/.forward
+    sudo postmap /etc/postfix/sasl_passwd
     sudo launchctl load -w /System/Library/LaunchDaemons/org.postfix.master.plist
   else
     printf "\n# Mail sending from aegir won't actually work until you configure postfix properly..\n"
@@ -931,6 +931,6 @@ http://twitter.com/BrianGilbert_
   printf "\n########\n# Creating and maintaining this takes a lot of time, please help:\n#  https://www.gittip.com/realityloop/\n########\n"
   say "Development and maintenance of this script takes a lot of time, if it makes life easier for you please support me with a donation"
   printf "\n########\n# Finished..\n########\n"
-} 2>&1 | tee -a ~/Desktop/aegir-install-logfile$(date +"%Y-%m-%d.%H:%M:%S").log
+} 2>&1 | tee -a ~/Desktop/aegir-install-logfile-$(date +"%Y-%m-%d.%H.%M.%S").log
 sleep 5;open https://www.gittip.com/Brian%20Gilbert/
 exit

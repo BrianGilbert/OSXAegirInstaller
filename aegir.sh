@@ -457,7 +457,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
   mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
   fi
-  wget https://gist.githubusercontent.com/BrianGilbert/5908352/raw/26e5943ec52c1d43c867fc16c4960e291b17f7d2/nginx.conf > /usr/local/etc/nginx/nginx.conf
+  curl https://gist.githubusercontent.com/BrianGilbert/5908352/raw/26e5943ec52c1d43c867fc16c4960e291b17f7d2/nginx.conf > /usr/local/etc/nginx/nginx.conf
   sed -i '' 's/\[username\]/'$USERNAME'/' /usr/local/etc/nginx/nginx.conf
 
   say "You may be prompted for your password"
@@ -473,7 +473,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   unset TMPDIR
   printf "\n########\n# Configuring mariadb..\n########\n"
   mysql_install_db --user=$USERNAME --basedir="$(brew --prefix mariadb)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
-  curl https://gist.github.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my-drupal.cnf
+  curl https://gist.githubusercontent.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my-drupal.cnf
   say "You may be prompted for your password"
   sudo ln -s /usr/local/etc/my-drupal.cnf /etc/my.cnf
 
@@ -700,7 +700,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   brew install solr
   mkdir -p ~/Library/LaunchAgents
   printf "\n########\n# Downloading solr launch daemon..\n########\n"
-  curl https://gist.github.com/BrianGilbert/6208150/raw/dfe9d698aee2cdbe9eeae88437c5ec844774bdb4/com.apache.solr.plist > ~/Library/LaunchAgents/com.apache.solr.plist
+  curl https://gist.githubusercontent.com/BrianGilbert/6208150/raw/dfe9d698aee2cdbe9eeae88437c5ec844774bdb4/com.apache.solr.plist > ~/Library/LaunchAgents/com.apache.solr.plist
   sed -i '' 's/\[username\]/'$USERNAME'/' ~/Library/LaunchAgents/com.apache.solr.plist
   fi
 
@@ -824,7 +824,7 @@ server {
 
   mkdir -p /usr/local/etc/ssl/private;
   openssl req -x509 -nodes -days 7300 -subj "/C=US/ST=New York/O=Aegir/OU=Cloud/L=New York/CN=*.aegir.ld" -newkey rsa:2048 -keyout /usr/local/etc/ssl/private/nginx-wild-ssl.key -out /usr/local/etc/ssl/private/nginx-wild-ssl.crt -batch 2> /dev/null;
-  wget -O /var/aegir/config/server_master/nginx/pre.d/nginx_wild_ssl.conf https://gist.github.com/BrianGilbert/7760457/raw/fa9163ecc533ae14ea1332b38444e03be00dd329/nginx_wild_ssl.conf;
+  curl https://gist.githubusercontent.com/BrianGilbert/7760457/raw/fa9163ecc533ae14ea1332b38444e03be00dd329/nginx_wild_ssl.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_wild_ssl.conf;
   sudo /usr/local/bin/nginx -s reload;
 
   printf "\n########\n# Saving some instructional notes to ~/Desktop/YourAegirSetup.txt..\n########\n"

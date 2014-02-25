@@ -371,6 +371,8 @@ tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf 2&>1 >/d
   # Uninstall drush if it was previously installed via homebrew
   brew uninstall drush 2&>1 >/dev/null
   brew install drush
+  printf "\n########\n# Installing php53 prerequisites..\n########\n"
+  brew install re2c flex bison27 libevent
   printf "\n########\n# Installing dnsmasq..\n########\n"
   brew install dnsmasq
   printf "\n########\n# Configuring dnsmasq..\n########\n"

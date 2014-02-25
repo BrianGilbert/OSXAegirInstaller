@@ -8,7 +8,7 @@ username=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
 osx=`sw_vers -productVersion`
 
 # set volume so say text can be heard
-osascript -e "set Volume 8"
+osascript -e "set Volume 5"
 
 printf "########
 # This script is designed to be run by the primary account
@@ -262,7 +262,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
 
   echo "
 ########
-# What address should aegirs email notifications get sent to?
+# What address should aegirs email notifications get sent to? [enter your email address]:
 ########"
   say "This is the email that notifications from a gir will be sent to"
   read email
@@ -283,7 +283,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
   if [[ $gmail =~ ^(y|yes)$ ]]; then
     printf "\n########\n# OK, I'll attempt to set up postfix..\n"
     echo "########
-# Whats the full gmail address? (eg. aegir@gmail.com)
+# Whats the full gmail address? (eg. aegir@gmail.com):
 ########"
   say "type your gee mail address in now"
     read gmailaddress
@@ -348,6 +348,7 @@ tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf 2&>1 >/d
 
   # Tap required kegs
   printf "\n########\n# Now we'll tap some extra kegs we need..\n########\n"
+  brew tap homebrew/versions 2&>1 >/dev/null
   brew tap homebrew/dupes 2&>1 >/dev/null
   brew tap josegonzalez/homebrew-php 2&>1 >/dev/null
 

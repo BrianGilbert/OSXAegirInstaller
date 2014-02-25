@@ -128,6 +128,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
         brew uninstall php53-xdebug
         brew uninstall php53-xhprof
         brew uninstall php53
+        rm /var/log/nginx/php53-fpm.log
         rm /usr/local/bin/go53
 
         brew uninstall php54-geoip
@@ -137,6 +138,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
         brew uninstall php54-xdebug
         brew uninstall php54-xhprof
         brew uninstall php54
+        rm /var/log/nginx/php54-fpm.log
         rm /usr/local/bin/go54
 
         brew uninstall php55-geoip
@@ -146,6 +148,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
         brew uninstall php55-xdebug
         brew uninstall php55-xhprof
         brew uninstall php55
+        rm /var/log/nginx/php55-fpm.log
         rm /usr/local/bin/go55
 
         rm -rf /usr/local/etc/php

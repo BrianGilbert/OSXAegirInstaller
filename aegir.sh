@@ -818,9 +818,9 @@ server {
 
   printf "\n########\n# Symlinking platforms to ~/Sites/Aegir..\n########\n"
   say "symbolic linking a gir platforms directory to your Sites slash Aegir directory"
-  mkdir -p /Users/$USERNAME/Sites/Aegir
+  mkdir -p ~/Sites/Aegir
   rmdir /var/aegir/platforms
-  ln -s /Users/$USERNAME/Sites/Aegir /var/aegir/platforms
+  ln -s ~/Sites/Aegir /var/aegir/platforms
 
   mkdir -p /usr/local/etc/ssl/private;
   openssl req -x509 -nodes -days 7300 -subj "/C=US/ST=New York/O=Aegir/OU=Cloud/L=New York/CN=*.aegir.ld" -newkey rsa:2048 -keyout /usr/local/etc/ssl/private/nginx-wild-ssl.key -out /usr/local/etc/ssl/private/nginx-wild-ssl.crt -batch 2> /dev/null;

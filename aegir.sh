@@ -455,7 +455,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
   mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
   fi
-  curl https://gist.github.com/BrianGilbert/5908352/raw/26e5943ec52c1d43c867fc16c4960e291b17f7d2/nginx.conf > /usr/local/etc/nginx/nginx.conf
+  wget https://gist.githubusercontent.com/BrianGilbert/5908352/raw/26e5943ec52c1d43c867fc16c4960e291b17f7d2/nginx.conf > /usr/local/etc/nginx/nginx.conf
   sed -i '' 's/\[username\]/'$USERNAME'/' /usr/local/etc/nginx/nginx.conf
 
   say "You may be prompted for your password"
@@ -781,7 +781,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   $DRUSH cache-clear drush
   printf "\n########\n# Installing hostmaster..\n########\n"
 
-  say "type m y s q l for the DB password"
+  say "type the DB password you entered "
   $DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.0' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld #remove this line when/if expects block below is enabled again.
 
   # This expect block works but the previous expect block doesn't so can't use this yet.

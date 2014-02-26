@@ -3,69 +3,98 @@
 # of Realityloop @Realityloop http://realitylop.com/
 # I'm by no means a bash scripter, please submit pull requests/issues for improvements. :)
 
+# set volume so say text can be heard
+osascript -e "set Volume 5"
+
+curl --silent --head https://www.github.com/ | grep "20[0-9] Found|30[0-9] Found" > /dev/null
+if [[ $? -eq 1 ]] ; then
+  echo "########\n# Online, continuing"
+else
+  echo "########\n# This script needs Internet access and you are offline, exiting\n########\n"
+  say " you need to be online to run this script, exiting"
+  exit
+fi
+
 # Set some variables for username installing aegir and the OS X version
 USERNAME=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
 osx=`sw_vers -productVersion`
 
-# set volume so say text can be heard
-osascript -e "set Volume 5"
-
-printf "########
-# This script is designed to be run by the primary account
-# it has not been tested on a multi user setup.
-########
-# You cannot use this script if you have macports installed
-# so we will uninstall it automatically
-########
-# OS X's inbuilt apache uses port 80 we need to disable it due to a
-# conflict with nginx, we'll disable it for you during install.
-########\n"
-say "This script is designed to be run by the primary account,
-it has not been tested on a multi user setup..
-You cannot use this script if you have macports installed,
-so we will uninstall it automatically.
-Mac OS inbuilt apache uses port 80, we'll disable apache so engine x can
-run."
-
-printf "# Attempting to uninstall macports..\n########\n"
-say "Attempting to uninstall macports, you may need to enter your password"
-sudo port -fp uninstall installed 2&>1 >/dev/null
-sudo rm -rf \
-    /opt/local \
-    /Applications/DarwinPorts \
-    /Applications/MacPorts \
-    /Library/LaunchDaemons/org.macports.* \
-    /Library/Receipts/DarwinPorts*.pkg \
-    /Library/Receipts/MacPorts*.pkg \
-    /Library/StartupItems/DarwinPortsStartup \
-    /Library/Tcl/darwinports1.0 \
-    /Library/Tcl/macports1.0 \
-    ~/.macports 2&>1 >/dev/null
-
-printf "\n########\n# Logging install process to file on desktop in case anything\n# goes wrong during install, No passwords are logged..\n########\n"
-say "Creating logfile on desktop in case anything goes wrong during the install, no passwords are logged"
 {
-  printf "\n########\n# Disabling OS X's inbuilt apache..\n########\n"
-  say "Disabling OS X's inbuilt apache, this will error if it's already disabled"
-  sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist
-
   # Make sure that the script wasn't run as root.
   if [ $USERNAME = "root" ] ; then
-    printf "# This script should not be run as sudo or root. exiting.\n"
+    printf "########\n# This script should not be run as sudo or root. exiting.\n########\n"
     say "This script should not be run as sudo or root. exiting."
     exit
   else
     #fresh installations of mac osx does not have /user/local, so we need to create it first in case it's not there.
+    printf "\n########\n# Creating some required directories and setting correct ownership..\n########\n"
+    say "you may need to enter your password"
     sudo mkdir -p /usr/local
     sudo chown -R $USERNAME:admin /usr/local
     chmod 775 /usr/local
   fi
 
+  printf "########
+  # This script is designed to be run by the primary account
+  # it has not been tested on a multi user setup.
+  ########
+  # You will need the following information during this script:
+  # -a gmail account that is configured to allow remote smtp access
+  # -the password for the gmail account address
+  # -an email address to receive notifications from aegir
+  # -attention to what is being requested via the script
+  ########
+  # You cannot use this script if you have macports installed
+  # so we will uninstall it automatically
+  ########
+  # OS X's inbuilt apache uses port 80 if it's running we'll disable
+  # it for you during install so that nginx can run on port 80.
+  ########
+  # Logging install process to file on desktop in case anything
+  # goes wrong during install, No passwords are logged..
+  ########\n"
+
+  port
+  if [[ $? -eq 127 ]] ; then
+    printf "########\n# macports isn't installed continuing..\n########\n"
+  else
+    printf "########\n# Attempting to uninstall macports..\n########\n"
+    say "you may need to enter your password"
+    sudo port -fp uninstall installed 2&>1 >/dev/null
+    sudo rm -rf \
+        /opt/local \
+        /Applications/DarwinPorts \
+        /Applications/MacPorts \
+        /Library/LaunchDaemons/org.macports.* \
+        /Library/Receipts/DarwinPorts*.pkg \
+        /Library/Receipts/MacPorts*.pkg \
+        /Library/StartupItems/DarwinPortsStartup \
+        /Library/Tcl/darwinports1.0 \
+        /Library/Tcl/macports1.0 \
+        ~/.macports 2&>1 >/dev/null
+  fi
+
+  ps aux|grep "httpd"|grep -v grep > /dev/null
+  if [[ $? -eq 1 ]] ; then
+    printf "\n########\n# Apache isn't installed, continuing..\n########\n"
+  else
+    printf "\n########\n# Disabling apache now..\n########\n"
+    say "you may need to enter your password"
+    sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist
+  fi
+
   printf "\n########\n# Checking OS version..\n########\n"
-  say "Checking OS version."
-  if [ $osx = 10.8.4 -o $osx = 10.8.5 -o $osx = 10.9 ] ; then
-    printf "# Your OS is new enough, so let's go!\n########\n"
-    say "Your OS is new enough, so let's go!"
+  if [ $osx = 10.8.4 -o $osx = 10.8.5 -o $osx = 10.9 -o $osx = 10.9.1 -o $osx = 10.9.2 ] ; then
+    printf "# Your using $osx, so let's go!\n########\n"
+  else
+    printf "# This hasn't been tested on $osx yet, should I continue anyway? [Y/n]\n########\n"
+    read OS
+    if [[ $OS =~ ^(y|Y)$ ]]; then
+      printf "\n########\n# You entered Y\n########\n"
+    else
+      printf "\n########\n# You entered N\n########\n"
+      exit
+    fi
   fi
 
   # Check Aegir isn't already installed.
@@ -76,19 +105,20 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
     # Possibly I'll allow reinstallations in the future..
     #
     printf "# Should I remove it and do a clean install? [Y/n]\n########\n"
-    say "Should I remove it and do, a clean install?"
+    say "input required"
     read CLEAN
 
     if [[ $CLEAN =~ ^(y|Y)$ ]]; then
+      printf "# You entered Y\n########\n"
       printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew compononets before running a clean install, are you sure? [Y/n]\n########\n"
       say "There is no turning back.. This will uninstall a gir and all related homebrew compononents including any existing databases before running a clean install, are you sure?"
       read FORSURE
       if [[ $FORSURE =~ ^(y|Y)$ ]]; then
+        printf "\n########\n# You entered Y\n"
         printf "\n########\n# Don't say I didn't warn you, cleaning everything before running clean install..\n########\n"
         say "Don't say I didn't warn you, cleaning everything before running clean install.."
 
         printf "# Stopping and deleting any services that are already installed..\n########\n"
-        say "Stopping and deleting any services that are already installed.."
         if [ -e "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist" ] ; then
           sudo launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
           sudo rm /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
@@ -120,7 +150,6 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
         fi
 
         printf "# Uninstalling related brews..\n########\n"
-        say "Uninstalling related brews."
         brew uninstall php53-geoip
         brew uninstall php53-imagick
         brew uninstall php53-mcrypt
@@ -154,6 +183,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
         rm -rf /usr/local/etc/php
 
         brew uninstall phpcs
+        brew uninstall phpunit
 
         brew uninstall nginx
         rm -rf /usr/local/etc/nginx
@@ -171,12 +201,10 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
   			sudo networksetup -setdnsservers Wi-Fi empty
 
         printf "# Removing previous drush installation, this may error..\n########\n"
-        say "Removing previous drush installation, this may error."
         brew uninstall drush
         brew uninstall gzip
         brew uninstall wget
         printf "# Removing related configurations..\n########\n"
-        say "Removing related configurations."
         sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist
         sudo rm /etc/postfix/sasl_passwd
         sudo rm /etc/postfix/main.cf
@@ -193,12 +221,10 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
         rm ~/Desktop/YourAegirSetup.txt
 
         printf "# Removing Aegir folder..\n########\n"
-        say "Removing A gir folder."
         sudo rm -rf /var/aegir
 
       else
         printf "# Exiting..\n########\n"
-        say "Exiting."
         exit
       fi
     # else
@@ -217,51 +243,51 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
   fi
 
   printf "# Checking if the Command Line Tools are installed..\n########\n"
-  say "Checking if the Command Line Tools are installed."
   if type "/usr/bin/clang" > /dev/null 2>&1; then
     printf "# They're installed.\n########\n"
-    say "They're installed."
   else
-    if [ $osx = 10.9 -o $osx = 10.9.1] ; then
-      printf "# Your using 10.9 so I'll just install them for you..\n########\n"
-      say "Your using 10.9 so I'll just install them for you."
+    if [ $osx = 10.9 -o $osx = 10.9.1 -o $osx = 10.9.2 ] ; then
+      printf "# Your using $osx so I'll just install them for you..\n########\n"
       xcode-select --install
     else
       printf "########\n# Nope. You need the Command Line tools installed before this script will work\n\n"
       printf "# You will need to install them via the Xcode Preferences/Downloads tab:\n"
       printf "#    http://itunes.apple.com/au/app/xcode/id497799835?mt=12\n\n"
-      printf "# Continue the script after you've installed them.\n########\n"
-      say "You will need to install the Command Line Tools before this script will work, You can install them now and come back to this terminal and press Y to continue"
+      printf "# Continue the script after you've installed them.\n# Are they now installed? [Y/n]\n########\n"
+      say "input required"
       read CLT
       if ! [[ $CLT =~ ^(y|Y)$ ]]; then
+        printf "# You entered N\n########\n"
         exit
+      else
+        printf "# You entered Y\n########\n"
       fi
     fi
   fi
 
-  echo "# You will need the following information during this script:
-# -a gmail account that is configured to allow remote smtp access
-# -the password for the gmail account address
-# -an email address to receive notifications from aegir
-# -attention to what is being requested via the script
+  echo "########
+# Your hostname will be set to aegir.ld
 ########
-# Your hostname will be set to aegir.ld\n########"
-  say "You dooo need to keep an eye on this script as input is required throughout"
-
-  echo "# I can also setup ApacheSolr which is best used in conjunction with:
+# I can also setup ApacheSolr which is best used in conjunction with:
 # https://drupal.org/project/search_api_solr
 # Set up solr [Y/n]:
 ########"
-  say "Should I install ApacheSolr?"
+  say "input required"
   read SOLR
 
   if [[ $SOLR =~ ^(y|Y)$ ]]; then
+    printf "# You entered Y\n########\n"
     echo "
 ########
 # Do you want solr to run automatically on boot [Y/n]:
 ########"
-  say "Do you want Solr to run on boot?"
+    say "input required"
     read SOLRBOOT
+    if [[ $SOLRBOOT =~ ^(y|Y)$ ]]; then
+      printf "# You entered Y\n########\n"
+    else
+      printf "# You entered N\n########\n"
+    fi
   fi
 
   echo "
@@ -285,7 +311,8 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
   say "Do you have a gee mail address you can use to relay the messages?"
   read gmail
   if [[ $gmail =~ ^(y|Y)$ ]]; then
-    printf "\n########\n# OK, I'll attempt to set up postfix..\n"
+    printf "\n########\n# You entered Y\n########\n"
+    printf "# OK, I'll attempt to set up postfix..\n"
     echo "########
 # Whats the full gmail address? (eg. aegir@gmail.com):
 ########"
@@ -300,7 +327,7 @@ say "Creating logfile on desktop in case anything goes wrong during the install,
 
     #setup mail sending
     printf "\n########\n# No time like the present, lets set up postfix now..\n########\n"
-    say "Setting up postfix"
+    say "You may be prompted for your password"
     sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist
     echo "smtp.gmail.com:587 $gmailaddress:$gmailpass"  | sudo tee -a  /etc/postfix/sasl_passwd 2&>1 >/dev/null
     sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
@@ -331,34 +358,33 @@ tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf 2&>1 >/d
     say "Mail sending won't actually work until you configure postfix properly"
   fi
 
-  printf "# Checking if Homebrew is installed..\n########\n"
-  say "Checking if Homebrew is installed.."
+  printf "\n########\n# Checking if Homebrew is installed..\n########\n"
   if type "brew" > /dev/null 2>&1; then
     printf "\n########\n# Affirmative! Lets make sure everything is up to date..\n# Just so you know, this may throw a few warnings..\n########\n"
-    say "It is, lets make sure everything is up to date, you may see some errors in the output, thats ok."
+    say "Making sure homebrew is up to date, you may see some errors in the output, thats ok."
     export PATH=/usr/local/bin:/usr/local/sbin:$PATH
     brew prune
     brew update
     brew doctor
   else
     printf "# Nope! Installing Homebrew now..\n########\n"
-    say "Installing homebrew now, you'll need to hit enter when prompted"
+    say "Installing homebrew now, you'll need to hit return when prompted"
     ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
     echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.bash_profile
     echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.zshrc
     export PATH=/usr/local/bin:/usr/local/sbin:$PATH
-    brew doctor
   fi
 
   # Tap required kegs
   printf "\n########\n# Now we'll tap some extra kegs we need..\n########\n"
-  brew tap homebrew/versions 2&>1 >/dev/null
-  brew tap homebrew/dupes 2&>1 >/dev/null
-  brew tap josegonzalez/homebrew-php 2&>1 >/dev/null
+  brew tap homebrew/versions
+  brew tap homebrew/dupes
+  brew tap josegonzalez/homebrew-php
+  brew update
+  brew doctor
 
   # Install required formula's
   printf "# Installing required brew formulae..\n########\n"
-  say "Installing required brew formulae."
   printf "# Installing gcc..\n########\n"
   brew install apple-gcc42
   printf "\n########\n# Installing wget..\n########\n"
@@ -372,14 +398,23 @@ tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf 2&>1 >/d
   brew uninstall drush 2&>1 >/dev/null
   brew install drush
   printf "\n########\n# Installing php53 prerequisites..\n########\n"
-  brew install re2c flex bison27 libevent
+  brew install re2c
+  if [ "$?" = "1" ]; then
+    printf "# re2c install failed, retrying\n########\n"
+    say "You may be prompted for your password"
+    sudo rm -rf /Library/Caches/Homebrew/re2c-0.13.6.tar.gz
+    brew install re2c
+  fi
+  brew install flex
+  brew install bison27
+  brew install libevent
   printf "\n########\n# Installing dnsmasq..\n########\n"
   brew install dnsmasq
   printf "\n########\n# Configuring dnsmasq..\n########\n"
   mkdir -p /usr/local/etc
 
   # Configure dnsmasq
-  say "Setting up wildcard DNS so that domains ending in dot ld will resolve to your local machine"
+  printf "########\n# Setting up wildcard DNS so that domains ending in dot ld will resolve to your local machine\n"
   if [ -e "/usr/local/etc/dnsmasq.conf" ] ; then
     printf "########\n# You already have a dnsmasq.conf file..\n# So this all works proerly I'm going to delete and recreate it..\n########\n"
     rm /usr/local/etc/dnsmasq.conf
@@ -426,8 +461,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   sudo sh -c 'echo "nameserver 127.0.0.1
   domain ." >> /etc/resolver/default'
 
-  printf "# Setting known network interfaces to use 127.0.0.1 for DNS lookups..\n########\n"
-  say "Setting known network interfaces to use 127.0.0.1 for DNS lookups, this may throw errors, thats ok."
+  printf "# Setting known network interfaces to use 127.0.0.1 for DNS lookups,this may throw errors, thats ok...\n########\n"
   sudo networksetup -setdnsservers AirPort 127.0.0.1
   sudo networksetup -setdnsservers Ethernet 127.0.0.1
   sudo networksetup -setdnsservers 'Thunderbolt Ethernet' 127.0.0.1
@@ -450,7 +484,6 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist
 
   printf "\n########\n# Installing nginx..\n########\n"
-  say "installing and configuring engine x"
   brew install pcre geoip
   brew install nginx --with-debug --with-flv --with-geoip --with-http_dav_module --with-mp4 --with-spdy --with-ssl --with-upload-progress
   printf "\n########\n# Configuring nginx..\n########\n"
@@ -467,7 +500,6 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   sudo mkdir -p /var/lib/nginx
 
   printf "\n########\n# Installing mariadb..\n########\n"
-  say "installing and configuring maria db"
   brew install cmake
   brew install mariadb
   unset TMPDIR
@@ -477,8 +509,77 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   say "You may be prompted for your password"
   sudo ln -s /usr/local/etc/my-drupal.cnf /etc/my.cnf
 
+  printf "\n########\n# Installing php55..\n########\n"
+  brew install php55 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+  brew install php55-geoip
+  brew install php55-imagick
+  brew install php55-mcrypt
+  brew install php55-uploadprogress
+  brew install php55-xdebug
+  brew install php55-xhprof
+
+    printf "\n########\n# Configuring php55..\n########\n"
+    sed -i '' '/timezone =/ a\
+    date.timezone = Australia/Melbourne\
+    ' /usr/local/etc/php/5.5/php.ini
+    sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.5/php.ini
+    sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.5/php.ini
+    sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.5/php.ini
+    sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.5/php.ini
+    sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.5/php.ini
+    sed -i '' '/pid = run/ a\
+    pid = /usr/local/var/run/php-fpm.pid\
+    ' /usr/local/etc/php/5.5/php-fpm.conf
+
+    # Additions for xdebug to work with PHPStorm
+    echo "xdebug.max_nesting_level = 200
+
+xdebug.profiler_enable = 1
+xdebug.profiler_enable_trigger = 1
+xdebug.profiler_output_name = xdebug-profile-cachegrind.out-%H-%R
+xdebug.profiler_output_dir = /tmp/xdebug/
+
+xdebug.remote_autostart = 0
+xdebug.remote_enable=1
+xdebug.remote_connect_back = 1
+xdebug.remote_port = 9001
+xdebug.remote_host = localhost
+
+xdebug.var_display_max_children = 128
+xdebug.var_display_max_data = 2048
+xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
+
+    say "You may be prompted for your password"
+    sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
+
+    cp $(brew --prefix josegonzalez/php/php55)/homebrew-php.josegonzalez.php55.plist ~/Library/LaunchAgents/
+
+  echo "#!/bin/sh
+# Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
+# of Realityloop @Realityloop http://realitylop.com/
+
+# Remove old symlink for xhprof and create correct one for this version of php
+rm /usr/local/opt/xhprof 2&>1 >/dev/null
+ln -s  $(brew --prefix php55-xhprof) /usr/local/opt/xhprof
+
+# Stop php-fpm and start correct version
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
+launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+
+# Brew link correct php version
+brew unlink php53
+brew unlink php54
+brew link php55
+
+# Restart nginx
+sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
+  chmod 755 /usr/local/bin/go55
+
+  brew unlink php55
+
   printf "\n########\n# Installing php54..\n########\n"
-  say "installing and configuring php 5.4"
   brew install php54 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php54-geoip
   brew install php54-imagick
@@ -518,7 +619,7 @@ xdebug.var_display_max_children = 128
 xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.4/conf.d/ext-xdebug.ini
 
-    say "You may be prompted for your password"#
+    say "You may be prompted for your password"
   	sudo ln -s $(brew --prefix josegonzalez/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
 
     mkdir -p ~/Library/LaunchAgents
@@ -549,79 +650,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go54
 
   brew unlink php54
 
-  printf "\n########\n# Installing php55..\n########\n"
-  say "installing and configuring php 5.5"
-  brew install php55 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
-  brew install php55-geoip
-  brew install php55-imagick
-  brew install php55-mcrypt
-  brew install php55-uploadprogress
-  brew install php55-xdebug
-  brew install php55-xhprof
-
-  	printf "\n########\n# Configuring php55..\n########\n"
-  	sed -i '' '/timezone =/ a\
-  	date.timezone = Australia/Melbourne\
-  	' /usr/local/etc/php/5.5/php.ini
-  	sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.5/php.ini
-  	sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.5/php.ini
-  	sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.5/php.ini
-  	sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.5/php.ini
-  	sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.5/php.ini
-  	sed -i '' '/pid = run/ a\
-  	pid = /usr/local/var/run/php-fpm.pid\
-  	' /usr/local/etc/php/5.5/php-fpm.conf
-
-    # Additions for xdebug to work with PHPStorm
-    echo "xdebug.max_nesting_level = 200
-
-xdebug.profiler_enable = 1
-xdebug.profiler_enable_trigger = 1
-xdebug.profiler_output_name = xdebug-profile-cachegrind.out-%H-%R
-xdebug.profiler_output_dir = /tmp/xdebug/
-
-xdebug.remote_autostart = 0
-xdebug.remote_enable=1
-xdebug.remote_connect_back = 1
-xdebug.remote_port = 9001
-xdebug.remote_host = localhost
-
-xdebug.var_display_max_children = 128
-xdebug.var_display_max_data = 2048
-xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
-
-    say "You may be prompted for your password"
-  	sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
-
-    cp $(brew --prefix josegonzalez/php/php55)/homebrew-php.josegonzalez.php55.plist ~/Library/LaunchAgents/
-
-  echo "#!/bin/sh
-# Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
-# of Realityloop @Realityloop http://realitylop.com/
-
-# Remove old symlink for xhprof and create correct one for this version of php
-rm /usr/local/opt/xhprof 2&>1 >/dev/null
-ln -s  $(brew --prefix php55-xhprof) /usr/local/opt/xhprof
-
-# Stop php-fpm and start correct version
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist 2&>1 >/dev/null
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
-launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
-
-# Brew link correct php version
-brew unlink php53
-brew unlink php54
-brew link php55
-
-# Restart nginx
-sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
-  chmod 755 /usr/local/bin/go55
-
-  brew unlink php55
-
   printf "\n########\n# Installing php53..\n########\n"
-  say "installing and configuring php 5.3"
   brew install php53 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php53-geoip
   brew install php53-imagick
@@ -690,13 +719,13 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   chmod 755 /usr/local/bin/go53
 
   printf "\n########\n# Installing php code sniffer..\n########\n"
-  say "installing and configuring php code sniffer"
   brew install drupal-code-sniffer
+  printf "\n########\n# Installing phpunit..\n########\n"
+  brew install phpunit
 
   #Solr
   if [[ $SOLR =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing solr..\n########\n"
-  say "installing solr"
   brew install solr
   mkdir -p ~/Library/LaunchAgents
   printf "\n########\n# Downloading solr launch daemon..\n########\n"
@@ -705,7 +734,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   fi
 
   printf "\n########\n# Setting up launch daemons..\n########\n"
-  say "Setting up launch daemons, You may be prompted for your password"
+  say "you may be prompted for your password"
   sudo cp $(brew --prefix nginx)/homebrew.mxcl.nginx.plist /Library/LaunchDaemons/
   sudo chown root:wheel /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
 
@@ -713,7 +742,6 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
 
 
   printf "\n########\n# Launching daemons now..\n########\n"
-  say "Launching daemons now"
   sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
   launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
   launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
@@ -724,7 +752,6 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   fi
 
   printf "\n########\n# Finishing mariadb setup..\n########\n"
-  say "Finishing Maria db setup"
   echo "########
 # Enter the following when prompted..
 #
@@ -736,7 +763,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
 # Remove test database and access to it? [Y/n] y
 # Reload privilege tables now? [Y/n] y
 ########" #remove this echo when expects block below is fixed.
-  say "Enter the following when prompted. Current password: hit enter. Set root password: press Y, New password: type m y s q l, Remove anonymous users: press y, Disallow root login remotely: press y, Remove test database and access to it: press y, Reload privilege tables now: press y."
+  say "Read the block above and enter responses as shown when propted"
 
   sudo PATH="/usr/local/bin:/usr/local/sbin:$PATH" $(brew --prefix mariadb)/bin/mysql_secure_installation #remove this line when expects block below is fixed.
   # This expect block throws error
@@ -764,7 +791,6 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   #   expect eof"
 
   printf "\n########\n# Doing some setup ready for Aegir install..\n########\n"
-  say "preflight setup for a gir install"
   sudo mkdir -p /var/aegir
   sudo chown $USERNAME /var/aegir
   sudo chgrp staff /var/aegir
@@ -772,18 +798,18 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   echo "$USERNAME ALL=NOPASSWD: /usr/local/bin/nginx" | sudo tee -a  /etc/sudoers
   ln -s /var/aegir/config/nginx.conf /usr/local/etc/nginx/aegir.conf
 
-  printf "\n########\n# Adding aegir.conf include to ngix.conf..\n########\n"
+  printf "\n########\n# Adding aegir.conf include to ngix.conf..\n"
   ed -s /usr/local/etc/nginx/nginx.conf <<< $'g/#aegir/s!!include /usr/local/etc/nginx/aegir.conf;!\nw'
 
-  printf "\n########\n# Aegir time..\n########\n"
-  printf "\n########\n# Downloading provision..\n########\n"
+  printf "# Aegir time..\n########\n"
+  printf "# Downloading provision..\n########\n"
   DRUSH='drush --php=/usr/local/bin/php'
   $DRUSH dl --destination=/users/$USERNAME/.drush provision-6.x-2.0
   printf "\n########\n# Clearing drush caches..\n########\n"
   $DRUSH cache-clear drush
   printf "\n########\n# Installing hostmaster..\n########\n"
 
-  say "type the DB password you entered "
+  say "type the DB password you entered for my SQL earlier"
   $DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.0' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld #remove this line when/if expects block below is enabled again.
 
   # This expect block works but the previous expect block doesn't so can't use this yet.
@@ -812,16 +838,15 @@ server {
 }
 " >> /var/aegir/config/server_master/nginx/pre.d/nginx_xhprof.ld.conf
 
-  printf "\n########\n# Grabbing registry_rebuild drush module\n########\n"
-  say "install registry rebuild"
+  printf "\n########\n# Installing registry_rebuild drush module\n########\n"
   drush dl registry_rebuild
 
   printf "\n########\n# Symlinking platforms to ~/Sites/Aegir..\n########\n"
-  say "symbolic linking a gir platforms directory to your Sites slash Aegir directory"
   mkdir -p ~/Sites/Aegir
   rmdir /var/aegir/platforms
   ln -s ~/Sites/Aegir /var/aegir/platforms
 
+  printf "\n########\n# Enabling SSL for local sites..\n########\n"
   mkdir -p /usr/local/etc/ssl/private;
   openssl req -x509 -nodes -days 7300 -subj "/C=US/ST=New York/O=Aegir/OU=Cloud/L=New York/CN=*.aegir.ld" -newkey rsa:2048 -keyout /usr/local/etc/ssl/private/nginx-wild-ssl.key -out /usr/local/etc/ssl/private/nginx-wild-ssl.crt -batch 2> /dev/null;
   curl https://gist.githubusercontent.com/BrianGilbert/7760457/raw/fa9163ecc533ae14ea1332b38444e03be00dd329/nginx_wild_ssl.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_wild_ssl.conf;
@@ -915,8 +940,12 @@ following steps, reset DNS to 127.0.0.1 and run following command:
 Then start nginx:
  sudo /usr/local/bin/nginx
 
-After using this script please take the time to say thanks:
+Please take the time to say thanks:
 http://twitter.com/BrianGilbert_
+
+Creating and maintaining this takes a lot of time, if it makes life easier
+for you please consider making a donation:
+https://www.gittip.com/realityloop/
 
 1. https://drupal.org/project/barracuda
 " >> ~/Desktop/YourAegirSetup.txt'
@@ -934,5 +963,5 @@ http://twitter.com/BrianGilbert_
   say "Development and maintenance of this script takes a lot of time, if it makes life easier for you please support me with a donation"
   printf "\n########\n# Finished..\n########\n"
 } 2>&1 | tee -a ~/Desktop/aegir-install-logfile-$(date +"%Y-%m-%d.%H.%M.%S").log
-sleep 5;open https://www.gittip.com/Brian%20Gilbert/
+sleep 5;open http://rl.cm/osxaegirinstalled
 exit

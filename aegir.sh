@@ -2,24 +2,24 @@
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
 # of Realityloop @Realityloop http://realitylop.com/
 # I'm by no means a bash scripter, please submit pull requests/issues for improvements. :)
-
-# set volume so say text can be heard
-osascript -e "set Volume 5"
-
-curl --silent --head https://www.github.com/ | grep "20[0-9] Found|30[0-9] Found" > /dev/null
-if [[ $? -eq 1 ]] ; then
-  echo "########\n# Online, continuing"
-else
-  echo "########\n# This script needs Internet access and you are offline, exiting\n########\n"
-  say " you need to be online to run this script, exiting"
-  exit
-fi
-
-# Set some variables for username installing aegir and the OS X version
-USERNAME=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
-osx=`sw_vers -productVersion`
-
 {
+  # set volume so say text can be heard
+  osascript -e "set Volume 5"
+
+  curl --silent --head https://www.github.com/ | grep "20[0-9] Found|30[0-9] Found" > /dev/null
+  if [[ $? -eq 1 ]] ; then
+    printf "########\n# Online, continuing $(date +"%Y-%m-%d %H:%M:%S")\n"
+  else
+    printf "########\n# This script needs Internet access and you are offline, exiting\n########\n"
+    say " you need to be online to run this script, exiting"
+    exit
+  fi
+
+  # Set some variables for username installing aegir and the OS X version
+  USERNAME=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
+  DRUSH='drush --php=/usr/local/bin/php'
+  osx=`sw_vers -productVersion`
+
   # Make sure that the script wasn't run as root.
   if [ $USERNAME = "root" ] ; then
     printf "########\n# This script should not be run as sudo or root. exiting.\n########\n"
@@ -27,32 +27,39 @@ osx=`sw_vers -productVersion`
     exit
   else
     #fresh installations of mac osx does not have /user/local, so we need to create it first in case it's not there.
-    printf "\n########\n# Creating some required directories and setting correct ownership..\n########\n"
+    printf "########\n# Creating some required directories and setting correct ownership..\n"
     say "you may need to enter your password"
-    sudo mkdir -p /usr/local
-    sudo chown -R $USERNAME:admin /usr/local
-    chmod 775 /usr/local
+    ls /usr/local > /dev/null
+    if [[ $? -eq 1 ]] ; then
+      say "you may need to enter your password"
+      sudo mkdir -p /usr/local
+    fi
+    ls -l /usr/local| awk '{print $3}'|grep root > /dev/null
+    if [[ $? -eq 0 ]] ; then
+      sudo chown -R $USERNAME:admin /usr/local
+      chmod 775 /usr/local
+    fi
   fi
 
   printf "########
-  # This script is designed to be run by the primary account
-  # it has not been tested on a multi user setup.
-  ########
-  # You will need the following information during this script:
-  # -a gmail account that is configured to allow remote smtp access
-  # -the password for the gmail account address
-  # -an email address to receive notifications from aegir
-  # -attention to what is being requested via the script
-  ########
-  # You cannot use this script if you have macports installed
-  # so we will uninstall it automatically
-  ########
-  # OS X's inbuilt apache uses port 80 if it's running we'll disable
-  # it for you during install so that nginx can run on port 80.
-  ########
-  # Logging install process to file on desktop in case anything
-  # goes wrong during install, No passwords are logged..
-  ########\n"
+# This script is designed to be run by the primary account
+# it has not been tested on a multi user setup.
+########
+# You will need the following information during this script:
+# -a gmail account that is configured to allow remote smtp access
+# -the password for the gmail account address
+# -an email address to receive notifications from aegir
+# -attention to what is being requested via the script
+########
+# You cannot use this script if you have macports installed
+# so we will uninstall it automatically
+########
+# OS X's inbuilt apache uses port 80 if it's running we'll disable
+# it for you during install so that nginx can run on port 80.
+########
+# Logging install process to file on desktop in case anything
+# goes wrong during install, No passwords are logged..
+########\n"
 
   port
   if [[ $? -eq 127 ]] ; then
@@ -116,7 +123,7 @@ osx=`sw_vers -productVersion`
       if [[ $FORSURE =~ ^(y|Y)$ ]]; then
         printf "\n########\n# You entered Y\n"
         printf "\n########\n# Don't say I didn't warn you, cleaning everything before running clean install..\n########\n"
-        say "Don't say I didn't warn you, cleaning everything before running clean install.."
+        say "Don't say I didn't warn you, removing components before running clean install.."
 
         printf "# Stopping and deleting any services that are already installed..\n########\n"
         if [ -e "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist" ] ; then
@@ -149,7 +156,12 @@ osx=`sw_vers -productVersion`
           rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
         fi
 
-        printf "# Uninstalling related brews..\n########\n"
+        if [ -e "~/Library/LaunchAgents/org.aegir.hosting.queued.plist" ] ; then
+          launchctl unload -w ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
+          rm ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
+        fi
+
+        printf "########\n# Uninstalling related brews..\n########\n"
         brew uninstall php53-geoip
         brew uninstall php53-imagick
         brew uninstall php53-mcrypt
@@ -157,7 +169,7 @@ osx=`sw_vers -productVersion`
         brew uninstall php53-xdebug
         brew uninstall php53-xhprof
         brew uninstall php53
-        rm /var/log/nginx/php53-fpm.log
+        sudo rm /var/log/nginx/php53-fpm.log
         rm /usr/local/bin/go53
 
         brew uninstall php54-geoip
@@ -167,7 +179,7 @@ osx=`sw_vers -productVersion`
         brew uninstall php54-xdebug
         brew uninstall php54-xhprof
         brew uninstall php54
-        rm /var/log/nginx/php54-fpm.log
+        sudo rm /var/log/nginx/php54-fpm.log
         rm /usr/local/bin/go54
 
         brew uninstall php55-geoip
@@ -177,18 +189,27 @@ osx=`sw_vers -productVersion`
         brew uninstall php55-xdebug
         brew uninstall php55-xhprof
         brew uninstall php55
-        rm /var/log/nginx/php55-fpm.log
+        sudo rm /var/log/nginx/php55-fpm.log
         rm /usr/local/bin/go55
 
         rm -rf /usr/local/etc/php
 
-        brew uninstall phpcs
+        brew uninstall php-code-sniffer
+        brew uninstall drupal-code-sniffer
         brew uninstall phpunit
 
-        brew uninstall nginx
+        brew uninstall re2c
+        brew uninstall flex
+        brew uninstall bison27
+        brew uninstall libevent
+        brew uninstall openssl
+        brew uninstall solr
+
+        sudo rm $(brew --prefix nginx)/logs/error.log
         rm -rf /usr/local/etc/nginx
         rm -rf /usr/local/var/run/nginx
         sudo rm /var/log/nginx/error.log
+        brew uninstall nginx
 
         brew uninstall pcre geoip
         brew uninstall dnsmasq
@@ -218,6 +239,24 @@ osx=`sw_vers -productVersion`
         sudo rm /etc/my.cnf
         rm -rf /usr/local/var/mysql
 
+        brew uninstall autoconf
+        brew uninstall cmake
+        brew uninstall curl
+        brew uninstall freetype
+        brew uninstall gettext
+        brew uninstall gmp
+        brew uninstall gzip
+        brew uninstall imagemagick
+        brew uninstall imap-uw
+        brew uninstall jpeg
+        brew uninstall libpng
+        brew uninstall libtool
+        brew uninstall mcrypt
+        brew uninstall pkg-config
+        brew uninstall unixodbc
+        brew uninstall zlib
+        brew uninstall apple-gcc42
+
         rm ~/Desktop/YourAegirSetup.txt
 
         printf "# Removing Aegir folder..\n########\n"
@@ -232,6 +271,13 @@ osx=`sw_vers -productVersion`
     #   say "Should I remove it and do, a clean install?"
     #   read UPGRADE
     #   if [[ $UPGRADE =~ ^(y|Y)$ ]]; then
+    #     $DRUSH dl --destination=/var/aegir/.drush provision-6.x-2.0
+    #     $DRUSH cache-clear drush
+    #     OLD_AEGIR_DIR=/var/aegir/hostmaster/000
+    #     AEGIR_VERSION=6.x-2.0
+    #     AEGIR_DOMAIN=aegir.ld
+    #     cd $OLD_AEGIR_DIR
+    #     drush hostmaster-migrate $AEGIR_DOMAIN $HOME/hostmaster-$AEGIR_VERSION
     #     say "Upgrade isn't implemented yet"
     #     exit
     #   else
@@ -719,6 +765,8 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   chmod 755 /usr/local/bin/go53
 
   printf "\n########\n# Installing php code sniffer..\n########\n"
+  brew install php-code-sniffer
+  printf "\n########\n# Installing drupal code sniffer..\n########\n"
   brew install drupal-code-sniffer
   printf "\n########\n# Installing phpunit..\n########\n"
   brew install phpunit
@@ -803,7 +851,6 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
 
   printf "# Aegir time..\n########\n"
   printf "# Downloading provision..\n########\n"
-  DRUSH='drush --php=/usr/local/bin/php'
   $DRUSH dl --destination=/users/$USERNAME/.drush provision-6.x-2.0
   printf "\n########\n# Clearing drush caches..\n########\n"
   $DRUSH cache-clear drush
@@ -820,6 +867,19 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   #   expect \"Do you really want to proceed with the install (y/n):\"
   #   send \"y\r\"
   #   expect eof"
+
+  printf "\n########\n# Changing some hostmaster varibles to defaults we like..\n########\n"
+  drush @hostmaster vset hosting_feature_platform_pathauto 1
+  drush @hostmaster vset hosting_feature_cron 0
+  drush @hostmaster vset "hosting_feature_Cron queue" 0
+  drush @hostmaster vset "hosting_feature_Hosting queue daemon" 1
+  drush @hostmaster vset hosting_feature_queued 1
+  drush @hostmaster vset hosting_queue_tasks_enabled 0
+  drush @hostmaster vset hosting_require_disable_before_delete 0
+
+  printf "\n########\n# Download and start hosting queue daemon launch agent..\n########\n"
+  curl https://gist.githubusercontent.com/BrianGilbert/9226172/raw/509f69711a5a2c61ec41b6d3b690a72096b26703/org.aegir.hosting.queued.plist > ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
+  launchctl load -w ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
 
   echo "###
 ### Custom site for xhprof.
@@ -854,7 +914,7 @@ server {
 
   printf "\n########\n# Saving some instructional notes to ~/Desktop/YourAegirSetup.txt..\n########\n"
   say "saving some instructional notes to your desktop"
-  sudo sh -c 'echo "Hi fellow Drupaler,
+  echo "Hi fellow Drupaler,
 
 Here is some important information about your local Aegir setup.
 
@@ -948,7 +1008,7 @@ for you please consider making a donation:
 https://www.gittip.com/realityloop/
 
 1. https://drupal.org/project/barracuda
-" >> ~/Desktop/YourAegirSetup.txt'
+" >> ~/Desktop/YourAegirSetup.txt
 
   printf "\n########\n# Attempting to email it to you as well..\n########\n"
   say "emailing it to you as well"
@@ -961,7 +1021,7 @@ https://www.gittip.com/realityloop/
   say "please say thanks via twitter, at, Brian Gilbert underscore"
   printf "\n########\n# Creating and maintaining this takes a lot of time, please help:\n#  https://www.gittip.com/realityloop/\n########\n"
   say "Development and maintenance of this script takes a lot of time, if it makes life easier for you please support me with a donation"
-  printf "\n########\n# Finished..\n########\n"
+  printf "\n########\n# Finished $(date +"%Y-%m-%d %H:%M:%S")\n########\n"
 } 2>&1 | tee -a ~/Desktop/aegir-install-logfile-$(date +"%Y-%m-%d.%H.%M.%S").log
 sleep 5;open http://rl.cm/osxaegirinstalled
 exit

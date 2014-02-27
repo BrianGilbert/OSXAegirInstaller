@@ -105,7 +105,7 @@
   fi
 
   # Check Aegir isn't already installed.
-  if [ -e "/var/aegir/config/includes/global.inc" ] ; then
+  if [ -e "/var/aegir/.osxaegir" ] ; then
     printf "# You already have aegir installed..\n########\n"
     say "You already have a gir installed.."
     #exit # Remove this line when uninstall block below is fixed.
@@ -138,7 +138,6 @@
 
         if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
           launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
-          rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
         fi
 
         if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist" ] ; then
@@ -232,6 +231,7 @@
         sudo cp /etc/postfix/main.cf.orig /etc/postfix/main.cf
         rm ~/.forward
 
+        rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
   			brew uninstall mariadb
         rm /usr/local/etc/my-drupal.cnf
         rm /usr/local/etc/my.cnf
@@ -311,6 +311,13 @@
     fi
   fi
 
+  printf "\n########\n# Doing some setup ready for Aegir install..\n########\n"
+  sudo mkdir -p /var/aegir
+  sudo chown $USERNAME /var/aegir
+  sudo chgrp staff /var/aegir
+  echo "$(date +"%Y-%m-%d %H:%M:%S")" > /var/aegir/.osxaegir
+  sudo dscl . append /Groups/_www GroupMembership $USERNAME
+
   echo "########
 # Your hostname will be set to aegir.ld
 ########
@@ -374,7 +381,7 @@
     #setup mail sending
     printf "\n########\n# No time like the present, lets set up postfix now..\n########\n"
     say "You may be prompted for your password"
-    sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist
+    sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist 2&>1 >/dev/null
     echo "smtp.gmail.com:587 $gmailaddress:$gmailpass"  | sudo tee -a  /etc/postfix/sasl_passwd 2&>1 >/dev/null
     sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
     echo "
@@ -838,11 +845,6 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   #   send \"y\r\"
   #   expect eof"
 
-  printf "\n########\n# Doing some setup ready for Aegir install..\n########\n"
-  sudo mkdir -p /var/aegir
-  sudo chown $USERNAME /var/aegir
-  sudo chgrp staff /var/aegir
-  sudo dscl . append /Groups/_www GroupMembership $USERNAME
   echo "$USERNAME ALL=NOPASSWD: /usr/local/bin/nginx" | sudo tee -a  /etc/sudoers
   ln -s /var/aegir/config/nginx.conf /usr/local/etc/nginx/aegir.conf
 

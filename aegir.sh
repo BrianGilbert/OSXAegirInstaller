@@ -27,15 +27,16 @@
     exit
   else
     #fresh installations of mac osx does not have /user/local, so we need to create it first in case it's not there.
-    printf "########\n# Creating some required directories and setting correct ownership..\n"
-    say "you may need to enter your password"
-    ls /usr/local > /dev/null
+    printf "########\n# Checking /usr/local exists..\n"
+    ls /usr/local > /dev/null 2&>1
     if [[ $? -eq 1 ]] ; then
+      printf "# It doesn't so I'm creating it..\n"
       say "you may need to enter your password"
       sudo mkdir -p /usr/local
     fi
     ls -l /usr/local| awk '{print $3}'|grep root > /dev/null
     if [[ $? -eq 0 ]] ; then
+      printf "# Setting it's permissions correctly..\n########\n"
       sudo chown -R $USERNAME:admin /usr/local
       chmod 775 /usr/local
     fi
@@ -61,11 +62,11 @@
 # goes wrong during install, No passwords are logged..
 ########\n"
 
-  port
+  port > /dev/null 2&>1
   if [[ $? -eq 127 ]] ; then
-    printf "########\n# macports isn't installed continuing..\n########\n"
+    printf "########\n# macports isn't installed continuing..\n"
   else
-    printf "########\n# Attempting to uninstall macports..\n########\n"
+    printf "########\n# Attempting to uninstall macports..\nn"
     say "you may need to enter your password"
     sudo port -fp uninstall installed > /dev/null 2&>1
     sudo rm -rf \
@@ -83,9 +84,9 @@
 
   ps aux|grep "httpd"|grep -v grep > /dev/null
   if [[ $? -eq 1 ]] ; then
-    printf "\n########\n# Apache isn't installed, continuing..\n########\n"
+    printf "########\n# Apache isn't installed, continuing..\n########\n"
   else
-    printf "\n########\n# Disabling apache now..\n########\n"
+    printf "########\n# Disabling apache now..\n########\n"
     say "you may need to enter your password"
     sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist
   fi
@@ -290,7 +291,7 @@
 
   printf "# Checking if the Command Line Tools are installed..\n########\n"
   if type "/usr/bin/clang" > /dev/null 2>&1; then
-    printf "# They're installed.\n########\n"
+    printf "# They're installed."
   else
     if [ $osx = 10.9 -o $osx = 10.9.1 -o $osx = 10.9.2 ] ; then
       printf "# Your using $osx so I'll just install them for you..\n########\n"
@@ -379,7 +380,7 @@
     read gmailpass
 
     #setup mail sending
-    printf "\n########\n# No time like the present, lets set up postfix now..\n########\n"
+    printf "\n########\n# No time like the present, lets set up postfix now.."
     say "You may be prompted for your password"
     sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist > /dev/null 2&>1
     echo "smtp.gmail.com:587 $gmailaddress:$gmailpass"  | sudo tee -a  /etc/postfix/sasl_passwd > /dev/null 2&>1

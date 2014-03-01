@@ -67,7 +67,7 @@
   else
     printf "########\n# Attempting to uninstall macports..\n########\n"
     say "you may need to enter your password"
-    sudo port -fp uninstall installed 2&>1 >/dev/null
+    sudo port -fp uninstall installed > /dev/null 2&>1
     sudo rm -rf \
         /opt/local \
         /Applications/DarwinPorts \
@@ -78,7 +78,7 @@
         /Library/StartupItems/DarwinPortsStartup \
         /Library/Tcl/darwinports1.0 \
         /Library/Tcl/macports1.0 \
-        ~/.macports 2&>1 >/dev/null
+        ~/.macports > /dev/null 2&>1
   fi
 
   ps aux|grep "httpd"|grep -v grep > /dev/null
@@ -381,8 +381,8 @@
     #setup mail sending
     printf "\n########\n# No time like the present, lets set up postfix now..\n########\n"
     say "You may be prompted for your password"
-    sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist 2&>1 >/dev/null
-    echo "smtp.gmail.com:587 $gmailaddress:$gmailpass"  | sudo tee -a  /etc/postfix/sasl_passwd 2&>1 >/dev/null
+    sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist > /dev/null 2&>1
+    echo "smtp.gmail.com:587 $gmailaddress:$gmailpass"  | sudo tee -a  /etc/postfix/sasl_passwd > /dev/null 2&>1
     sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
     echo "
 myhostname = aegir.ld
@@ -401,7 +401,7 @@ smtp_sasl_security_options=
 # Enable Transport Layer Security (TLS), i.e. SSL.
 smtp_use_tls=yes
 smtp_tls_security_level=encrypt
-tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf 2&>1 >/dev/null
+tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf > /dev/null 2&>1
     echo  "$email" >> ~/.forward
     sudo postmap /etc/postfix/sasl_passwd
     sudo launchctl load -w /System/Library/LaunchDaemons/org.postfix.master.plist
@@ -448,7 +448,7 @@ tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf 2&>1 >/d
   brew install libpng
   printf "\n########\n# Installing drush..\n########\n"
   # Uninstall drush if it was previously installed via homebrew
-  brew uninstall drush 2&>1 >/dev/null
+  brew uninstall drush > /dev/null 2&>1
   brew install drush
   printf "\n########\n# Installing php53 prerequisites..\n########\n"
   brew install re2c

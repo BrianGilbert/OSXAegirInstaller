@@ -612,13 +612,13 @@ xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.i
 # of Realityloop @Realityloop http://realitylop.com/
 
 # Remove old symlink for xhprof and create correct one for this version of php
-rm /usr/local/opt/xhprof 2&>1 >/dev/null
+rm /usr/local/opt/xhprof > /dev/null 2>&1
 ln -s  $(brew --prefix php55-xhprof) /usr/local/opt/xhprof
 
 # Stop php-fpm and start correct version
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist 2&>1 >/dev/null
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
 
 # Brew link correct php version
@@ -683,13 +683,13 @@ xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.4/conf.d/ext-xdebug.i
 # of Realityloop @Realityloop http://realitylop.com/
 
 # Remove old symlink for xhprof and create correct one for this version of php
-rm /usr/local/opt/xhprof 2&>1 >/dev/null
+rm /usr/local/opt/xhprof > /dev/null 2>&1
 ln -s  $(brew --prefix php54-xhprof) /usr/local/opt/xhprof
 
 # Stop php-fpm and start correct version
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist 2&>1 >/dev/null
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
 
 # Brew link correct php version
@@ -753,13 +753,13 @@ xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.i
 # of Realityloop @Realityloop http://realitylop.com/
 
 # Remove old symlink for xhprof and create correct one for this version of php
-rm /usr/local/opt/xhprof 2&>1 >/dev/null
+rm /usr/local/opt/xhprof > /dev/null 2>&1
 ln -s  $(brew --prefix php53-xhprof) /usr/local/opt/xhprof
 
 # Stop php-fpm and start correct version
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist 2&>1 >/dev/null
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist 2&>1 >/dev/null
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist 2&>1 >/dev/null
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
 launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
 
 # Brew link correct php version
@@ -883,22 +883,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   curl https://gist.githubusercontent.com/BrianGilbert/9226172/raw/509f69711a5a2c61ec41b6d3b690a72096b26703/org.aegir.hosting.queued.plist > ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
   launchctl load -w ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
 
-  echo "###
-### Custom site for xhprof.
-###
-
-server {
-  include fastcgi_params;
-  fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-  limit_conn    gulag 32; # like mod_evasive - this allows max 32 simultaneous connections from one IP address
-  listen        *:80;
-  server_name  xhprof.ld;
-  root   /usr/local/opt/xhprof/xhprof_html/;
-
-  # Extra configuration from modules:
-  include       /var/aegir/config/includes/nginx_vhost_common.conf;
-}
-" >> /var/aegir/config/server_master/nginx/pre.d/nginx_xhprof.ld.conf
+  curl https://gist.githubusercontent.com/BrianGilbert/9282670/raw/3e77b7fc4baa5cb072b13156b943c9a4145eb86a/nginx_xhprof.ld.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_xhprof.ld.conf
 
   printf "\n########\n# Installing registry_rebuild drush module\n########\n"
   drush dl registry_rebuild

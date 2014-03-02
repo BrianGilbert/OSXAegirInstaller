@@ -572,21 +572,24 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   brew install php55-xdebug
   brew install php55-xhprof
 
-    printf "\n########\n# Configuring php55..\n########\n"
-    sed -i '' '/timezone =/ a\
-    date.timezone = Australia/Melbourne\
-    ' /usr/local/etc/php/5.5/php.ini
-    sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.5/php.ini
-    sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.5/php.ini
-    sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.5/php.ini
-    sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.5/php.ini
-    sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.5/php.ini
-    sed -i '' '/pid = run/ a\
-    pid = /usr/local/var/run/php-fpm.pid\
-    ' /usr/local/etc/php/5.5/php-fpm.conf
+  # Make sure LaunchAgents directory exists
+  mkdir -p ~/Library/LaunchAgents
 
-    # Additions for xdebug to work with PHPStorm
-    echo "xdebug.max_nesting_level = 200
+  printf "\n########\n# Configuring php55..\n########\n"
+  sed -i '' '/timezone =/ a\
+  date.timezone = Australia/Melbourne\
+  ' /usr/local/etc/php/5.5/php.ini
+  sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.5/php.ini
+  sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.5/php.ini
+  sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.5/php.ini
+  sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.5/php.ini
+  sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.5/php.ini
+  sed -i '' '/pid = run/ a\
+  pid = /usr/local/var/run/php-fpm.pid\
+  ' /usr/local/etc/php/5.5/php-fpm.conf
+
+  # Additions for xdebug to work with PHPStorm
+  echo "xdebug.max_nesting_level = 200
 
 xdebug.profiler_enable = 1
 xdebug.profiler_enable_trigger = 1
@@ -603,10 +606,10 @@ xdebug.var_display_max_children = 128
 xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
 
-    say "You may be prompted for your password"
-    sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
+  say "You may be prompted for your password"
+  sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
 
-    cp $(brew --prefix josegonzalez/php/php55)/homebrew-php.josegonzalez.php55.plist ~/Library/LaunchAgents/
+  cp $(brew --prefix josegonzalez/php/php55)/homebrew-php.josegonzalez.php55.plist ~/Library/LaunchAgents/
 
   echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
@@ -642,21 +645,21 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
   brew install php54-xdebug
   brew install php54-xhprof
 
-  	printf "\n########\n# Configuring php54..\n########\n"
-  	sed -i '' '/timezone =/ a\
-  	date.timezone = Australia/Melbourne\
-  	' /usr/local/etc/php/5.4/php.ini
-  	sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.4/php.ini
-  	sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.4/php.ini
-  	sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.4/php.ini
-  	sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.4/php.ini
-  	sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.4/php.ini
-  	sed -i '' '/pid = run/ a\
-  	pid = /usr/local/var/run/php-fpm.pid\
-  	' /usr/local/etc/php/5.4/php-fpm.conf
+	printf "\n########\n# Configuring php54..\n########\n"
+	sed -i '' '/timezone =/ a\
+	date.timezone = Australia/Melbourne\
+	' /usr/local/etc/php/5.4/php.ini
+	sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.4/php.ini
+	sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.4/php.ini
+	sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.4/php.ini
+	sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.4/php.ini
+	sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.4/php.ini
+	sed -i '' '/pid = run/ a\
+	pid = /usr/local/var/run/php-fpm.pid\
+	' /usr/local/etc/php/5.4/php-fpm.conf
 
-    # Additions for xdebug to work with PHPStorm
-    echo "xdebug.max_nesting_level = 200
+  # Additions for xdebug to work with PHPStorm
+  echo "xdebug.max_nesting_level = 200
 
 xdebug.profiler_enable = 1
 xdebug.profiler_enable_trigger = 1
@@ -673,11 +676,11 @@ xdebug.var_display_max_children = 128
 xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.4/conf.d/ext-xdebug.ini
 
-    say "You may be prompted for your password"
-  	sudo ln -s $(brew --prefix josegonzalez/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
+  say "You may be prompted for your password"
+	sudo ln -s $(brew --prefix josegonzalez/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
 
-    mkdir -p ~/Library/LaunchAgents
-    cp $(brew --prefix josegonzalez/php/php54)/homebrew-php.josegonzalez.php54.plist ~/Library/LaunchAgents/
+  mkdir -p ~/Library/LaunchAgents
+  cp $(brew --prefix josegonzalez/php/php54)/homebrew-php.josegonzalez.php54.plist ~/Library/LaunchAgents/
 
   echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
@@ -713,7 +716,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go54
   brew install php53-xdebug
   brew install php53-xhprof
 
-    printf "\n########\n# Configuring php53..\n########\n"
+  printf "\n########\n# Configuring php53..\n########\n"
   sed -i '' '/timezone =/ a\
   date.timezone = Australia/Melbourne\
   ' /usr/local/etc/php/5.3/php.ini
@@ -726,8 +729,8 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go54
   pid = /usr/local/var/run/php-fpm.pid\
   ' /usr/local/etc/php/5.3/php-fpm.conf
 
-    # Additions for xdebug to work with PHPStorm
-    echo "xdebug.max_nesting_level = 200
+  # Additions for xdebug to work with PHPStorm
+  echo "xdebug.max_nesting_level = 200
 
 xdebug.profiler_enable = 1
 xdebug.profiler_enable_trigger = 1
@@ -744,10 +747,10 @@ xdebug.var_display_max_children = 128
 xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
 
-    say "You may be prompted for your password"
-    sudo ln -s $(brew --prefix josegonzalez/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
+  say "You may be prompted for your password"
+  sudo ln -s $(brew --prefix josegonzalez/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
 
-    cp $(brew --prefix josegonzalez/php/php53)/homebrew-php.josegonzalez.php53.plist ~/Library/LaunchAgents/
+  cp $(brew --prefix josegonzalez/php/php53)/homebrew-php.josegonzalez.php53.plist ~/Library/LaunchAgents/
 
   echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
@@ -1007,7 +1010,7 @@ https://www.gittip.com/realityloop/
   printf "\n########\n# Double check your network interfaces to ensure their DNS server is set to 127.0.0.1 as we only tried to set commonly named interfaces.\n########\n"
   printf "\n########\n# Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n########\n"
   say "please say thanks via twitter, at, Brian Gilbert underscore"
-  printf "\n########\n# Creating and maintaining this takes a lot of time, please help:\n#  https://www.gittip.com/realityloop/\n########\n"
+  printf "\n########\n# Creating and maintaining this takes a lot of time, please help:\n#  https://www.gittip.com/Brian%20Gilbert/\n########\n"
   say "Development and maintenance of this script takes a lot of time, if it makes life easier for you please support me with a donation"
   printf "\n########\n# Finished $(date +"%Y-%m-%d %H:%M:%S")\n########\n"
 } 2>&1 | tee -a ~/Desktop/aegir-install-logfile-$(date +"%Y-%m-%d.%H.%M.%S").log

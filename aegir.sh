@@ -112,18 +112,18 @@
     #exit # Remove this line when uninstall block below is fixed.
     # Possibly I'll allow reinstallations in the future..
     #
-    printf "# Should I remove it and do a clean install? [Y/n]\n########\n"
+    printf "# Should I remove it? The option to re-install will be given after this. [Y/n]\n########\n"
     say "input required"
     read CLEAN
 
     if [[ $CLEAN =~ ^(y|Y)$ ]]; then
       printf "# You entered Y\n########\n"
-      printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew compononets before running a clean install, are you sure? [Y/n]\n########\n"
-      say "There is no turning back.. This will uninstall a gir and all related homebrew compononents including any existing databases before running a clean install, are you sure?"
+      printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew compononets, are you sure? [Y/n]\n########\n"
+      say "There is no turning back.. This will uninstall a gir and all related homebrew compononents including any existing databases, are you sure?"
       read FORSURE
       if [[ $FORSURE =~ ^(y|Y)$ ]]; then
         printf "\n########\n# You entered Y\n"
-        printf "\n########\n# Don't say I didn't warn you, cleaning everything before running clean install..\n########\n"
+        printf "\n########\n# Don't say I didn't warn you, cleaning everything..\n########\n"
         say "Don't say I didn't warn you, removing components before running clean install.."
 
         printf "# Stopping and deleting any services that are already installed..\n########\n"
@@ -262,6 +262,15 @@
 
         printf "# Removing Aegir folder..\n########\n"
         sudo rm -rf /var/aegir
+
+        printf "# would you now like to re-install Aegir? [Y/n]\n########\n"
+        read OS
+        if [[ $OS =~ ^(y|Y)$ ]]; then
+          printf "\n########\n# You entered Y\n########\n"
+        else
+          printf "\n########\n# You entered N\n########\n"
+          exit
+        fi
 
       else
         printf "# Exiting..\n########\n"

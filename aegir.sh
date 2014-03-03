@@ -124,7 +124,7 @@
       if [[ $FORSURE =~ ^(y|Y)$ ]]; then
         printf "\n########\n# You entered Y\n"
         printf "\n########\n# Don't say I didn't warn you, cleaning everything..\n########\n"
-        say "Don't say I didn't warn you, removing components before running clean install.."
+        say "Don't say I didn't warn you, removing components.."
 
         printf "# Stopping and deleting any services that are already installed..\n########\n"
         if [ -e "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist" ] ; then
@@ -139,6 +139,7 @@
 
         if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
           launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+          killall mysqld
         fi
 
         if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist" ] ; then

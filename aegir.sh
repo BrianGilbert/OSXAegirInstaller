@@ -139,7 +139,6 @@
 
         if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
           launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
-          killall mysqld
         fi
 
         if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist" ] ; then
@@ -1018,7 +1017,7 @@ https://www.gittip.com/realityloop/
 
   printf "\n########\n# The date.timezone value in /usr/local/etc/php/[version]/php.ini\n# Is set to Melbourne/Australia\n# You may want to change it to something that suits you better.\n########\n"
   # printf "The mysql root password is set to 'mysql' and login is only possible from localhost..\n"
-  printf "\n########\n# Double check your network interfaces to ensure their DNS server is set to 127.0.0.1 as we only tried to set commonly named interfaces.\n########\n"
+  printf "\n########\n# Double check your network interfaces to ensure their DNS server\n# is set to 127.0.0.1 as we only tried to set commonly named interfaces.\n########\n"
   printf "\n########\n# Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n########\n"
   say "please say thanks via twitter, at, Brian Gilbert underscore"
   printf "\n########\n# Creating and maintaining this takes a lot of time, please help:\n#  https://www.gittip.com/Brian%20Gilbert/\n########\n"

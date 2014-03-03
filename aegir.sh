@@ -118,8 +118,8 @@
 
     if [[ $CLEAN =~ ^(y|Y)$ ]]; then
       printf "# You entered Y\n########\n"
-      printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew compononets, are you sure? [Y/n]\n########\n"
-      say "There is no turning back.. This will uninstall a gir and all related homebrew compononents including any existing databases, are you sure?"
+      printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew components, are you sure? [Y/n]\n########\n"
+      say "There is no turning back.. This will uninstall a gir and all related homebrew components including any existing databases, are you sure?"
       read FORSURE
       if [[ $FORSURE =~ ^(y|Y)$ ]]; then
         printf "\n########\n# You entered Y\n"
@@ -263,6 +263,7 @@
         printf "# Removing Aegir folder..\n########\n"
         sudo rm -rf /var/aegir
 
+        say "input required"
         printf "# would you now like to re-install Aegir? [Y/n]\n########\n"
         read OS
         if [[ $OS =~ ^(y|Y)$ ]]; then

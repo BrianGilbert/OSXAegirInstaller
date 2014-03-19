@@ -139,6 +139,7 @@
 
         if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
           launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+          kill $(ps aux | grep 'mysqld' | awk '{print $2}')
         fi
 
         if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist" ] ; then
@@ -554,7 +555,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
   mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
   fi
-  curl https://gist.githubusercontent.com/BrianGilbert/5908352/raw/26e5943ec52c1d43c867fc16c4960e291b17f7d2/nginx.conf > /usr/local/etc/nginx/nginx.conf
+  curl https://gist.githubusercontent.com/BrianGilbert/5908352/raw/2b6f9094348af7b8d64c3582a0e6e67164bd0168/nginx.conf > /usr/local/etc/nginx/nginx.conf
   sed -i '' 's/\[username\]/'$USERNAME'/' /usr/local/etc/nginx/nginx.conf
 
   say "You may be prompted for your password"

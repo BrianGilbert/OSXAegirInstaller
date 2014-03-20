@@ -868,7 +868,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
 
   printf "# Aegir time..\n########\n"
   printf "# Downloading provision..\n########\n"
-  $DRUSH dl --destination=/users/$USERNAME/.drush provision-6.x-2.0
+  $DRUSH dl --destination=/Users/$USERNAME/.drush provision-6.x-2.0
   printf "\n########\n# Clearing drush caches..\n########\n"
   $DRUSH cache-clear drush
   printf "\n########\n# Installing hostmaster..\n########\n"

@@ -1021,5 +1021,5 @@ https://www.gittip.com/Brian%20Gilbert/
   printf "\n########\n# Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n########\n"
   printf "\n########\n# Finished $(date +"%Y-%m-%d %H:%M:%S")\n########\n"
 } 2>&1 | tee -a ~/Desktop/aegir-install-logfile-$(date +"%Y-%m-%d.%H.%M.%S").log
-sleep 5;open http://rl.cm/osxaegirthanks
+sleep 5;open http://rl.cm/osxaegirwoot
 exit

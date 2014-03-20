@@ -28,7 +28,7 @@
   else
     #fresh installations of mac osx does not have /usr/local, so we need to create it first in case it's not there.
     printf "########\n# Checking /usr/local exists..\n"
-    if [ -d '/usr/local' ] ; then
+    if [ ! -d '/usr/local' ] ; then
       printf "# It doesn't so I'm creating it..\n"
       say "you may need to enter your password"
       sudo mkdir -p /usr/local

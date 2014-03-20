@@ -1006,7 +1006,7 @@ http://twitter.com/BrianGilbert_
 
 Creating and maintaining this takes a lot of time, if it makes life easier
 for you please consider making a donation:
-https://www.gittip.com/realityloop/
+https://www.gittip.com/Brian%20Gilbert/
 
 1. https://drupal.org/project/barracuda
 " >> ~/Desktop/YourAegirSetup.txt
@@ -1019,10 +1019,7 @@ https://www.gittip.com/realityloop/
   # printf "The mysql root password is set to 'mysql' and login is only possible from localhost..\n"
   printf "\n########\n# Double check your network interfaces to ensure their DNS server\n# is set to 127.0.0.1 as we only tried to set commonly named interfaces.\n########\n"
   printf "\n########\n# Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n########\n"
-  say "please say thanks via twitter, at, Brian Gilbert underscore"
-  printf "\n########\n# Creating and maintaining this takes a lot of time, please help:\n#  https://www.gittip.com/Brian%20Gilbert/\n########\n"
-  say "Development and maintenance of this script takes a lot of time, if it makes life easier for you please support me with a donation"
   printf "\n########\n# Finished $(date +"%Y-%m-%d %H:%M:%S")\n########\n"
 } 2>&1 | tee -a ~/Desktop/aegir-install-logfile-$(date +"%Y-%m-%d.%H.%M.%S").log
-sleep 5;open http://rl.cm/osxaegirinstalled
+sleep 5;open http://rl.cm/osxaegirthanks
 exit

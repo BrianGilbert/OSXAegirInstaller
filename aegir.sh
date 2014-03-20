@@ -26,10 +26,9 @@
     say "This script should not be run as sudo or root. exiting."
     exit
   else
-    #fresh installations of mac osx does not have /user/local, so we need to create it first in case it's not there.
+    #fresh installations of mac osx does not have /usr/local, so we need to create it first in case it's not there.
     printf "########\n# Checking /usr/local exists..\n"
-    ls /usr/local > /dev/null 2&>1
-    if [[ $? -eq 1 ]] ; then
+    if [ ! -d '/usr/local' ] ; then
       printf "# It doesn't so I'm creating it..\n"
       say "you may need to enter your password"
       sudo mkdir -p /usr/local
@@ -868,7 +867,7 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
 
   printf "# Aegir time..\n########\n"
   printf "# Downloading provision..\n########\n"
-  $DRUSH dl --destination=/users/$USERNAME/.drush provision-6.x-2.0
+  $DRUSH dl --destination=/Users/$USERNAME/.drush provision-6.x-2.0
   printf "\n########\n# Clearing drush caches..\n########\n"
   $DRUSH cache-clear drush
   printf "\n########\n# Installing hostmaster..\n########\n"

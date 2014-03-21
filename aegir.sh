@@ -363,12 +363,10 @@
 
   echo "
 ########
-# I'd like to set up postfix so you receive emails from Aegir
+# I need to set up postfix so you receive emails from Aegir, if you don't
+# installation will surely fail !!!
 #
 # !!! This has only been tested with gmail accounts !!!
-#
-# If you don't do it now you will need to configure mail sending yourself:
-# http://rl.cm/13ujhJp
 #
 # Do you have a gmail account you can use? [Y/n]:
 ########"
@@ -884,38 +882,40 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   #   send \"y\r\"
   #   expect eof"
 
-  printf "\n########\n# Changing some hostmaster varibles to defaults we like..\n########\n"
-  drush @hostmaster vset hosting_feature_platform_pathauto 1
-  drush @hostmaster vset hosting_feature_cron 0
-  drush @hostmaster vset "hosting_feature_Cron queue" 0
-  drush @hostmaster vset "hosting_feature_Hosting queue daemon" 1
-  drush @hostmaster vset hosting_feature_queued 1
-  drush @hostmaster vset hosting_queue_tasks_enabled 0
-  drush @hostmaster vset hosting_require_disable_before_delete 0
+  if [[ $(wget http://aegir.ld > /dev/null 2>&1 | egrep "HTTP" | awk {'print $6'}) != "404" ]] ; then
+    rm index.html > /dev/null 2>&1
+    printf "\n########\n# Changing some hostmaster varibles to defaults we like..\n########\n"
+    drush @hostmaster vset hosting_feature_platform_pathauto 1
+    drush @hostmaster vset hosting_feature_cron 0
+    drush @hostmaster vset "hosting_feature_Cron queue" 0
+    drush @hostmaster vset "hosting_feature_Hosting queue daemon" 1
+    drush @hostmaster vset hosting_feature_queued 1
+    drush @hostmaster vset hosting_queue_tasks_enabled 0
+    drush @hostmaster vset hosting_require_disable_before_delete 0
 
-  printf "\n########\n# Download and start hosting queue daemon launch agent..\n########\n"
-  curl https://gist.githubusercontent.com/BrianGilbert/9226172/raw/509f69711a5a2c61ec41b6d3b690a72096b26703/org.aegir.hosting.queued.plist > ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
-  launchctl load -w ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
+    printf "\n########\n# Download and start hosting queue daemon launch agent..\n########\n"
+    curl https://gist.githubusercontent.com/BrianGilbert/9226172/raw/509f69711a5a2c61ec41b6d3b690a72096b26703/org.aegir.hosting.queued.plist > ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
+    launchctl load -w ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
 
-  curl https://gist.githubusercontent.com/BrianGilbert/9282670/raw/3e77b7fc4baa5cb072b13156b943c9a4145eb86a/nginx_xhprof.ld.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_xhprof.ld.conf
+    curl https://gist.githubusercontent.com/BrianGilbert/9282670/raw/3e77b7fc4baa5cb072b13156b943c9a4145eb86a/nginx_xhprof.ld.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_xhprof.ld.conf
 
-  printf "\n########\n# Installing registry_rebuild drush module\n########\n"
-  drush dl registry_rebuild
+    printf "\n########\n# Installing registry_rebuild drush module\n########\n"
+    drush dl registry_rebuild
 
-  printf "\n########\n# Symlinking platforms to ~/Sites/Aegir..\n########\n"
-  mkdir -p ~/Sites/Aegir
-  rmdir /var/aegir/platforms
-  ln -s ~/Sites/Aegir /var/aegir/platforms
+    printf "\n########\n# Symlinking platforms to ~/Sites/Aegir..\n########\n"
+    mkdir -p ~/Sites/Aegir
+    rmdir /var/aegir/platforms
+    ln -s ~/Sites/Aegir /var/aegir/platforms
 
-  printf "\n########\n# Enabling SSL for local sites..\n########\n"
-  mkdir -p /usr/local/etc/ssl/private;
-  openssl req -x509 -nodes -days 7300 -subj "/C=US/ST=New York/O=Aegir/OU=Cloud/L=New York/CN=*.aegir.ld" -newkey rsa:2048 -keyout /usr/local/etc/ssl/private/nginx-wild-ssl.key -out /usr/local/etc/ssl/private/nginx-wild-ssl.crt -batch 2> /dev/null;
-  curl https://gist.githubusercontent.com/BrianGilbert/7760457/raw/fa9163ecc533ae14ea1332b38444e03be00dd329/nginx_wild_ssl.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_wild_ssl.conf;
-  sudo /usr/local/bin/nginx -s reload;
+    printf "\n########\n# Enabling SSL for local sites..\n########\n"
+    mkdir -p /usr/local/etc/ssl/private;
+    openssl req -x509 -nodes -days 7300 -subj "/C=US/ST=New York/O=Aegir/OU=Cloud/L=New York/CN=*.aegir.ld" -newkey rsa:2048 -keyout /usr/local/etc/ssl/private/nginx-wild-ssl.key -out /usr/local/etc/ssl/private/nginx-wild-ssl.crt -batch 2> /dev/null;
+    curl https://gist.githubusercontent.com/BrianGilbert/7760457/raw/fa9163ecc533ae14ea1332b38444e03be00dd329/nginx_wild_ssl.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_wild_ssl.conf;
+    sudo /usr/local/bin/nginx -s reload;
 
-  printf "\n########\n# Saving some instructional notes to ~/Desktop/YourAegirSetup.txt..\n########\n"
-  say "saving some instructional notes to your desktop"
-  echo "Hi fellow Drupaler,
+    printf "\n########\n# Saving some instructional notes to ~/Desktop/YourAegirSetup.txt..\n########\n"
+    say "saving some instructional notes to your desktop"
+    echo "Hi fellow Drupaler,
 
 Here is some important information about your local Aegir setup.
 
@@ -1011,15 +1011,19 @@ https://www.gittip.com/Brian%20Gilbert/
 1. https://drupal.org/project/barracuda
 " >> ~/Desktop/YourAegirSetup.txt
 
-  printf "\n########\n# Attempting to email it to you as well..\n########\n"
-  say "emailing it to you as well"
-  mail -s 'Your local Aegir setup' $email < ~/Desktop/YourAegirSetup.txt
+    printf "\n########\n# Attempting to email it to you as well..\n########\n"
+    say "emailing it to you as well"
+    mail -s 'Your local Aegir setup' $email < ~/Desktop/YourAegirSetup.txt
 
-  printf "\n########\n# The date.timezone value in /usr/local/etc/php/[version]/php.ini\n# Is set to Melbourne/Australia\n# You may want to change it to something that suits you better.\n########\n"
-  # printf "The mysql root password is set to 'mysql' and login is only possible from localhost..\n"
-  printf "\n########\n# Double check your network interfaces to ensure their DNS server\n# is set to 127.0.0.1 as we only tried to set commonly named interfaces.\n########\n"
-  printf "\n########\n# Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n########\n"
-  printf "\n########\n# Finished $(date +"%Y-%m-%d %H:%M:%S")\n########\n"
+    printf "\n########\n# The date.timezone value in /usr/local/etc/php/[version]/php.ini\n# Is set to Melbourne/Australia\n# You may want to change it to something that suits you better.\n########\n"
+    # printf "The mysql root password is set to 'mysql' and login is only possible from localhost..\n"
+    printf "\n########\n# Double check your network interfaces to ensure their DNS server\n# is set to 127.0.0.1 as we only tried to set commonly named interfaces.\n########\n"
+    printf "\n########\n# Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n########\n"
+    printf "\n########\n# Finished $(date +"%Y-%m-%d %H:%M:%S")\n########\n"
+    open http://rl.cm/osxaegirwoot
+  else
+    echo "\n########\n# Something has gone wrong!\n# The aegir.ld site isn't accesible.\n# you'll probably need to rerun the installation.\n########\n"
+  fi
 } 2>&1 | tee -a ~/Desktop/aegir-install-logfile-$(date +"%Y-%m-%d.%H.%M.%S").log
-sleep 5;open http://rl.cm/osxaegirwoot
+
 exit

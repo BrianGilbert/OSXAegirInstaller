@@ -1006,7 +1006,8 @@ http://twitter.com/BrianGilbert_
 
 Creating and maintaining this takes a lot of time, if it makes life easier
 for you please consider making a donation:
-https://www.gittip.com/Brian%20Gilbert/
+Paypal: http://rl.cm/osxaegirdonation
+Gittip: https://www.gittip.com/Brian%20Gilbert/
 
 1. https://drupal.org/project/barracuda
 " >> ~/Desktop/YourAegirSetup.txt
@@ -1021,9 +1022,10 @@ https://www.gittip.com/Brian%20Gilbert/
     printf "\n########\n# Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n########\n"
     printf "\n########\n# Finished $(date +"%Y-%m-%d %H:%M:%S")\n########\n"
     open http://rl.cm/osxaegirwoot
+    sleep 30;open http://rl.cm/osxaegirdonation
   else
     echo "\n########\n# Something has gone wrong!\n# The aegir.ld site isn't accesible.\n# you'll probably need to rerun the installation.\n########\n"
   fi
 } 2>&1 | tee -a ~/Desktop/aegir-install-logfile-$(date +"%Y-%m-%d.%H.%M.%S").log
-
+echo "###fin###"
 exit

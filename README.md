@@ -1,19 +1,18 @@
 OSXAegirInstaller
 =================
 
-I am now accepting donations via GitTip! https://www.gittip.com/Brian%20Gilbert/
+This script does everything that you need for Aegir to run natively on your Mac, it has been recently tested Mavericks 10.9, 10.9.1, 10.9.2. I expect it will work fine on 10.8.x as well but am not really supporting legacy versions of OS X anymore.
 
-This has been tested on Mountain Lion 10.8.4 & Mavericks 10.9, I expect it will work fine on 10.8.5 as well.
+It took around 3 months hacking and a patch to the Aegir project to get Aegir installable on a mac and then approximately 2 weeks to write the initial version of this script so I hope you say thanks with a [Paypal Donation](https://www.paypal.com/webscr?cmd=_donations&business=brian@briangilbert.net&item_name=OSXAegir%20Donation&currency_code=AUD) for the time I've saved you.
 
-__Warning:__ I have tested this script extensivley on a clean install of OSX, but I take no responsability for anything that happens to your computer using the script.
-I'd reccomend you use Disk Utility to repair permissions on your primary drive before running this script.
+Prerequisites
+-----------------
+*A gmail address/password you can use for relaying emails
+*XCode if you aren't using 10.9+
 
-It should be fine to install on any machine that doesn't have a webserver already running on port 80 or a DB server already running on 3306.
-
-Requirements:
-* XCode installed and run at least once
-
-This script installs the following via Homebrew on OSX:
+What get's installed?
+---------------------------
+This script installs/configures everything you need for Aegir to work on OSX, mostly via Homebrew:
 * wget
 * gzip
 * drush 6
@@ -21,13 +20,18 @@ This script installs the following via Homebrew on OSX:
 * nginx (with geoip and uploadprogress)
 * mariadb
 * php 5.3/5.4/5.5 (with uploadprogress, xhprof and xdebug)
+* postfix (relaying email via a gmail account you own)
 * solr4 (optional)
 
 And then installs Aegir 6.x-2.0 stable
 
-Once installed you can access the Aegir dashboard at http://aegir.ld
-Any site you create that ends in .ld or has an alias ending in .ld will resolve to localhost and work within your browser.
+Once installed you can access the Aegir dashboard at [http://aegir.ld](http://aegir.ld)
+Any site you create should ends in .ld or have an alias ending in .ld so that it will resolve to localhost and work within your browser.
 
+The script creates unsigned SSL certificates so that you can access any of the sites you create using https.
+
+Installation Instructions
+------------------------------
 Execute the following in terminal to run the installer:
 
     cd ~
@@ -35,19 +39,26 @@ Execute the following in terminal to run the installer:
     chmod +x aegir.sh
     ./aegir.sh
 
+Post Install
+---------------
 After installation change php versions (and restart nginx) by running the following commands:
 
     go53
     go54
     go54
 
-__SSL Support:__ This is part of main script since Dec 3 2013, so you only need the commends below if you installed prior.
+Uninstall
+-----------
+If the install fails or you don't like Aegir, you can re-run the script to uninstall everything.
 
-This will enable access to your aegir sites using https, you will need to trust the certificate in your browser though.
+Warning
+-----------
+I have tested this script extensivley on a clean install of OSX, but I take no responsability for anything that happens to your computer using the script.
+I'd recommend you use Disk Utility to repair permissions on your primary drive before running this script. 
 
-    cd ~
-    curl -O https://raw.github.com/BrianGilbert/OSXAegirInstaller/master/enablessl.sh
-    chmod +x enablessl.sh
-    ./aegir.sh
+It should be fine to install on any machine that doesn't have a webserver already running on port 80 or a DB server already running on 3306, this means that you can have MAMP or Acquia Dev Desktop installed as well as Aegir (unless you have changed the default ports on either of these to 80/3306).
 
-This is the largest script I've written to date, so any improvements gladly accepted as pull requests!
+Any improvements gladly accepted as pull requests!
+
+It took around 3 months hacking and a patch to the Aegir project to get Aegir installable on a mac and then approximately 2 weeks to write the initial version of this script so I hope you say thanks with a [Paypal Donation](https://www.paypal.com/webscr?cmd=_donations&business=brian@briangilbert.net&item_name=OSXAegir%20Donation&currency_code=AUD) for the time I've saved you.
+

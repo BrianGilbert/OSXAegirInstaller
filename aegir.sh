@@ -18,7 +18,7 @@
   # Set some variables for username installing aegir and the OS X version
   USERNAME=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
   DRUSH='drush --php=/usr/local/bin/php'
-  osx=`sw_vers -productVersion`
+  OSX=`sw_vers -productVersion`
 
   # Make sure that the script wasn't run as root.
   if [ $USERNAME = "root" ] ; then
@@ -91,17 +91,11 @@
   fi
 
   printf "\n########\n# Checking OS version..\n########\n"
-  if [ $osx = 10.8.4 -o $osx = 10.8.5 -o $osx = 10.9 -o $osx = 10.9.1 -o $osx = 10.9.2 ] ; then
-    printf "# Your using $osx, so let's go!\n########\n"
+  if [ $OSX = 10.9 -o $OSX = 10.9.1 -o $OSX = 10.9.2 -o $OSX = 10.9.3 ] ; then
+    printf "# Your using $OSX, so let's go!\n########\n"
   else
-    printf "# This hasn't been tested on $osx yet, should I continue anyway? [Y/n]\n########\n"
-    read OS
-    if [[ $OS =~ ^(y|Y)$ ]]; then
-      printf "\n########\n# You entered Y\n########\n"
-    else
-      printf "\n########\n# You entered N\n########\n"
+    printf "# $OSX isn't a supported version for this script\n# Update to 10.9+ and rerun the script, exiting.\n########\n"
       exit
-    fi
   fi
 
   # Check Aegir isn't already installed.
@@ -113,13 +107,13 @@
     #
     printf "# Should I remove it? The option to re-install will be given after this. [Y/n]\n########\n"
     say "input required"
-    read CLEAN
+    read -n1 CLEAN
 
     if [[ $CLEAN =~ ^(y|Y)$ ]]; then
       printf "# You entered Y\n########\n"
       printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew components, are you sure? [Y/n]\n########\n"
       say "There is no turning back.. This will uninstall a gir and all related homebrew components including any existing databases, are you sure?"
-      read FORSURE
+      read -n1 FORSURE
       if [[ $FORSURE =~ ^(y|Y)$ ]]; then
         printf "\n########\n# You entered Y\n"
         printf "\n########\n# Don't say I didn't warn you, cleaning everything..\n########\n"
@@ -265,8 +259,8 @@
 
         say "input required"
         printf "# would you now like to re-install Aegir? [Y/n]\n########\n"
-        read OS
-        if [[ $OS =~ ^(y|Y)$ ]]; then
+        read -n1 REINSTALL
+        if [[ $REINSTALL =~ ^(y|Y)$ ]]; then
           printf "\n########\n# You entered Y\n########\n"
         else
           printf "\n########\n# You entered N\n########\n"
@@ -299,27 +293,27 @@
     fi
   fi
 
-  printf "# Checking if the Command Line Tools are installed..\n########\n"
-  if type "/usr/bin/clang" > /dev/null 2>&1; then
-    printf "# They're installed."
-  else
-    if [ $osx = 10.9 -o $osx = 10.9.1 -o $osx = 10.9.2 ] ; then
-      printf "# Your using $osx so I'll just install them for you..\n########\n"
-      xcode-select --install
+  printf "\n########\n# Checking if Homebrew is installed..\n########\n"
+  if type "brew" > /dev/null 2>&1; then
+    printf "\n########\n# Affirmative! Lets make sure everything is up to date..\n# Just so you know, this may throw a few warnings..\n########\n"
+    say "Making sure homebrew is up to date, you may see some errors in the output, thats ok."
+    export PATH=/usr/local/bin:/usr/local/sbin:$PATH
+    brew prune
+    brew update
+    brew doctor
+    if [[ $? -eq 1 ]] ; then
+      printf "########\n# Homebrew in order, continuing\n########"
     else
-      printf "########\n# Nope. You need the Command Line tools installed before this script will work\n\n"
-      printf "# You will need to install them via the Xcode Preferences/Downloads tab:\n"
-      printf "#    http://itunes.apple.com/au/app/xcode/id497799835?mt=12\n\n"
-      printf "# Continue the script after you've installed them.\n# Are they now installed? [Y/n]\n########\n"
-      say "input required"
-      read CLT
-      if ! [[ $CLT =~ ^(y|Y)$ ]]; then
-        printf "# You entered N\n########\n"
-        exit
-      else
-        printf "# You entered Y\n########\n"
-      fi
+      printf "########\n# Homebrew needs some work, exiting\n########"
+      exit
     fi
+  else
+    printf "# Nope! Installing Homebrew now..\n########\n"
+    say "Installing homebrew now, you'll need to hit return when prompted"
+    ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
+    echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.bash_profile
+    echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.zshrc
+    export PATH=/usr/local/bin:/usr/local/sbin:$PATH
   fi
 
   printf "\n########\n# Doing some setup ready for Aegir install..\n########\n"
@@ -332,12 +326,71 @@
   echo "########
 # Your hostname will be set to aegir.ld
 ########
+# I can install multiple versions of PHP; 5.3, 5.4 and/or 5.5.
+# Let me know which versions you'd like installed.
+# Set up PHP 5.3 [Y/n]:
+########"
+  say "input required"
+  read -n1 PHP53
+
+  echo "
+########
+# Make PHP 5.3 the default [Y/n]:
+########"
+  say "input required"
+  read -n1 PHP53DEF
+
+  echo "
+########
+# Set up PHP 5.4 [Y/n]:
+########"
+  say "input required"
+  read -n1 PHP54
+
+  if [[ ! $PHP53DEF =~ ^(y|Y)$ ]]; then
+    echo "
+########
+# Make PHP 5.4 the default [Y/n]:
+########"
+    say "input required"
+    read -n1 PHP54DEF
+  fi
+
+  echo "
+########
+# Set up PHP 5.5 [Y/n]:
+########"
+  say "input required"
+  read -n1 PHP55
+
+  if [[ $PHP53DEF =~ ^(y|Y)$ || $PHP54DEF =~ ^(y|Y)$ ]]; then
+    echo""
+  else
+    echo "
+########
+# Make PHP 5.5 the default [Y/n]:
+########"
+    say "input required"
+    read -n1 PHP55DEF
+  fi
+
+  if [[ ! $PHP53 =~ ^(y|Y)$ && ! $PHP54 =~ ^(y|Y)$ && ! $PHP55 =~ ^(y|Y)$ ]]; then
+    echo "
+########
+# You didn't select any version of PHP?!? So I'm installing PHP5.5
+########"
+  PHP55="Y"
+  PHP55DEF="Y"
+  fi
+
+echo "
+########
 # I can also setup ApacheSolr which is best used in conjunction with:
 # https://drupal.org/project/search_api_solr
 # Set up solr [Y/n]:
 ########"
   say "input required"
-  read SOLR
+  read -n1 SOLR
 
   if [[ $SOLR =~ ^(y|Y)$ ]]; then
     printf "# You entered Y\n########\n"
@@ -346,7 +399,7 @@
 # Do you want solr to run automatically on boot [Y/n]:
 ########"
     say "input required"
-    read SOLRBOOT
+    read -n1 SOLRBOOT
     if [[ $SOLRBOOT =~ ^(y|Y)$ ]]; then
       printf "# You entered Y\n########\n"
     else
@@ -371,7 +424,7 @@
 # Do you have a gmail account you can use? [Y/n]:
 ########"
   say "Do you have a gee mail address you can use to relay the messages?"
-  read gmail
+  read -n1 gmail
   if [[ $gmail =~ ^(y|Y)$ ]]; then
     printf "\n########\n# You entered Y\n########\n"
     printf "# OK, I'll attempt to set up postfix..\n"
@@ -420,23 +473,6 @@ tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf > /dev/n
     say "Mail sending won't actually work until you configure postfix properly"
   fi
 
-  printf "\n########\n# Checking if Homebrew is installed..\n########\n"
-  if type "brew" > /dev/null 2>&1; then
-    printf "\n########\n# Affirmative! Lets make sure everything is up to date..\n# Just so you know, this may throw a few warnings..\n########\n"
-    say "Making sure homebrew is up to date, you may see some errors in the output, thats ok."
-    export PATH=/usr/local/bin:/usr/local/sbin:$PATH
-    brew prune
-    brew update
-    brew doctor
-  else
-    printf "# Nope! Installing Homebrew now..\n########\n"
-    say "Installing homebrew now, you'll need to hit return when prompted"
-    ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
-    echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.bash_profile
-    echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.zshrc
-    export PATH=/usr/local/bin:/usr/local/sbin:$PATH
-  fi
-
   # Tap required kegs
   printf "\n########\n# Now we'll tap some extra kegs we need..\n########\n"
   brew tap homebrew/versions
@@ -459,17 +495,6 @@ tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf > /dev/n
   # Uninstall drush if it was previously installed via homebrew
   brew uninstall drush > /dev/null 2&>1
   brew install drush
-  printf "\n########\n# Installing php53 prerequisites..\n########\n"
-  brew install re2c
-  if [ "$?" = "1" ]; then
-    printf "# re2c install failed, retrying\n########\n"
-    say "You may be prompted for your password"
-    sudo rm -rf /Library/Caches/Homebrew/re2c-0.13.6.tar.gz
-    brew install re2c
-  fi
-  brew install flex
-  brew install bison27
-  brew install libevent
   printf "\n########\n# Installing dnsmasq..\n########\n"
   brew install dnsmasq
   printf "\n########\n# Configuring dnsmasq..\n########\n"
@@ -535,7 +560,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
 # your active device is set to 127.0.0.1, or else things
 # will not work properly later in the script.
 ########"
-  say "Open your network settings now and confirm DNS for your active network device is set to 127.0.0.1, or else things will not work properly later in the script"
+  say "Open your network settings to confirm DNS for your active network device is set to 127.0.0.1, or else things will not work properly later in the script"
   printf "# Setting hostname to aegir.ld\n########\n"
   sudo scutil --set HostName aegir.ld
 
@@ -571,6 +596,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   say "You may be prompted for your password"
   sudo ln -s /usr/local/etc/my-drupal.cnf /etc/my.cnf
 
+if [[ $PHP55 =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php55..\n########\n"
   brew install php55 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php55-geoip
@@ -642,8 +668,12 @@ brew link php55
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
   chmod 755 /usr/local/bin/go55
 
-  brew unlink php55
+  if [[ ! $PHP55DEF =~ ^(y|Y)$ ]]; then
+    brew unlink php55
+  fi
+fi
 
+if [[ $PHP54 =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php54..\n########\n"
   brew install php54 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php54-geoip
@@ -713,8 +743,17 @@ brew link php54
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go54
   chmod 755 /usr/local/bin/go54
 
-  brew unlink php54
+  if [[ ! $PHP54DEF =~ ^(y|Y)$ ]]; then
+    brew unlink php54
+  fi
+fi
 
+if [[ $PHP53 =~ ^(y|Y)$ ]]; then
+  printf "\n########\n# Installing php53 prerequisites..\n########\n"
+  brew install re2c
+  brew install flex
+  brew install bison27
+  brew install libevent
   printf "\n########\n# Installing php53..\n########\n"
   brew install php53 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php53-geoip
@@ -783,6 +822,11 @@ brew link php53
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   chmod 755 /usr/local/bin/go53
 
+  if [[ ! $PHP53DEF =~ ^(y|Y)$ ]]; then
+    brew unlink php53
+  fi
+fi
+
   printf "\n########\n# Installing php code sniffer..\n########\n"
   brew install php-code-sniffer
   printf "\n########\n# Installing drupal code sniffer..\n########\n"
@@ -811,9 +855,21 @@ sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   printf "\n########\n# Launching daemons now..\n########\n"
   sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
   launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
-  launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
-  launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
-  launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+  if [[ $PHP55DEF =~ ^(y|Y)$ ]]; then
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+    launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+  fi
+  if [[ $PHP54DEF =~ ^(y|Y)$ ]]; then
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+    launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+  fi
+  if [[ $PHP53DEF =~ ^(y|Y)$ ]]; then
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+    launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+  fi
   if [[ $SOLRBOOT =~ ^(y|Y)$ ]]; then
     launchctl load -w ~/Library/LaunchAgents/com.apache.solr.plist
   fi

@@ -1,14 +1,15 @@
 OSXAegirInstaller
 =================
 
-This script does everything that you need for Aegir to run natively on your Mac, it has been recently tested Mavericks 10.9, 10.9.1, 10.9.2. I expect it will work fine on 10.8.x as well but am not really supporting legacy versions of OS X anymore.
+This script does everything that you need for Aegir to run natively on your Mac that is running Maverics, If you are using an older version of OSX you will need to upgrade first. It has most recently been tested (25th March 2014) on Mavericks 10.9.2 .
+
+Install time ranges from 25 minutes for a single version of PHP up to 1 hour if you select all versions of PHP and ApacheSOLR. This is due to the fact most components are compiled specifically for yout system.
 
 It took around 3 months hacking and a patch to the Aegir project to get Aegir installable on a mac and then approximately 2 weeks to write the initial version of this script so I hope you say thanks with a [Paypal Donation](https://www.paypal.com/webscr?cmd=_donations&business=brian@briangilbert.net&item_name=OSXAegir%20Donation&currency_code=AUD) for the time I've saved you.
 
 Prerequisites
 -----------------
 *A gmail address/password you can use for relaying emails
-*XCode if you aren't using 10.9+
 
 What get's installed?
 ---------------------------

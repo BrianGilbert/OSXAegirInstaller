@@ -36,7 +36,7 @@
     ls -l /usr/local| awk '{print $3}'|grep root > /dev/null
     if [[ $? -eq 0 ]] ; then
       printf "# Setting it's permissions correctly..\n########\n"
-      sudo chown -R $USERNAME:admin /usr/local
+      sudo chown -R ${USERNAME}:admin /usr/local
       chmod 775 /usr/local
     fi
   fi
@@ -109,12 +109,12 @@
     say "input required"
     read -n1 CLEAN
 
-    if [[ $CLEAN =~ ^(y|Y)$ ]]; then
+    if [[ ${CLEAN} =~ ^(y|Y)$ ]]; then
       printf "# You entered Y\n########\n"
       printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew components, are you sure? [Y/n]\n########\n"
       say "There is no turning back.. This will uninstall a gir and all related homebrew components including any existing databases, are you sure?"
       read -n1 FORSURE
-      if [[ $FORSURE =~ ^(y|Y)$ ]]; then
+      if [[ ${FORSURE} =~ ^(y|Y)$ ]]; then
         printf "\n########\n# You entered Y\n"
         printf "\n########\n# Don't say I didn't warn you, cleaning everything..\n########\n"
         say "Don't say I didn't warn you, removing components.."
@@ -260,7 +260,7 @@
         say "input required"
         printf "# would you now like to re-install Aegir? [Y/n]\n########\n"
         read -n1 REINSTALL
-        if [[ $REINSTALL =~ ^(y|Y)$ ]]; then
+        if [[ ${REINSTALL} =~ ^(y|Y)$ ]]; then
           printf "\n########\n# You entered Y\n########\n"
         else
           printf "\n########\n# You entered N\n########\n"
@@ -297,7 +297,7 @@
   if type "brew" > /dev/null 2>&1; then
     printf "\n########\n# Affirmative! Lets make sure everything is up to date..\n# Just so you know, this may throw a few warnings..\n########\n"
     say "Making sure homebrew is up to date, you may see some errors in the output, thats ok."
-    export PATH=/usr/local/bin:/usr/local/sbin:$PATH
+    export PATH=/usr/local/bin:/usr/local/sbin:${PATH}
     brew prune
     brew update
     brew doctor
@@ -311,27 +311,20 @@
     printf "# Nope! Installing Homebrew now..\n########\n"
     say "Installing homebrew now, you'll need to hit return when prompted"
     ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
-    echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.bash_profile
-    echo  'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.zshrc
-    export PATH=/usr/local/bin:/usr/local/sbin:$PATH
+    echo 'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.bash_profile
+    echo 'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.zshrc
+    source ~/.bash_profile
   fi
 
-  printf "\n########\n# Doing some setup ready for Aegir install..\n########\n"
+  printf "\n########\n# Doing some setup ready for Aegir install..\n########"
   sudo mkdir -p /var/aegir
-  sudo chown $USERNAME /var/aegir
+  sudo chown ${USERNAME} /var/aegir
   sudo chgrp staff /var/aegir
   echo "$(date +"%Y-%m-%d %H:%M:%S")" > /var/aegir/.osxaegir
-  sudo dscl . append /Groups/_www GroupMembership $USERNAME
+  sudo dscl . append /Groups/_www GroupMembership ${USERNAME}
 
-  echo "########
-# Your hostname will be set to aegir.ld
+  echo "
 ########
-# Install the developmental version of Aegir (7.x-3.x)? [Y/n]:
-########"
-  say "input required"
-  read -n1 AEGIR7X
-
-  echo "########
 # I can install multiple versions of PHP; 5.3, 5.4 and/or 5.5.
 # Let me know which versions you'd like installed.
 # Set up PHP 5.3 [Y/n]:
@@ -339,7 +332,7 @@
   say "input required"
   read -n1 PHP53
 
-  if [[ $PHP53 =~ ^(y|Y)$ ]]; then
+  if [[ ${PHP53} =~ ^(y|Y)$ ]]; then
     echo "
 ########
 # Make PHP 5.3 the default [Y/n]:
@@ -355,8 +348,8 @@
   say "input required"
   read -n1 PHP54
 
-  if [[ ! $PHP53DEF =~ ^(y|Y)$ ]]; then
-    if [[ $PHP54 =~ ^(y|Y)$ ]]; then
+  if [[ ! ${PHP53DEF} =~ ^(y|Y)$ ]]; then
+    if [[ ${PHP54} =~ ^(y|Y)$ ]]; then
       echo "
 ########
 # Make PHP 5.4 the default [Y/n]:
@@ -373,7 +366,7 @@
   say "input required"
   read -n1 PHP55
 
-  if [[ $PHP53DEF =~ ^(y|Y)$ || $PHP54DEF =~ ^(y|Y)$ ]]; then
+  if [[ ${PHP53DEF} =~ ^(y|Y)$ || ${PHP54DEF} =~ ^(y|Y)$ ]]; then
     echo""
   else
     echo "
@@ -384,7 +377,7 @@
     read -n1 PHP55DEF
   fi
 
-  if [[ ! $PHP53 =~ ^(y|Y)$ && ! $PHP54 =~ ^(y|Y)$ && ! $PHP55 =~ ^(y|Y)$ ]]; then
+  if [[ ! ${PHP53} =~ ^(y|Y)$ && ! ${PHP54} =~ ^(y|Y)$ && ! ${PHP55} =~ ^(y|Y)$ ]]; then
     echo "
 ########
 # You didn't select any version of PHP?!? So I'm installing PHP5.5
@@ -402,7 +395,7 @@ echo "
   say "input required"
   read -n1 SOLR
 
-  if [[ $SOLR =~ ^(y|Y)$ ]]; then
+  if [[ ${SOLR} =~ ^(y|Y)$ ]]; then
     printf "# You entered Y\n########\n"
     echo "
 ########
@@ -410,7 +403,7 @@ echo "
 ########"
     say "input required"
     read -n1 SOLRBOOT
-    if [[ $SOLRBOOT =~ ^(y|Y)$ ]]; then
+    if [[ ${SOLRBOOT} =~ ^(y|Y)$ ]]; then
       printf "# You entered Y\n########\n"
     else
       printf "# You entered N\n########\n"
@@ -422,7 +415,7 @@ echo "
 # What address should aegirs email notifications get sent to? [enter your email address]:
 ########"
   say "This is the email that notifications from a gir will be sent to"
-  read email
+  read EMAIL
 
   echo "
 ########
@@ -434,27 +427,27 @@ echo "
 # Do you have a gmail account you can use? [Y/n]:
 ########"
   say "Do you have a gee mail address you can use to relay the messages?"
-  read -n1 gmail
-  if [[ $gmail =~ ^(y|Y)$ ]]; then
+  read -n1 GMAIL
+  if [[ ${GMAIL} =~ ^(y|Y)$ ]]; then
     printf "\n########\n# You entered Y\n########\n"
     printf "# OK, I'll attempt to set up postfix..\n"
     echo "########
 # Whats the full gmail address? (eg. aegir@gmail.com):
 ########"
   say "type your gee mail address in now"
-    read gmailaddress
+    read GMAILADDRESS
     echo "
 ########
 # What is the account password?
 ########"
   say "type your gee mail password in now"
-    read gmailpass
+    read GMAILPASS
 
     #setup mail sending
-    printf "\n########\n# No time like the present, lets set up postfix now.."
+    printf "\n########\n# No time like the present, lets set up postfix now..\n########\n"
     say "You may be prompted for your password"
     sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist > /dev/null 2&>1
-    echo "smtp.gmail.com:587 $gmailaddress:$gmailpass"  | sudo tee -a  /etc/postfix/sasl_passwd > /dev/null 2&>1
+    echo "smtp.gmail.com:587 ${GMAILADDRESS}:${GMAILPASS}"  | sudo tee -a  /etc/postfix/sasl_passwd > /dev/null 2&>1
     sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
     echo "
 myhostname = aegir.ld
@@ -474,7 +467,7 @@ smtp_sasl_security_options=
 smtp_use_tls=yes
 smtp_tls_security_level=encrypt
 tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf > /dev/null 2&>1
-    echo  "$email" >> ~/.forward
+    echo  "${EMAIL}" >> ~/.forward
     sudo postmap /etc/postfix/sasl_passwd
     sudo launchctl load -w /System/Library/LaunchDaemons/org.postfix.master.plist
   else
@@ -504,6 +497,7 @@ tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf > /dev/n
   printf "\n########\n# Installing drush..\n########\n"
   # Uninstall drush if it was previously installed via homebrew
   brew uninstall drush > /dev/null 2&>1
+  # printf "# Installing composer..\n########\n"  # this needs to be moved after phph installation
   brew install drush
   printf "\n########\n# Installing dnsmasq..\n########\n"
   brew install dnsmasq
@@ -588,7 +582,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
   fi
   curl https://gist.githubusercontent.com/BrianGilbert/5908352/raw/2b6f9094348af7b8d64c3582a0e6e67164bd0168/nginx.conf > /usr/local/etc/nginx/nginx.conf
-  sed -i '' 's/\[username\]/'$USERNAME'/' /usr/local/etc/nginx/nginx.conf
+  sed -i '' 's/\[username\]/'${USERNAME}'/' /usr/local/etc/nginx/nginx.conf
 
   say "You may be prompted for your password"
   sudo mkdir -p $(brew --prefix nginx)/logs
@@ -601,12 +595,12 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   brew install mariadb
   unset TMPDIR
   printf "\n########\n# Configuring mariadb..\n########\n"
-  mysql_install_db --user=$USERNAME --basedir="$(brew --prefix mariadb)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
+  mysql_install_db --user=${USERNAME} --basedir="$(brew --prefix mariadb)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
   curl https://gist.githubusercontent.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my-drupal.cnf
   say "You may be prompted for your password"
   sudo ln -s /usr/local/etc/my-drupal.cnf /etc/my.cnf
 
-if [[ $PHP55 =~ ^(y|Y)$ ]]; then
+if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php55..\n########\n"
   brew install php55 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php55-geoip
@@ -678,12 +672,12 @@ brew link php55
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
   chmod 755 /usr/local/bin/go55
 
-  if [[ ! $PHP55DEF =~ ^(y|Y)$ ]]; then
+  if [[ ! ${PHP55DEF} =~ ^(y|Y)$ ]]; then
     brew unlink php55
   fi
 fi
 
-if [[ $PHP54 =~ ^(y|Y)$ ]]; then
+if [[ ${PHP54} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php54..\n########\n"
   brew install php54 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php54-geoip
@@ -753,12 +747,12 @@ brew link php54
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go54
   chmod 755 /usr/local/bin/go54
 
-  if [[ ! $PHP54DEF =~ ^(y|Y)$ ]]; then
+  if [[ ! ${PHP54DEF} =~ ^(y|Y)$ ]]; then
     brew unlink php54
   fi
 fi
 
-if [[ $PHP53 =~ ^(y|Y)$ ]]; then
+if [[ ${PHP53} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php53 prerequisites..\n########\n"
   brew install re2c
   brew install flex
@@ -832,7 +826,7 @@ brew link php53
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   chmod 755 /usr/local/bin/go53
 
-  if [[ ! $PHP53DEF =~ ^(y|Y)$ ]]; then
+  if [[ ! ${PHP53DEF} =~ ^(y|Y)$ ]]; then
     brew unlink php53
   fi
 fi
@@ -845,13 +839,13 @@ fi
   brew install phpunit
 
   #Solr
-  if [[ $SOLR =~ ^(y|Y)$ ]]; then
+  if [[ ${SOLR} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing solr..\n########\n"
   brew install solr
   mkdir -p ~/Library/LaunchAgents
   printf "\n########\n# Downloading solr launch daemon..\n########\n"
   curl https://gist.githubusercontent.com/BrianGilbert/6208150/raw/dfe9d698aee2cdbe9eeae88437c5ec844774bdb4/com.apache.solr.plist > ~/Library/LaunchAgents/com.apache.solr.plist
-  sed -i '' 's/\[username\]/'$USERNAME'/' ~/Library/LaunchAgents/com.apache.solr.plist
+  sed -i '' 's/\[username\]/'${USERNAME}'/' ~/Library/LaunchAgents/com.apache.solr.plist
   fi
 
   printf "\n########\n# Setting up launch daemons..\n########\n"
@@ -865,22 +859,22 @@ fi
   printf "\n########\n# Launching daemons now..\n########\n"
   sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
   launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
-  if [[ $PHP55DEF =~ ^(y|Y)$ ]]; then
+  if [[ ${PHP55DEF} =~ ^(y|Y)$ ]]; then
     launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
     launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
   fi
-  if [[ $PHP54DEF =~ ^(y|Y)$ ]]; then
+  if [[ ${PHP54DEF} =~ ^(y|Y)$ ]]; then
     launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
     launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
   fi
-  if [[ $PHP53DEF =~ ^(y|Y)$ ]]; then
+  if [[ ${PHP53DEF} =~ ^(y|Y)$ ]]; then
     launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
     launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
   fi
-  if [[ $SOLRBOOT =~ ^(y|Y)$ ]]; then
+  if [[ ${SOLRBOOT} =~ ^(y|Y)$ ]]; then
     launchctl load -w ~/Library/LaunchAgents/com.apache.solr.plist
   fi
 
@@ -898,7 +892,7 @@ fi
 ########" #remove this echo when expects block below is fixed.
   say "Read the block above and enter responses as shown when propted"
 
-  sudo PATH="/usr/local/bin:/usr/local/sbin:$PATH" $(brew --prefix mariadb)/bin/mysql_secure_installation #remove this line when expects block below is fixed.
+  sudo PATH="/usr/local/bin:/usr/local/sbin:${PATH}" $(brew --prefix mariadb)/bin/mysql_secure_installation #remove this line when expects block below is fixed.
   # This expect block throws error
   # /usr/local/opt/mariadb/bin/mysql_secure_installation: line 379: find_mysql_client: command not found
   # Any help greatly appreciated..
@@ -923,7 +917,7 @@ fi
   #   send \"y\r\"
   #   expect eof"
 
-  echo "$USERNAME ALL=NOPASSWD: /usr/local/bin/nginx" | sudo tee -a  /etc/sudoers
+  echo "${USERNAME} ALL=NOPASSWD: /usr/local/bin/nginx" | sudo tee -a  /etc/sudoers
   ln -s /var/aegir/config/nginx.conf /usr/local/etc/nginx/aegir.conf
 
   printf "\n########\n# Adding aegir.conf include to ngix.conf..\n"
@@ -931,20 +925,20 @@ fi
 
   printf "# Aegir time..\n########\n"
   printf "# Downloading provision..\n########\n"
-  if [[ $AEGIR7X =~ ^(y|Y)$ ]]; then
-    $DRUSH dl --destination=/Users/$USERNAME/.drush provision-7.x-3.x
+  if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
+    ${DRUSH} dl --destination=/Users/${USERNAME}/.drush provision-7.x-3.x
   else
-    $DRUSH dl --destination=/Users/$USERNAME/.drush provision-6.x-2.0
+    ${DRUSH} dl --destination=/Users/${USERNAME}/.drush provision-6.x-2.0
   fi
   printf "\n########\n# Clearing drush caches..\n########\n"
-  $DRUSH cache-clear drush
+  ${DRUSH} cache-clear drush
   printf "\n########\n# Installing hostmaster..\n########\n"
 
   say "type the DB password you entered for my SQL earlier"
-  if [[ $AEGIR7X =~ ^(y|Y)$ ]]; then
-    $DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.x' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld #remove this line when/if expects block below is enabled again.
+  if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
+    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.x' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
   else
-    $DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.0' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld #remove this line when/if expects block below is enabled again.
+    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.0' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
   fi
 
   # This expect block works but the previous expect block doesn't so can't use this yet.
@@ -1088,7 +1082,7 @@ Gittip: https://www.gittip.com/Brian%20Gilbert/
 
     printf "\n########\n# Attempting to email it to you as well..\n########\n"
     say "emailing it to you as well"
-    mail -s 'Your local Aegir setup' $email < ~/Desktop/YourAegirSetup.txt
+    mail -s 'Your local Aegir setup' ${EMAIL} < ~/Desktop/YourAegirSetup.txt
 
     printf "\n########\n# The date.timezone value in /usr/local/etc/php/[version]/php.ini\n# Is set to Melbourne/Australia\n# You may want to change it to something that suits you better.\n########\n"
     # printf "The mysql root password is set to 'mysql' and login is only possible from localhost..\n"

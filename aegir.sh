@@ -18,10 +18,10 @@
   # Set some variables for username installing aegir and the OS X version
   USERNAME=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
   DRUSH='drush --php=/usr/local/bin/php'
-  OSX=`sw_vers -productVersion`
+  OSX=`sw_vers -productVersion | cut -c 1-4`
 
   # Make sure that the script wasn't run as root.
-  if [ $USERNAME = "root" ] ; then
+  if [ ${USERNAME} = "root" ] ; then
     printf "########\n# This script should not be run as sudo or root. exiting.\n########\n"
     say "This script should not be run as sudo or root. exiting."
     exit
@@ -83,7 +83,7 @@
 
   ps aux|grep "httpd"|grep -v grep > /dev/null
   if [[ $? -eq 1 ]] ; then
-    printf "########\n# Apache isn't installed, continuing..\n########\n"
+    printf "########\n# Apache isn't active, continuing..\n########\n"
   else
     printf "########\n# Disabling apache now..\n########\n"
     say "you may need to enter your password"
@@ -91,10 +91,10 @@
   fi
 
   printf "\n########\n# Checking OS version..\n########\n"
-  if [ $OSX = 10.9 -o $OSX = 10.9.1 -o $OSX = 10.9.2 -o $OSX = 10.9.3 ] ; then
+  if [ ${OSX} = 10.9 ] ; then
     printf "# Your using $OSX, so let's go!\n########\n"
   else
-    printf "# $OSX isn't a supported version for this script\n# Update to 10.9+ and rerun the script, exiting.\n########\n"
+    printf "# ${OSX} isn't a supported version for this script\n# Update to 10.9+ and rerun the script, exiting.\n########\n"
       exit
   fi
 
@@ -301,7 +301,7 @@
     brew prune
     brew update
     brew doctor
-    if [[ $? -eq 1 ]] ; then
+    if [[ $? -eq 0 ]] ; then
       printf "########\n# Homebrew in order, continuing\n########"
     else
       printf "########\n# Homebrew needs some work, exiting\n########"
@@ -326,6 +326,12 @@
   echo "########
 # Your hostname will be set to aegir.ld
 ########
+# Install the developmental version of Aegir (7.x-3.x)? [Y/n]:
+########"
+  say "input required"
+  read -n1 AEGIR7X
+
+  echo "########
 # I can install multiple versions of PHP; 5.3, 5.4 and/or 5.5.
 # Let me know which versions you'd like installed.
 # Set up PHP 5.3 [Y/n]:
@@ -333,12 +339,14 @@
   say "input required"
   read -n1 PHP53
 
-  echo "
+  if [[ $PHP53 =~ ^(y|Y)$ ]]; then
+    echo "
 ########
 # Make PHP 5.3 the default [Y/n]:
 ########"
-  say "input required"
-  read -n1 PHP53DEF
+    say "input required"
+    read -n1 PHP53DEF
+  fi
 
   echo "
 ########
@@ -348,12 +356,14 @@
   read -n1 PHP54
 
   if [[ ! $PHP53DEF =~ ^(y|Y)$ ]]; then
-    echo "
+    if [[ $PHP54 =~ ^(y|Y)$ ]]; then
+      echo "
 ########
 # Make PHP 5.4 the default [Y/n]:
 ########"
-    say "input required"
-    read -n1 PHP54DEF
+      say "input required"
+      read -n1 PHP54DEF
+    fi
   fi
 
   echo "
@@ -856,18 +866,18 @@ fi
   sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
   launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
   if [[ $PHP55DEF =~ ^(y|Y)$ ]]; then
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
     launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
   fi
   if [[ $PHP54DEF =~ ^(y|Y)$ ]]; then
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
     launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
   fi
   if [[ $PHP53DEF =~ ^(y|Y)$ ]]; then
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
+    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
     launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
   fi
   if [[ $SOLRBOOT =~ ^(y|Y)$ ]]; then
@@ -921,13 +931,21 @@ fi
 
   printf "# Aegir time..\n########\n"
   printf "# Downloading provision..\n########\n"
-  $DRUSH dl --destination=/Users/$USERNAME/.drush provision-6.x-2.0
+  if [[ $AEGIR7X =~ ^(y|Y)$ ]]; then
+    $DRUSH dl --destination=/Users/$USERNAME/.drush provision-7.x-3.x
+  else
+    $DRUSH dl --destination=/Users/$USERNAME/.drush provision-6.x-2.0
+  fi
   printf "\n########\n# Clearing drush caches..\n########\n"
   $DRUSH cache-clear drush
   printf "\n########\n# Installing hostmaster..\n########\n"
 
   say "type the DB password you entered for my SQL earlier"
-  $DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.0' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld #remove this line when/if expects block below is enabled again.
+  if [[ $AEGIR7X =~ ^(y|Y)$ ]]; then
+    $DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.x' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld #remove this line when/if expects block below is enabled again.
+  else
+    $DRUSH hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.0' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld #remove this line when/if expects block below is enabled again.
+  fi
 
   # This expect block works but the previous expect block doesn't so can't use this yet.
   # expect -c "

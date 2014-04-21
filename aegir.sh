@@ -135,19 +135,19 @@
           kill $(ps aux | grep 'mysqld' | awk '{print $2}')
         fi
 
-        if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist" ] ; then
-          launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-          rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+        if [ -e "~/Library/LaunchAgents/homebrew.mxcl.php53.plist" ] ; then
+          launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
+          rm ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
         fi
 
-        if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist" ] ; then
-          launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
-          rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+        if [ -e "~/Library/LaunchAgents/homebrew.mxcl.php54.plist" ] ; then
+          launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist
+          rm ~/Library/LaunchAgents/homebrew.mxcl.php54.plist
         fi
 
-        if [ -e "~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist" ] ; then
-          launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
-          rm ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+        if [ -e "~/Library/LaunchAgents/homebrew.mxcl.php55.plist" ] ; then
+          launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
+          rm ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
         fi
 
         if [ -e "~/Library/LaunchAgents/org.aegir.hosting.queued.plist" ] ; then
@@ -647,7 +647,7 @@ xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.i
   say "You may be prompted for your password"
   sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
 
-  cp $(brew --prefix josegonzalez/php/php55)/homebrew-php.josegonzalez.php55.plist ~/Library/LaunchAgents/
+  cp $(brew --prefix josegonzalez/php/php55)/homebrew.mxcl.php55.plist ~/Library/LaunchAgents/
 
   echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
@@ -658,10 +658,10 @@ rm /usr/local/opt/xhprof > /dev/null 2>&1
 ln -s  $(brew --prefix php55-xhprof) /usr/local/opt/xhprof
 
 # Stop php-fpm and start correct version
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
-launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
 
 # Brew link correct php version
 brew unlink php53
@@ -722,7 +722,7 @@ xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.4/conf.d/ext-xdebug.i
 	sudo ln -s $(brew --prefix josegonzalez/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
 
   mkdir -p ~/Library/LaunchAgents
-  cp $(brew --prefix josegonzalez/php/php54)/homebrew-php.josegonzalez.php54.plist ~/Library/LaunchAgents/
+  cp $(brew --prefix josegonzalez/php/php54)/homebrew.mxcl.php54.plist ~/Library/LaunchAgents/
 
   echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
@@ -733,10 +733,10 @@ rm /usr/local/opt/xhprof > /dev/null 2>&1
 ln -s  $(brew --prefix php54-xhprof) /usr/local/opt/xhprof
 
 # Stop php-fpm and start correct version
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
-launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist
 
 # Brew link correct php version
 brew unlink php53
@@ -801,7 +801,7 @@ xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.i
   say "You may be prompted for your password"
   sudo ln -s $(brew --prefix josegonzalez/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
 
-  cp $(brew --prefix josegonzalez/php/php53)/homebrew-php.josegonzalez.php53.plist ~/Library/LaunchAgents/
+  cp $(brew --prefix josegonzalez/php/php53)/homebrew.mxcl.php53.plist ~/Library/LaunchAgents/
 
   echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
@@ -812,10 +812,10 @@ rm /usr/local/opt/xhprof > /dev/null 2>&1
 ln -s  $(brew --prefix php53-xhprof) /usr/local/opt/xhprof
 
 # Stop php-fpm and start correct version
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
-launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
-launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
 
 # Brew link correct php version
 brew unlink php54
@@ -860,19 +860,19 @@ fi
   sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
   launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
   if [[ ${PHP55DEF} =~ ^(y|Y)$ ]]; then
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
-    launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
+    launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
   fi
   if [[ ${PHP54DEF} =~ ^(y|Y)$ ]]; then
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist > /dev/null 2>&1
-    launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
+    launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist
   fi
   if [[ ${PHP53DEF} =~ ^(y|Y)$ ]]; then
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist > /dev/null 2>&1
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php55.plist > /dev/null 2>&1
-    launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+    launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
   fi
   if [[ ${SOLRBOOT} =~ ^(y|Y)$ ]]; then
     launchctl load -w ~/Library/LaunchAgents/com.apache.solr.plist

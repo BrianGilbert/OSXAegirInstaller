@@ -33,6 +33,11 @@ The script creates unsigned SSL certificates so that you can access any of the s
 
 Installation Instructions
 ------------------------------
+Always check the current status first: BrianGilbert/OSXAegirInstaller/issues/25
+    
+* This only shows the known status
+* Status is based on my ability to confirm any reports the script is not working, where due to an upstream issue I am unable to fix it myself
+
 Execute the following in terminal to run the installer:
 
     cd ~

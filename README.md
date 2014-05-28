@@ -41,7 +41,7 @@ Always check the current status first: https://github.com/BrianGilbert/OSXAegirI
 Execute the following in terminal to run the installer:
 
     cd ~
-    curl -O https://raw.github.com/BrianGilbert/OSXAegirInstaller/master/aegir.sh
+    curl -O https://raw.githubusercontent.com/BrianGilbert/OSXAegirInstaller/master/aegir.sh
     chmod +x aegir.sh
     ./aegir.sh
 

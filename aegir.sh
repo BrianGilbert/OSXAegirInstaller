@@ -35,7 +35,7 @@
     fi
     ls -l /usr/local| awk '{print $3}'|grep root > /dev/null
     if [[ $? -eq 0 ]] ; then
-      printf "# Setting it's permissions correctly..\n########\n"
+      printf "# Setting its permissions correctly..\n########\n"
       sudo chown -R ${USERNAME}:admin /usr/local
       chmod 775 /usr/local
     fi
@@ -92,7 +92,7 @@
 
   printf "\n########\n# Checking OS version..\n########\n"
   if [ ${OSX} = 10.9 ] ; then
-    printf "# Your using $OSX, so let's go!\n########\n"
+    printf "# You're using $OSX, so let's go!\n########\n"
   else
     printf "# ${OSX} isn't a supported version for this script\n# Update to 10.9+ and rerun the script, exiting.\n########\n"
       exit
@@ -295,8 +295,8 @@
 
   printf "\n########\n# Checking if Homebrew is installed..\n########\n"
   if type "brew" > /dev/null 2>&1; then
-    printf "\n########\n# Affirmative! Lets make sure everything is up to date..\n# Just so you know, this may throw a few warnings..\n########\n"
-    say "Making sure homebrew is up to date, you may see some errors in the output, thats ok."
+    printf "\n########\n# Affirmative! Let's make sure everything is up to date..\n# Just so you know, this may throw a few warnings..\n########\n"
+    say "Making sure homebrew is up to date, you may see some errors in the output, that's ok."
     export PATH=/usr/local/bin:/usr/local/sbin:${PATH}
     brew prune
     brew update
@@ -444,7 +444,7 @@ echo "
     read GMAILPASS
 
     #setup mail sending
-    printf "\n########\n# No time like the present, lets set up postfix now..\n########\n"
+    printf "\n########\n# No time like the present, let's set up postfix now..\n########\n"
     say "You may be prompted for your password"
     sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist > /dev/null 2&>1
     echo "smtp.gmail.com:587 ${GMAILADDRESS}:${GMAILPASS}"  | sudo tee -a  /etc/postfix/sasl_passwd > /dev/null 2&>1
@@ -552,7 +552,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   sudo sh -c 'echo "nameserver 127.0.0.1
   domain ." >> /etc/resolver/default'
 
-  printf "# Setting known network interfaces to use 127.0.0.1 for DNS lookups,this may throw errors, thats ok...\n########\n"
+  printf "# Setting known network interfaces to use 127.0.0.1 for DNS lookups,this may throw errors, that's ok...\n########\n"
   sudo networksetup -setdnsservers AirPort 127.0.0.1
   sudo networksetup -setdnsservers Ethernet 127.0.0.1
   sudo networksetup -setdnsservers 'Thunderbolt Ethernet' 127.0.0.1
@@ -994,7 +994,7 @@ The date.timezone value is set to Melbourne/Australia you may want
 to change it to something that suits you better.
 
 Your Aegir sites are accesible using http and https, though you
-will need to trush the certificate in your browser.
+will need to trash the certificate in your browser.
 
 To change it, depending on what versions of php you installed,
 type each of these in terminal and search for Melbourne:

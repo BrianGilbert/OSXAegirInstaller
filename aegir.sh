@@ -994,7 +994,7 @@ The date.timezone value is set to Melbourne/Australia you may want
 to change it to something that suits you better.
 
 Your Aegir sites are accesible using http and https, though you
-will need to trush the certificate in your browser.
+will need to trash the certificate in your browser.
 
 To change it, depending on what versions of php you installed,
 type each of these in terminal and search for Melbourne:

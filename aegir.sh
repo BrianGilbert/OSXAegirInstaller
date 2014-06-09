@@ -271,25 +271,55 @@
         printf "# Exiting..\n########\n"
         exit
       fi
-    # else
-    #   printf "# Should I attempt an upgrade? [Y/n]\n########\n"
-    #   say "Should I remove it and do, a clean install?"
-    #   read UPGRADE
-    #   if [[ $UPGRADE =~ ^(y|Y)$ ]]; then
-    #     $DRUSH dl --destination=/var/aegir/.drush provision-6.x-2.0
-    #     $DRUSH cache-clear drush
-    #     OLD_AEGIR_DIR=/var/aegir/hostmaster/000
-    #     AEGIR_VERSION=6.x-2.0
-    #     AEGIR_DOMAIN=aegir.ld
-    #     cd $OLD_AEGIR_DIR
-    #     drush hostmaster-migrate $AEGIR_DOMAIN $HOME/hostmaster-$AEGIR_VERSION
-    #     say "Upgrade isn't implemented yet"
-    #     exit
-    #   else
-    #     printf "# Exiting..\n########\n"
-    #     say "Exiting."
-    #     exit
-    #   fi
+    else
+      printf "# Should I attempt an upgrade? [Y/n]\n########\n"
+      say "Should I remove it and do, a clean install?"
+      read UPGRADE
+      if [[ $UPGRADE =~ ^(y|Y)$ ]]; then
+
+        printf "# Should I attempt an upgrade? [Y/n]\n########\n"
+        read DEV
+        if [[ $DEV =~ ^(y|Y)$ ]]; then
+          INSTALL = '7.x-3.x';
+        else
+          INSTALL = '6.x-2.1';
+        fi
+
+        if [ -d "/var/aegir/hostmaster-6.x-2.x" ]; then
+          # Control will enter here if 6.x-2.0 directory exists.
+          CURRENTINSTALL = '/var/aegir/hostmaster-6.x-2.x';
+        fi
+
+        if [ -d "/var/aegir/hostmaster-6.x-2.0" ]; then
+          # Control will enter here if 6.x-2.0 directory exists.
+          CURRENTINSTALL = '/var/aegir/hostmaster-6.x-2.0';
+        fi
+
+        if [ -d "/var/aegir/hostmaster-6.x-2.1" ]; then
+          # Control will enter here if 6.x-2.0 directory exists.
+          CURRENTINSTALL = '/var/aegir/hostmaster-6.x-2.1';
+        fi
+
+        if [ -d "/var/aegir/hostmaster-7.x-3.x" ]; then
+          # Control will enter here if 7.x-3.x directory exists.
+          CURRENTINSTALL = '/var/aegir/hostmaster-7.x-3.x';
+        fi
+
+        # Aegir upgrade
+        say "Input will be required."
+        $DRUSH dl --destination=/Users/admin/.drush provision-{$INSTALL};
+        $DRUSH cache-clear drush
+        OLD_AEGIR_DIR={$CURRENTINSTALL};
+        AEGIR_VERSION={$INSTALL};
+        AEGIR_DOMAIN=aegir.ld;
+        cd $OLD_AEGIR_DIR;
+        drush hostmaster-migrate $AEGIR_DOMAIN /var/aegir/hostmaster-$AEGIR_VERSION --debug
+        exit
+      else
+        printf "# Exiting..\n########\n"
+        say "Exiting."
+        exit
+      fi
     fi
   fi
 
@@ -316,12 +346,20 @@
     source ~/.bash_profile
   fi
 
-  printf "\n########\n# Doing some setup ready for Aegir install..\n########"
+  printf "\n########\n# Doing some setup ready for Aegir install..\n########\n"
   sudo mkdir -p /var/aegir
   sudo chown ${USERNAME} /var/aegir
   sudo chgrp staff /var/aegir
   echo "$(date +"%Y-%m-%d %H:%M:%S")" > /var/aegir/.osxaegir
   sudo dscl . append /Groups/_www GroupMembership ${USERNAME}
+
+  echo "
+# Your hostname will be set to aegir.ld
+########
+# Install the developmental version of Aegir (7.x-3.x)? [Y/n]:
+########"
+  say "input required"
+  read -n1 AEGIR7X
 
   echo "
 ########
@@ -331,6 +369,11 @@
 ########"
   say "input required"
   read -n1 PHP53
+  if [[ ${PHP53} =~ ^(y|Y)$ ]]; then
+    printf "# You entered Y\n########\n"
+  else
+    printf "# You entered N\n########\n"
+  fi
 
   if [[ ${PHP53} =~ ^(y|Y)$ ]]; then
     echo "
@@ -339,6 +382,11 @@
 ########"
     say "input required"
     read -n1 PHP53DEF
+    if [[ ${PHP53DEF} =~ ^(y|Y)$ ]]; then
+      printf "# You entered Y\n########\n"
+    else
+      printf "# You entered N\n########\n"
+    fi
   fi
 
   echo "
@@ -347,6 +395,11 @@
 ########"
   say "input required"
   read -n1 PHP54
+  if [[ ${PHP54} =~ ^(y|Y)$ ]]; then
+    printf "# You entered Y\n########\n"
+  else
+    printf "# You entered N\n########\n"
+  fi
 
   if [[ ! ${PHP53DEF} =~ ^(y|Y)$ ]]; then
     if [[ ${PHP54} =~ ^(y|Y)$ ]]; then
@@ -356,6 +409,11 @@
 ########"
       say "input required"
       read -n1 PHP54DEF
+      if [[ ${PHP54DEF} =~ ^(y|Y)$ ]]; then
+        printf "# You entered Y\n########\n"
+      else
+        printf "# You entered N\n########\n"
+      fi
     fi
   fi
 
@@ -365,9 +423,14 @@
 ########"
   say "input required"
   read -n1 PHP55
+  if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
+    printf "# You entered Y\n########\n"
+  else
+    printf "# You entered N\n########\n"
+  fi
 
   if [[ ${PHP53DEF} =~ ^(y|Y)$ || ${PHP54DEF} =~ ^(y|Y)$ ]]; then
-    echo""
+    echo ""
   else
     echo "
 ########
@@ -375,6 +438,11 @@
 ########"
     say "input required"
     read -n1 PHP55DEF
+    if [[ ${PHP55DEF} =~ ^(y|Y)$ ]]; then
+      printf "# You entered Y\n########\n"
+    else
+      printf "# You entered N\n########\n"
+    fi
   fi
 
   if [[ ! ${PHP53} =~ ^(y|Y)$ && ! ${PHP54} =~ ^(y|Y)$ && ! ${PHP55} =~ ^(y|Y)$ ]]; then
@@ -410,72 +478,6 @@ echo "
     fi
   fi
 
-  echo "
-########
-# What address should aegirs email notifications get sent to? [enter your email address]:
-########"
-  say "This is the email that notifications from a gir will be sent to"
-  read EMAIL
-
-  echo "
-########
-# I need to set up postfix so you receive emails from Aegir, if you don't
-# installation will surely fail !!!
-#
-# !!! This has only been tested with gmail accounts !!!
-#
-# Do you have a gmail account you can use? [Y/n]:
-########"
-  say "Do you have a gee mail address you can use to relay the messages?"
-  read -n1 GMAIL
-  if [[ ${GMAIL} =~ ^(y|Y)$ ]]; then
-    printf "\n########\n# You entered Y\n########\n"
-    printf "# OK, I'll attempt to set up postfix..\n"
-    echo "########
-# Whats the full gmail address? (eg. aegir@gmail.com):
-########"
-  say "type your gee mail address in now"
-    read GMAILADDRESS
-    echo "
-########
-# What is the account password?
-########"
-  say "type your gee mail password in now"
-    read GMAILPASS
-
-    #setup mail sending
-    printf "\n########\n# No time like the present, lets set up postfix now..\n########\n"
-    say "You may be prompted for your password"
-    sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist > /dev/null 2&>1
-    echo "smtp.gmail.com:587 ${GMAILADDRESS}:${GMAILPASS}"  | sudo tee -a  /etc/postfix/sasl_passwd > /dev/null 2&>1
-    sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
-    echo "
-myhostname = aegir.ld
-
-# Minimum Postfix-specific configurations.
-mydomain_fallback = localhost
-mail_owner = _postfix
-setgid_group = _postdrop
-relayhost=smtp.gmail.com:587
-
-# Enable SASL authentication in the Postfix SMTP client.
-smtp_sasl_auth_enable=yes
-smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
-smtp_sasl_security_options=
-
-# Enable Transport Layer Security (TLS), i.e. SSL.
-smtp_use_tls=yes
-smtp_tls_security_level=encrypt
-tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf > /dev/null 2&>1
-    echo  "${EMAIL}" >> ~/.forward
-    sudo postmap /etc/postfix/sasl_passwd
-    sudo launchctl load -w /System/Library/LaunchDaemons/org.postfix.master.plist
-  else
-    printf "\n# Mail sending from aegir won't actually work until you configure postfix properly..\n"
-    printf "\n# See: http://realityloop.com/blog/2011/06/05/os-x-ditching-mamp-pro-part-2-gmail-email-relay\n"
-    say "Mail sending won't actually work until you configure postfix properly"
-  fi
-
   # Tap required kegs
   printf "\n########\n# Now we'll tap some extra kegs we need..\n########\n"
   brew tap homebrew/versions
@@ -498,6 +500,9 @@ tls_random_source=dev:/dev/urandom" | sudo tee -a  /etc/postfix/main.cf > /dev/n
   # Uninstall drush if it was previously installed via homebrew
   brew uninstall drush > /dev/null 2&>1
   # printf "# Installing composer..\n########\n"  # this needs to be moved after phph installation
+  # brew install composer
+  #composer global require drush/drush:6.*
+  #composer global require drush/drush:dev-master
   brew install drush
   printf "\n########\n# Installing dnsmasq..\n########\n"
   brew install dnsmasq
@@ -928,7 +933,7 @@ fi
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
     ${DRUSH} dl --destination=/Users/${USERNAME}/.drush provision-7.x-3.x
   else
-    ${DRUSH} dl --destination=/Users/${USERNAME}/.drush provision-6.x-2.0
+    ${DRUSH} dl --destination=/Users/${USERNAME}/.drush provision-6.x-2.1
   fi
   printf "\n########\n# Clearing drush caches..\n########\n"
   ${DRUSH} cache-clear drush
@@ -938,7 +943,7 @@ fi
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
     ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.x' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
   else
-    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.0' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
+    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.1' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
   fi
 
   # This expect block works but the previous expect block doesn't so can't use this yet.
@@ -952,14 +957,14 @@ fi
 
   if [[ $(wget http://aegir.ld > /dev/null 2>&1 | egrep "HTTP" | awk {'print $6'}) != "404" ]] ; then
     rm index.html > /dev/null 2>&1
-    printf "\n########\n# Changing some hostmaster varibles to defaults we like..\n########\n"
-    drush @hostmaster vset hosting_feature_platform_pathauto 1
-    drush @hostmaster vset hosting_feature_cron 0
-    drush @hostmaster vset "hosting_feature_Cron queue" 0
-    drush @hostmaster vset "hosting_feature_Hosting queue daemon" 1
-    drush @hostmaster vset hosting_feature_queued 1
-    drush @hostmaster vset hosting_queue_tasks_enabled 0
-    drush @hostmaster vset hosting_require_disable_before_delete 0
+    # printf "\n########\n# Changing some hostmaster varibles to defaults we like..\n########\n"
+    # drush @hostmaster vset hosting_feature_platform_pathauto 1
+    # drush @hostmaster vset hosting_feature_cron 0
+    # drush @hostmaster vset "hosting_feature_Cron queue" 0
+    # drush @hostmaster vset "hosting_feature_Hosting queue daemon" 1
+    # drush @hostmaster vset hosting_feature_queued 1
+    # drush @hostmaster vset hosting_queue_tasks_enabled 0
+    # drush @hostmaster vset hosting_require_disable_before_delete 0
 
     printf "\n########\n# Download and start hosting queue daemon launch agent..\n########\n"
     curl https://gist.githubusercontent.com/BrianGilbert/9226172/raw/509f69711a5a2c61ec41b6d3b690a72096b26703/org.aegir.hosting.queued.plist > ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
@@ -1089,8 +1094,8 @@ Gittip: https://www.gittip.com/Brian%20Gilbert/
     printf "\n########\n# Double check your network interfaces to ensure their DNS server\n# is set to 127.0.0.1 as we only tried to set commonly named interfaces.\n########\n"
     printf "\n########\n# Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n########\n"
     printf "\n########\n# Finished $(date +"%Y-%m-%d %H:%M:%S")\n########\n"
-    open http://rl.cm/osxaegirwoot
-    sleep 30;open http://rl.cm/osxaegirdonation
+#    open http://rl.cm/osxaegirwoot
+#    sleep 30;open http://rl.cm/osxaegirdonation
   else
     echo "\n########\n# Something has gone wrong!\n# The aegir.ld site isn't accesible.\n# you'll probably need to rerun the installation.\n########\n"
   fi

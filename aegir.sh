@@ -1094,8 +1094,8 @@ Gittip: https://www.gittip.com/Brian%20Gilbert/
     printf "\n########\n# Double check your network interfaces to ensure their DNS server\n# is set to 127.0.0.1 as we only tried to set commonly named interfaces.\n########\n"
     printf "\n########\n# Please say thanks @BrianGilbert_  http://twiter.com/BrianGilbert_\n########\n"
     printf "\n########\n# Finished $(date +"%Y-%m-%d %H:%M:%S")\n########\n"
-#    open http://rl.cm/osxaegirwoot
-#    sleep 30;open http://rl.cm/osxaegirdonation
+    open http://rl.cm/osxaegirwoot
+    sleep 30;open http://rl.cm/OSXAegirDonation
   else
     echo "\n########\n# Something has gone wrong!\n# The aegir.ld site isn't accesible.\n# you'll probably need to rerun the installation.\n########\n"
   fi

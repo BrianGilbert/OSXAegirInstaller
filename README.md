@@ -5,7 +5,7 @@ This script does everything that you need for Aegir to run natively on your Mac 
 
 Install time ranges from 25 minutes for a single version of PHP up to 1 hour if you select all versions of PHP and ApacheSOLR. This is due to the fact most components are compiled specifically for yout system.
 
-It took around 3 months hacking and a patch to the Aegir project to get Aegir installable on a mac and then approximately 2 weeks to write the initial version of this script so I hope you say thanks with a [Paypal Donation](https://www.paypal.com/webscr?cmd=_donations&business=brian@briangilbert.net&item_name=OSXAegir%20Donation&currency_code=AUD) for the time I've saved you.
+It took around 3 months hacking and a patch to the Aegir project to get Aegir installable on a mac and then approximately 2 weeks to write the initial version of this script so I hope you say thanks with a [Paypal Donation](https://www.paypal.com/webscr?cmd=_donations&business=brian@briangilbert.net&item_name=OSXAegir%20Donation&currency_code=USD) for the time I've saved you.
 
 Prerequisites
 -----------------

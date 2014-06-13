@@ -163,7 +163,7 @@
         brew uninstall php53-xdebug
         brew uninstall php53-xhprof
         brew uninstall php53
-        sudo rm /var/log/nginx/php53-fpm.log
+        sudo mv /var/log/nginx/php53-fpm.log{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
         rm /usr/local/bin/go53
 
         brew uninstall php54-geoip
@@ -173,7 +173,7 @@
         brew uninstall php54-xdebug
         brew uninstall php54-xhprof
         brew uninstall php54
-        sudo rm /var/log/nginx/php54-fpm.log
+        sudo mv /var/log/nginx/php54-fpm.log{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
         rm /usr/local/bin/go54
 
         brew uninstall php55-geoip
@@ -183,7 +183,7 @@
         brew uninstall php55-xdebug
         brew uninstall php55-xhprof
         brew uninstall php55
-        sudo rm /var/log/nginx/php55-fpm.log
+        sudo mv /var/log/nginx/php55-fpm.log{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
         rm /usr/local/bin/go55
 
         rm -rf /usr/local/etc/php
@@ -199,17 +199,17 @@
         brew uninstall openssl
         brew uninstall solr
 
-        sudo rm $(brew --prefix nginx)/logs/error.log
+        sudo mv $(brew --prefix nginx)/logs/error.log{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
         rm -rf /usr/local/etc/nginx
         rm -rf /usr/local/var/run/nginx
-        sudo rm /var/log/nginx/error.log
+        sudo mv /var/log/nginx/error.log{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
         brew uninstall nginx
 
         brew uninstall pcre geoip
         brew uninstall dnsmasq
-        sudo rm /etc/resolv.dnsmasq.conf
-        rm -rf /usr/local/etc/dnsmasq.conf
-        sudo rm /etc/resolver/default
+        sudo mv /etc/resolv.dnsmasq.conf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo mv /usr/local/etc/dnsmasq.conf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo mv /etc/resolver/default{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
         sudo networksetup -setdnsservers AirPort empty
   			sudo networksetup -setdnsservers Ethernet empty
   			sudo networksetup -setdnsservers 'Thunderbolt Ethernet' empty
@@ -221,18 +221,18 @@
         brew uninstall wget
         printf "# Removing related configurations..\n########\n"
         sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist
-        sudo rm /etc/postfix/sasl_passwd
-        sudo rm /etc/postfix/main.cf
+        sudo mv /etc/postfix/sasl_passwd{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo mv /etc/postfix/main.cf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
         sudo cp /etc/postfix/main.cf.orig /etc/postfix/main.cf
         rm ~/.forward
 
         rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
   			brew uninstall mariadb
-        rm /usr/local/etc/my-drupal.cnf
-        rm /usr/local/etc/my.cnf
-        rm -rf /usr/local/etc/my.cnf.d
-        sudo rm /etc/my.cnf
-        rm -rf /usr/local/var/mysql
+        mv /usr/local/etc/my-drupal.cnf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        mv /usr/local/etc/my.cnf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        mv  /usr/local/etc/my.cnf.d{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo mv /etc/my.cnf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        # rm -rf /usr/local/var/mysql # do not delete existing databases!
 
         brew uninstall autoconf
         brew uninstall cmake
@@ -252,10 +252,10 @@
         brew uninstall zlib
         brew uninstall apple-gcc42
 
-        rm ~/Desktop/YourAegirSetup.txt
+        mv ~/Desktop/YourAegirSetup.txt{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
 
-        printf "# Removing Aegir folder..\n########\n"
-        sudo rm -rf /var/aegir
+        printf "# Renaming your Aegir folder to /var/aegir.pre-uninstall-TI-ME-ST-AM-P....\n########\n"
+        sudo mv /var/aegir{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
 
         say "input required"
         printf "# would you now like to re-install Aegir? [Y/n]\n########\n"
@@ -513,7 +513,7 @@ echo "
   printf "########\n# Setting up wildcard DNS so that domains ending in dot ld will resolve to your local machine\n"
   if [ -e "/usr/local/etc/dnsmasq.conf" ] ; then
     printf "########\n# You already have a dnsmasq.conf file..\n# So this all works proerly I'm going to delete and recreate it..\n########\n"
-    rm /usr/local/etc/dnsmasq.conf
+    mv /usr/local/etc/dnsmasq.conf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
   fi
 
   printf "# Setting dnsmasq config..\n########\n"
@@ -528,7 +528,7 @@ echo "
   if [ -e "/etc/resolv.dnsmasq.conf" ] ; then
     printf "# You already have a resolv.conf set..\n# So this all works properly I'm going to delete and recreate it..\n########\n"
     say "You may be prompted for your password"
-    sudo rm /etc/resolv.dnsmasq.conf
+    sudo mv /etc/resolv.dnsmasq.conf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
   fi
 
   printf "# Setting OpenDNS and Google DNS servers as fallbacks..\n########\n"
@@ -549,7 +549,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   if [ -e "/etc/resolver/default" ] ; then
     printf "# You already have a resolver set for when you are offline..\n# So this all works properly I'm going to delete and recreate it..\n########\n"
     say "You may be prompted for your password"
-    sudo rm /etc/resolver/default
+    sudo mv /etc/resolver/default{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
   fi
 
   printf "########\n# Making local domains resolve when your disconnected from net..\n########\n"
@@ -634,47 +634,47 @@ if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
   # Additions for xdebug to work with PHPStorm
   echo "xdebug.max_nesting_level = 200
 
-xdebug.profiler_enable = 1
-xdebug.profiler_enable_trigger = 1
-xdebug.profiler_output_name = xdebug-profile-cachegrind.out-%H-%R
-xdebug.profiler_output_dir = /tmp/xdebug/
+	xdebug.profiler_enable = 1
+	xdebug.profiler_enable_trigger = 1
+	xdebug.profiler_output_name = xdebug-profile-cachegrind.out-%H-%R
+	xdebug.profiler_output_dir = /tmp/xdebug/
 
-xdebug.remote_autostart = 0
-xdebug.remote_enable=1
-xdebug.remote_connect_back = 1
-xdebug.remote_port = 9001
-xdebug.remote_host = localhost
+	xdebug.remote_autostart = 0
+	xdebug.remote_enable=1
+	xdebug.remote_connect_back = 1
+	xdebug.remote_port = 9001
+	xdebug.remote_host = localhost
 
-xdebug.var_display_max_children = 128
-xdebug.var_display_max_data = 2048
-xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
+	xdebug.var_display_max_children = 128
+	xdebug.var_display_max_data = 2048
+	xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
 
-  say "You may be prompted for your password"
-  sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
+	say "You may be prompted for your password"
+	sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
 
-  cp $(brew --prefix josegonzalez/php/php55)/homebrew.mxcl.php55.plist ~/Library/LaunchAgents/
+	cp $(brew --prefix josegonzalez/php/php55)/homebrew.mxcl.php55.plist ~/Library/LaunchAgents/
 
-  echo "#!/bin/sh
-# Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
-# of Realityloop @Realityloop http://realitylop.com/
+	echo "#!/bin/sh
+	# Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
+	# of Realityloop @Realityloop http://realitylop.com/
 
-# Remove old symlink for xhprof and create correct one for this version of php
-rm /usr/local/opt/xhprof > /dev/null 2>&1
-ln -s  $(brew --prefix php55-xhprof) /usr/local/opt/xhprof
+	# Remove old symlink for xhprof and create correct one for this version of php
+	rm /usr/local/opt/xhprof > /dev/null 2>&1
+	ln -s  $(brew --prefix php55-xhprof) /usr/local/opt/xhprof
 
-# Stop php-fpm and start correct version
-launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
-launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
-launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
-launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
+	# Stop php-fpm and start correct version
+	launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
+	launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
+	launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+	launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
 
-# Brew link correct php version
-brew unlink php53
-brew unlink php54
-brew link php55
+	# Brew link correct php version
+	brew unlink php53
+	brew unlink php54
+	brew link php55
 
-# Restart nginx
-sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
+	# Restart nginx
+	sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
   chmod 755 /usr/local/bin/go55
 
   if [[ ! ${PHP55DEF} =~ ^(y|Y)$ ]]; then

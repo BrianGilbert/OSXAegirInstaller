@@ -19,6 +19,7 @@
   USERNAME=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
   DRUSH='drush --php=/usr/local/bin/php'
   OSX=`sw_vers -productVersion | cut -c 1-4`
+	BACKUPS_DIR=~/Desktop/aegir-install-backups
 
   # Make sure that the script wasn't run as root.
   if [ ${USERNAME} = "root" ] ; then
@@ -112,12 +113,14 @@
     if [[ ${CLEAN} =~ ^(y|Y)$ ]]; then
       printf "# You entered Y\n########\n"
       printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew components, are you sure? [Y/n]\n########\n"
-      say "There is no turning back.. This will uninstall a gir and all related homebrew components including any existing databases, are you sure?"
+      say "There is no turning back.. This will uninstall aegir and all related homebrew components including any existing databases, are you sure?"
       read -n1 FORSURE
       if [[ ${FORSURE} =~ ^(y|Y)$ ]]; then
         printf "\n########\n# You entered Y\n"
         printf "\n########\n# Don't say I didn't warn you, cleaning everything..\n########\n"
         say "Don't say I didn't warn you, removing components.."
+
+				mkdir -p $BACKUPS_DIR
 
         printf "# Stopping and deleting any services that are already installed..\n########\n"
         if [ -e "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist" ] ; then
@@ -163,7 +166,7 @@
         brew uninstall php53-xdebug
         brew uninstall php53-xhprof
         brew uninstall php53
-        sudo mv /var/log/nginx/php53-fpm.log{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo rm /var/log/nginx/php53-fpm.log
         rm /usr/local/bin/go53
 
         brew uninstall php54-geoip
@@ -173,7 +176,7 @@
         brew uninstall php54-xdebug
         brew uninstall php54-xhprof
         brew uninstall php54
-        sudo mv /var/log/nginx/php54-fpm.log{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo rm /var/log/nginx/php54-fpm.log
         rm /usr/local/bin/go54
 
         brew uninstall php55-geoip
@@ -183,7 +186,7 @@
         brew uninstall php55-xdebug
         brew uninstall php55-xhprof
         brew uninstall php55
-        sudo mv /var/log/nginx/php55-fpm.log{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo rm /var/log/nginx/php55-fpm.log
         rm /usr/local/bin/go55
 
         rm -rf /usr/local/etc/php
@@ -199,17 +202,17 @@
         brew uninstall openssl
         brew uninstall solr
 
-        sudo mv $(brew --prefix nginx)/logs/error.log{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo mv $(brew --prefix nginx)/logs/error.log $BACKUPS_DIR/brew.nginx.error.log
         rm -rf /usr/local/etc/nginx
         rm -rf /usr/local/var/run/nginx
-        sudo mv /var/log/nginx/error.log{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo rm /var/log/nginx/error.log
         brew uninstall nginx
 
         brew uninstall pcre geoip
         brew uninstall dnsmasq
-        sudo mv /etc/resolv.dnsmasq.conf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
-        sudo mv /usr/local/etc/dnsmasq.conf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
-        sudo mv /etc/resolver/default{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo mv /etc/resolv.dnsmasq.conf $BACKUPS_DIR
+        sudo mv /usr/local/etc/dnsmasq.conf $BACKUPS_DIR
+        sudo mv /etc/resolver/default $BACKUPS_DIR/resolver.default
         sudo networksetup -setdnsservers AirPort empty
   			sudo networksetup -setdnsservers Ethernet empty
   			sudo networksetup -setdnsservers 'Thunderbolt Ethernet' empty
@@ -221,19 +224,41 @@
         brew uninstall wget
         printf "# Removing related configurations..\n########\n"
         sudo launchctl unload /System/Library/LaunchDaemons/org.postfix.master.plist
-        sudo mv /etc/postfix/sasl_passwd{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
-        sudo mv /etc/postfix/main.cf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo mv /etc/postfix/sasl_passwd $BACKUPS_DIR/postfix.sasl_passwd
+        sudo mv /etc/postfix/main.cf $BACKUPS_DIR/postfix.main.cf
         sudo cp /etc/postfix/main.cf.orig /etc/postfix/main.cf
         rm ~/.forward
 
         rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
   			brew uninstall mariadb
-        mv /usr/local/etc/my-drupal.cnf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
-        mv /usr/local/etc/my.cnf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
-        mv  /usr/local/etc/my.cnf.d{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
-        sudo mv /etc/my.cnf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
-        # rm -rf /usr/local/var/mysql # do not delete existing databases!
-
+        mv /usr/local/etc/my-drupal.cnf $BACKUPS_DIR
+        mv /usr/local/etc/my.cnf $BACKUPS_DIR/local.etc.my.cnf
+        mv  /usr/local/etc/my.cnf.d $BACKUPS_DIR
+        sudo mv /etc/my.cnf $BACKUPS_DIR/etc.my.cnf
+				say "Do you want to create backups of your databases?"
+        printf "# Do you want to backup all existing databases?\n# If you say no here make sure you have backups from your databases.\n# Answer [Y/n]\n########\n"
+				read -n1 DBBACKUP
+        if [[ $DBBACKUP =~ ^(y|Y)$ ]]; then
+					mkdir -p $BACKUPS_DIR/databases
+					printf "\n# What is your current MariaDB root password? \n########\n"
+					read DBPASS passw
+					DBLIST="$(mysql -uroot -h localhost -p$DBPASS -Bse 'show databases')"
+					if [ ${#DBLIST} -gt 0 ]; then
+						printf "\n# Backing up databases..\n########\n"
+						for DBITEM in $DBLIST
+						do
+							if [ "$DBITEM" != "performance_schema" ]; then
+				        printf "\n# Database: $DBITEM"
+								FILE=$BACKUPS_DIR/databases/$DBITEM.$NOW-$(date +"%Y-%m-%d.%H.%M.%S").sql
+								mysqldump --events --single-transaction -u root -h localhost -p$DBPASS $DBITEM > $FILE
+								tar czfP $FILE.tar.gz $FILE
+								rm $FILE
+							fi
+						done
+					fi
+        fi
+				printf "\n########\n# Now removing all databases..\n########\n"
+				rm -rf /usr/local/var/mysql
         brew uninstall autoconf
         brew uninstall cmake
         brew uninstall curl
@@ -252,10 +277,10 @@
         brew uninstall zlib
         brew uninstall apple-gcc42
 
-        mv ~/Desktop/YourAegirSetup.txt{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        mv ~/Desktop/YourAegirSetup.txt $BACKUPS_DIR/YourAegirSetup.txt-.pre-uninstall-$(date +"%Y-%m-%d.%H.%M.%S")
 
         printf "# Renaming your Aegir folder to /var/aegir.pre-uninstall-TI-ME-ST-AM-P....\n########\n"
-        sudo mv /var/aegir{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+        sudo mv /var/aegir/config $BACKUPS_DIR/aegir-config-pre-uninstall-$(date +"%Y-%m-%d.%H.%M.%S")
 
         say "input required"
         printf "# would you now like to re-install Aegir? [Y/n]\n########\n"
@@ -513,7 +538,7 @@ echo "
   printf "########\n# Setting up wildcard DNS so that domains ending in dot ld will resolve to your local machine\n"
   if [ -e "/usr/local/etc/dnsmasq.conf" ] ; then
     printf "########\n# You already have a dnsmasq.conf file..\n# So this all works proerly I'm going to delete and recreate it..\n########\n"
-    mv /usr/local/etc/dnsmasq.conf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+    mv /usr/local/etc/dnsmasq.conf $BACKUPS_DIR
   fi
 
   printf "# Setting dnsmasq config..\n########\n"
@@ -528,7 +553,7 @@ echo "
   if [ -e "/etc/resolv.dnsmasq.conf" ] ; then
     printf "# You already have a resolv.conf set..\n# So this all works properly I'm going to delete and recreate it..\n########\n"
     say "You may be prompted for your password"
-    sudo mv /etc/resolv.dnsmasq.conf{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+    sudo mv /etc/resolv.dnsmasq.conf $BACKUPS_DIR
   fi
 
   printf "# Setting OpenDNS and Google DNS servers as fallbacks..\n########\n"
@@ -549,7 +574,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   if [ -e "/etc/resolver/default" ] ; then
     printf "# You already have a resolver set for when you are offline..\n# So this all works properly I'm going to delete and recreate it..\n########\n"
     say "You may be prompted for your password"
-    sudo mv /etc/resolver/default{,.pre-uninstall-$(date +%Y-%m-%d-%H-%I-%S)}
+    sudo mv /etc/resolver/default $BACKUPS_DIR
   fi
 
   printf "########\n# Making local domains resolve when your disconnected from net..\n########\n"
@@ -584,7 +609,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   brew install nginx --with-debug --with-flv --with-geoip --with-http_dav_module --with-mp4 --with-spdy --with-ssl --with-upload-progress
   printf "\n########\n# Configuring nginx..\n########\n"
   if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
-  mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
+		mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
   fi
   curl https://gist.githubusercontent.com/BrianGilbert/5908352/raw/2b6f9094348af7b8d64c3582a0e6e67164bd0168/nginx.conf > /usr/local/etc/nginx/nginx.conf
   sed -i '' 's/\[username\]/'${USERNAME}'/' /usr/local/etc/nginx/nginx.conf

@@ -609,7 +609,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   brew install nginx --with-debug --with-flv --with-geoip --with-http_dav_module --with-mp4 --with-spdy --with-ssl --with-upload-progress
   printf "\n########\n# Configuring nginx..\n########\n"
   if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
-		mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
+  mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
   fi
   curl https://gist.githubusercontent.com/BrianGilbert/5908352/raw/2b6f9094348af7b8d64c3582a0e6e67164bd0168/nginx.conf > /usr/local/etc/nginx/nginx.conf
   sed -i '' 's/\[username\]/'${USERNAME}'/' /usr/local/etc/nginx/nginx.conf
@@ -659,47 +659,47 @@ if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
   # Additions for xdebug to work with PHPStorm
   echo "xdebug.max_nesting_level = 200
 
-	xdebug.profiler_enable = 1
-	xdebug.profiler_enable_trigger = 1
-	xdebug.profiler_output_name = xdebug-profile-cachegrind.out-%H-%R
-	xdebug.profiler_output_dir = /tmp/xdebug/
+xdebug.profiler_enable = 1
+xdebug.profiler_enable_trigger = 1
+xdebug.profiler_output_name = xdebug-profile-cachegrind.out-%H-%R
+xdebug.profiler_output_dir = /tmp/xdebug/
 
-	xdebug.remote_autostart = 0
-	xdebug.remote_enable=1
-	xdebug.remote_connect_back = 1
-	xdebug.remote_port = 9001
-	xdebug.remote_host = localhost
+xdebug.remote_autostart = 0
+xdebug.remote_enable=1
+xdebug.remote_connect_back = 1
+xdebug.remote_port = 9001
+xdebug.remote_host = localhost
 
-	xdebug.var_display_max_children = 128
-	xdebug.var_display_max_data = 2048
-	xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
+xdebug.var_display_max_children = 128
+xdebug.var_display_max_data = 2048
+xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
 
-	say "You may be prompted for your password"
-	sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
+  say "You may be prompted for your password"
+  sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
 
-	cp $(brew --prefix josegonzalez/php/php55)/homebrew.mxcl.php55.plist ~/Library/LaunchAgents/
+  cp $(brew --prefix josegonzalez/php/php55)/homebrew.mxcl.php55.plist ~/Library/LaunchAgents/
 
-	echo "#!/bin/sh
-	# Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
-	# of Realityloop @Realityloop http://realitylop.com/
+  echo "#!/bin/sh
+# Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
+# of Realityloop @Realityloop http://realitylop.com/
 
-	# Remove old symlink for xhprof and create correct one for this version of php
-	rm /usr/local/opt/xhprof > /dev/null 2>&1
-	ln -s  $(brew --prefix php55-xhprof) /usr/local/opt/xhprof
+# Remove old symlink for xhprof and create correct one for this version of php
+rm /usr/local/opt/xhprof > /dev/null 2>&1
+ln -s  $(brew --prefix php55-xhprof) /usr/local/opt/xhprof
 
-	# Stop php-fpm and start correct version
-	launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
-	launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
-	launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
-	launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
+# Stop php-fpm and start correct version
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
 
-	# Brew link correct php version
-	brew unlink php53
-	brew unlink php54
-	brew link php55
+# Brew link correct php version
+brew unlink php53
+brew unlink php54
+brew link php55
 
-	# Restart nginx
-	sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
+# Restart nginx
+sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
   chmod 755 /usr/local/bin/go55
 
   if [[ ! ${PHP55DEF} =~ ^(y|Y)$ ]]; then

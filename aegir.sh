@@ -15,11 +15,11 @@
     exit
   fi
 
-  # Set some variables for username installing aegir and the OS X version
+  # Set some variables for username, installing aegir, backups dir, and the OS X version
   USERNAME=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
   DRUSH='drush --php=/usr/local/bin/php'
+  BACKUPS_DIR=~/Desktop/aegir-install-backup-$(date +"%Y-%m-%d")
   OSX=`sw_vers -productVersion | cut -c 1-4`
-	BACKUPS_DIR=~/Desktop/aegir-install-backups
 
   # Make sure that the script wasn't run as root.
   if [ ${USERNAME} = "root" ] ; then
@@ -106,21 +106,21 @@
     #exit # Remove this line when uninstall block below is fixed.
     # Possibly I'll allow reinstallations in the future..
     #
-    printf "# Should I remove it? The option to re-install will be given after this. [Y/n]\n########\n"
+    printf "# Should I backup some important bits then  remove it? \n# The option to re-install will be given after this. [Y/n]\n########\n"
     say "input required"
     read -n1 CLEAN
 
     if [[ ${CLEAN} =~ ^(y|Y)$ ]]; then
       printf "# You entered Y\n########\n"
       printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew components, are you sure? [Y/n]\n########\n"
-      say "There is no turning back.. This will uninstall aegir and all related homebrew components including any existing databases, are you sure?"
+      say "There is no turning back.. This will uninstall a gir and all related homebrew components including any existing databases, are you sure?"
       read -n1 FORSURE
       if [[ ${FORSURE} =~ ^(y|Y)$ ]]; then
         printf "\n########\n# You entered Y\n"
         printf "\n########\n# Don't say I didn't warn you, cleaning everything..\n########\n"
         say "Don't say I didn't warn you, removing components.."
 
-				mkdir -p $BACKUPS_DIR
+        mkdir -p $BACKUPS_DIR
 
         printf "# Stopping and deleting any services that are already installed..\n########\n"
         if [ -e "/Library/LaunchDaemons/homebrew.mxcl.dnsmasq.plist" ] ; then
@@ -214,9 +214,9 @@
         sudo mv /usr/local/etc/dnsmasq.conf $BACKUPS_DIR
         sudo mv /etc/resolver/default $BACKUPS_DIR/resolver.default
         sudo networksetup -setdnsservers AirPort empty
-  			sudo networksetup -setdnsservers Ethernet empty
-  			sudo networksetup -setdnsservers 'Thunderbolt Ethernet' empty
-  			sudo networksetup -setdnsservers Wi-Fi empty
+        sudo networksetup -setdnsservers Ethernet empty
+        sudo networksetup -setdnsservers 'Thunderbolt Ethernet' empty
+        sudo networksetup -setdnsservers Wi-Fi empty
 
         printf "# Removing previous drush installation, this may error..\n########\n"
         brew uninstall drush
@@ -230,35 +230,35 @@
         rm ~/.forward
 
         rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
-  			brew uninstall mariadb
+        brew uninstall mariadb
         mv /usr/local/etc/my-drupal.cnf $BACKUPS_DIR
         mv /usr/local/etc/my.cnf $BACKUPS_DIR/local.etc.my.cnf
         mv  /usr/local/etc/my.cnf.d $BACKUPS_DIR
         sudo mv /etc/my.cnf $BACKUPS_DIR/etc.my.cnf
-				say "Do you want to create backups of your databases?"
+        say "Do you want to create backups of your databases?"
         printf "# Do you want to backup all existing databases?\n# If you say no here make sure you have backups from your databases.\n# Answer [Y/n]\n########\n"
-				read -n1 DBBACKUP
+        read -n1 DBBACKUP
         if [[ $DBBACKUP =~ ^(y|Y)$ ]]; then
-					mkdir -p $BACKUPS_DIR/databases
-					printf "\n# What is your current MariaDB root password? \n########\n"
-					read DBPASS passw
-					DBLIST="$(mysql -uroot -h localhost -p$DBPASS -Bse 'show databases')"
-					if [ ${#DBLIST} -gt 0 ]; then
-						printf "\n# Backing up databases..\n########\n"
-						for DBITEM in $DBLIST
-						do
-							if [ "$DBITEM" != "performance_schema" ]; then
-				        printf "\n# Database: $DBITEM"
-								FILE=$BACKUPS_DIR/databases/$DBITEM.$NOW-$(date +"%Y-%m-%d.%H.%M.%S").sql
-								mysqldump --events --single-transaction -u root -h localhost -p$DBPASS $DBITEM > $FILE
-								tar czfP $FILE.tar.gz $FILE
-								rm $FILE
-							fi
-						done
-					fi
+          mkdir -p $BACKUPS_DIR/databases
+          printf "\n# What is your current MariaDB root password? \n########\n"
+          read DBPASS passw
+          DBLIST="$(mysql -uroot -h localhost -p$DBPASS -Bse 'show databases')"
+          if [ ${#DBLIST} -gt 0 ]; then
+            printf "\n# Backing up databases..\n########\n"
+            for DBITEM in $DBLIST
+            do
+              if [ "$DBITEM" != "performance_schema" ]; then
+                printf "\n# Database: $DBITEM"
+                FILE=$BACKUPS_DIR/databases/$DBITEM.$NOW-$(date +"%Y-%m-%d.%H.%M.%S").sql
+                mysqldump --events --single-transaction -u root -h localhost -p$DBPASS $DBITEM > $FILE
+                tar czfP $FILE.tar.gz $FILE
+                rm $FILE
+              fi
+            done
+          fi
         fi
-				printf "\n########\n# Now removing all databases..\n########\n"
-				rm -rf /usr/local/var/mysql
+        printf "\n########\n# Now removing all databases..\n########\n"
+        rm -rf /usr/local/var/mysql
         brew uninstall autoconf
         brew uninstall cmake
         brew uninstall curl
@@ -537,7 +537,7 @@ echo "
   # Configure dnsmasq
   printf "########\n# Setting up wildcard DNS so that domains ending in dot ld will resolve to your local machine\n"
   if [ -e "/usr/local/etc/dnsmasq.conf" ] ; then
-    printf "########\n# You already have a dnsmasq.conf file..\n# So this all works proerly I'm going to delete and recreate it..\n########\n"
+    printf "########\n# You already have a dnsmasq.conf file..\n# So this all works proerly I'm going to backup and recreate it..\n########\n"
     mv /usr/local/etc/dnsmasq.conf $BACKUPS_DIR
   fi
 
@@ -551,7 +551,7 @@ echo "
   touch /usr/local/etc/dnsmasq.hosts
 
   if [ -e "/etc/resolv.dnsmasq.conf" ] ; then
-    printf "# You already have a resolv.conf set..\n# So this all works properly I'm going to delete and recreate it..\n########\n"
+    printf "# You already have a resolv.conf set..\n# So this all works properly I'm going to backup and recreate it..\n########\n"
     say "You may be prompted for your password"
     sudo mv /etc/resolv.dnsmasq.conf $BACKUPS_DIR
   fi
@@ -572,7 +572,7 @@ nameserver 8.8.8.8
 nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
 
   if [ -e "/etc/resolver/default" ] ; then
-    printf "# You already have a resolver set for when you are offline..\n# So this all works properly I'm going to delete and recreate it..\n########\n"
+    printf "# You already have a resolver set for when you are offline..\n# So this all works properly I'm going to backup and recreate it..\n########\n"
     say "You may be prompted for your password"
     sudo mv /etc/resolver/default $BACKUPS_DIR
   fi
@@ -717,18 +717,18 @@ if [[ ${PHP54} =~ ^(y|Y)$ ]]; then
   brew install php54-xdebug
   brew install php54-xhprof
 
-	printf "\n########\n# Configuring php54..\n########\n"
-	sed -i '' '/timezone =/ a\
-	date.timezone = Australia/Melbourne\
-	' /usr/local/etc/php/5.4/php.ini
-	sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.4/php.ini
-	sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.4/php.ini
-	sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.4/php.ini
-	sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.4/php.ini
-	sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.4/php.ini
-	sed -i '' '/pid = run/ a\
-	pid = /usr/local/var/run/php-fpm.pid\
-	' /usr/local/etc/php/5.4/php-fpm.conf
+  printf "\n########\n# Configuring php54..\n########\n"
+  sed -i '' '/timezone =/ a\
+  date.timezone = Australia/Melbourne\
+  ' /usr/local/etc/php/5.4/php.ini
+  sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.4/php.ini
+  sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.4/php.ini
+  sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.4/php.ini
+  sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.4/php.ini
+  sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.4/php.ini
+  sed -i '' '/pid = run/ a\
+  pid = /usr/local/var/run/php-fpm.pid\
+  ' /usr/local/etc/php/5.4/php-fpm.conf
 
   # Additions for xdebug to work with PHPStorm
   echo "xdebug.max_nesting_level = 200
@@ -749,7 +749,7 @@ xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.4/conf.d/ext-xdebug.ini
 
   say "You may be prompted for your password"
-	sudo ln -s $(brew --prefix josegonzalez/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
+  sudo ln -s $(brew --prefix josegonzalez/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
 
   mkdir -p ~/Library/LaunchAgents
   cp $(brew --prefix josegonzalez/php/php54)/homebrew.mxcl.php54.plist ~/Library/LaunchAgents/

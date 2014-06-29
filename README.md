@@ -34,14 +34,14 @@ The script creates unsigned SSL certificates so that you can access any of the s
 Installation Instructions
 ------------------------------
 Always check the current status first: https://github.com/BrianGilbert/OSXAegirInstaller/issues/25
-    
+
 * This only shows the known status
 * Status is based on my ability to confirm any reports the script is not working, where due to an upstream issue I am unable to fix it myself
 
 Execute the following in terminal to run the installer:
 
     cd ~
-    curl -O https://raw.github.com/BrianGilbert/OSXAegirInstaller/master/aegir.sh
+    curl -O https://raw.githubusercontent.com/BrianGilbert/OSXAegirInstaller/master/aegir.sh
     chmod +x aegir.sh
     ./aegir.sh
 
@@ -60,7 +60,7 @@ If the install fails or you don't like Aegir, you can re-run the script to unins
 Warning
 -----------
 I have tested this script extensivley on a clean install of OSX, but I take no responsability for anything that happens to your computer using the script.
-I'd recommend you use Disk Utility to repair permissions on your primary drive before running this script. 
+I'd recommend you use Disk Utility to repair permissions on your primary drive before running this script.
 
 It should be fine to install on any machine that doesn't have a webserver already running on port 80 or a DB server already running on 3306, this means that you can have MAMP or Acquia Dev Desktop installed as well as Aegir (unless you have changed the default ports on either of these to 80/3306).
 

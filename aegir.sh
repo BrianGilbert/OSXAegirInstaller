@@ -675,9 +675,9 @@ xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
 
   say "You may be prompted for your password"
-  sudo ln -s $(brew --prefix josegonzalez/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
+  sudo ln -s $(brew --prefix homebrew/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
 
-  cp $(brew --prefix josegonzalez/php/php55)/homebrew.mxcl.php55.plist ~/Library/LaunchAgents/
+  cp $(brew --prefix homebrew/php/php55)/homebrew.mxcl.php55.plist ~/Library/LaunchAgents/
 
   echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
@@ -749,10 +749,10 @@ xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.4/conf.d/ext-xdebug.ini
 
   say "You may be prompted for your password"
-  sudo ln -s $(brew --prefix josegonzalez/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
+  sudo ln -s $(brew --prefix homebrew/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
 
   mkdir -p ~/Library/LaunchAgents
-  cp $(brew --prefix josegonzalez/php/php54)/homebrew.mxcl.php54.plist ~/Library/LaunchAgents/
+  cp $(brew --prefix homebrew/php/php54)/homebrew.mxcl.php54.plist ~/Library/LaunchAgents/
 
   echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
@@ -829,9 +829,9 @@ xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
 
   say "You may be prompted for your password"
-  sudo ln -s $(brew --prefix josegonzalez/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
+  sudo ln -s $(brew --prefix homebrew/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
 
-  cp $(brew --prefix josegonzalez/php/php53)/homebrew.mxcl.php53.plist ~/Library/LaunchAgents/
+  cp $(brew --prefix homebrew/php/php53)/homebrew.mxcl.php53.plist ~/Library/LaunchAgents/
 
   echo "#!/bin/sh
 # Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert

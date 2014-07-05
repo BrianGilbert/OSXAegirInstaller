@@ -507,7 +507,7 @@ echo "
   printf "\n########\n# Now we'll tap some extra kegs we need..\n########\n"
   brew tap homebrew/versions
   brew tap homebrew/dupes
-  brew tap josegonzalez/homebrew-php
+  brew tap homebrew/homebrew-php
   brew update
   brew doctor
 

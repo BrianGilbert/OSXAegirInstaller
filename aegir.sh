@@ -219,6 +219,7 @@
         sudo networksetup -setdnsservers Wi-Fi empty
 
         printf "# Removing previous drush installation, this may error..\n########\n"
+        brew uninstall composer
         brew uninstall drush
         brew uninstall gzip
         brew uninstall wget
@@ -352,7 +353,7 @@
   if type "brew" > /dev/null 2>&1; then
     printf "\n########\n# Affirmative! Let's make sure everything is up to date..\n# Just so you know, this may throw a few warnings..\n########\n"
     say "Making sure homebrew is up to date, you may see some errors in the output, that's ok."
-    export PATH=/usr/local/bin:/usr/local/sbin:${PATH}
+    export PATH=/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:${PATH}
     brew prune
     brew update
     brew doctor
@@ -366,8 +367,8 @@
     printf "# Nope! Installing Homebrew now..\n########\n"
     say "Installing homebrew now, you'll need to hit return when prompted"
     ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
-    echo 'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.bash_profile
-    echo 'export PATH=/usr/local/bin:/usr/local/sbin:$PATH' >> ~/.zshrc
+    echo 'export PATH=/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:$PATH' >> ~/.bash_profile
+    echo 'export PATH=/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:$PATH' >> ~/.zshrc
     source ~/.bash_profile
   fi
 
@@ -521,14 +522,6 @@ echo "
   brew install gzip
   printf "\n########\n# Installing libpng..\n########\n"
   brew install libpng
-  printf "\n########\n# Installing drush..\n########\n"
-  # Uninstall drush if it was previously installed via homebrew
-  brew uninstall drush > /dev/null 2&>1
-  # printf "# Installing composer..\n########\n"  # this needs to be moved after phph installation
-  # brew install composer
-  #composer global require drush/drush:6.*
-  #composer global require drush/drush:dev-master
-  brew install drush
   printf "\n########\n# Installing dnsmasq..\n########\n"
   brew install dnsmasq
   printf "\n########\n# Configuring dnsmasq..\n########\n"
@@ -635,6 +628,7 @@ if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
   brew install php55 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php55-geoip
   brew install php55-imagick
+  brew install php55-intl
   brew install php55-mcrypt
   brew install php55-uploadprogress
   brew install php55-xdebug
@@ -712,6 +706,7 @@ if [[ ${PHP54} =~ ^(y|Y)$ ]]; then
   brew install php54 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php54-geoip
   brew install php54-imagick
+  brew install php54-intl
   brew install php54-mcrypt
   brew install php54-uploadprogress
   brew install php54-xdebug
@@ -792,6 +787,7 @@ if [[ ${PHP53} =~ ^(y|Y)$ ]]; then
   brew install php53 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php53-geoip
   brew install php53-imagick
+  brew install php53-intl
   brew install php53-mcrypt
   brew install php53-uploadprogress
   brew install php53-xdebug
@@ -868,6 +864,21 @@ fi
   printf "\n########\n# Installing phpunit..\n########\n"
   brew install phpunit
 
+  printf "# Installing composer..\n########\n"
+  brew install homebrew/php/composer
+
+  printf "\n########\n# Installing drush..\n########\n"
+  # Uninstall drush if it was previously installed via homebrew
+  brew uninstall drush > /dev/null 2&>1
+
+  if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
+    composer global require drush/drush:6.*
+    #composer global require drush/drush:dev-master
+  else
+    composer global require drush/drush:6.*
+  fi
+  #brew install drush
+
   #Solr
   if [[ ${SOLR} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing solr..\n########\n"
@@ -922,7 +933,7 @@ fi
 ########" #remove this echo when expects block below is fixed.
   say "Read the block above and enter responses as shown when propted"
 
-  sudo PATH="/usr/local/bin:/usr/local/sbin:${PATH}" $(brew --prefix mariadb)/bin/mysql_secure_installation #remove this line when expects block below is fixed.
+  sudo PATH="/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:${PATH}" $(brew --prefix mariadb)/bin/mysql_secure_installation #remove this line when expects block below is fixed.
   # This expect block throws error
   # /usr/local/opt/mariadb/bin/mysql_secure_installation: line 379: find_mysql_client: command not found
   # Any help greatly appreciated..

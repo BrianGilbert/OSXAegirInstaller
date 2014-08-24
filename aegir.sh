@@ -213,6 +213,7 @@
         sudo mv /etc/resolv.dnsmasq.conf $BACKUPS_DIR
         sudo mv /usr/local/etc/dnsmasq.conf $BACKUPS_DIR
         sudo mv /etc/resolver/default $BACKUPS_DIR/resolver.default
+        sudo mv /usr/local/etc/dnsmasq.hosts $BACKUPS_DIR
         sudo networksetup -setdnsservers AirPort empty
         sudo networksetup -setdnsservers Ethernet empty
         sudo networksetup -setdnsservers 'Thunderbolt Ethernet' empty
@@ -281,7 +282,7 @@
         mv ~/Desktop/YourAegirSetup.txt $BACKUPS_DIR/YourAegirSetup.txt-.pre-uninstall-$(date +"%Y-%m-%d.%H.%M.%S")
 
         printf "# Renaming your Aegir folder to /var/aegir.pre-uninstall-TI-ME-ST-AM-P....\n########\n"
-        sudo mv /var/aegir/config $BACKUPS_DIR/aegir-config-pre-uninstall-$(date +"%Y-%m-%d.%H.%M.%S")
+        sudo mv /var/aegir $BACKUPS_DIR/aegir-config-pre-uninstall-$(date +"%Y-%m-%d.%H.%M.%S")
 
         say "input required"
         printf "# would you now like to re-install Aegir? [Y/n]\n########\n"
@@ -536,7 +537,7 @@ echo "
 
   printf "# Setting dnsmasq config..\n########\n"
   cp $(brew --prefix dnsmasq)/dnsmasq.conf.example /usr/local/etc/dnsmasq.conf
-  echo '# Edited by MEMPAE script' | cat - /usr/local/etc/dnsmasq.conf > temp && mv temp /usr/local/etc/dnsmasq.conf
+  echo '# Edited by OSX Aegir install script' | cat - /usr/local/etc/dnsmasq.conf > temp && mv temp /usr/local/etc/dnsmasq.conf
   echo "resolv-file=/etc/resolv.dnsmasq.conf" >> /usr/local/etc/dnsmasq.conf
   echo "address=/.ld/127.0.0.1" >> /usr/local/etc/dnsmasq.conf
   echo "listen-address=127.0.0.1" >> /usr/local/etc/dnsmasq.conf
@@ -864,7 +865,7 @@ fi
   printf "\n########\n# Installing phpunit..\n########\n"
   brew install phpunit
 
-  printf "# Installing composer..\n########\n"
+  printf "########\n# Installing composer..\n########\n"
   brew install homebrew/php/composer
 
   printf "\n########\n# Installing drush..\n########\n"
@@ -872,12 +873,10 @@ fi
   brew uninstall drush > /dev/null 2&>1
 
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
-    composer global require drush/drush:6.*
-    #composer global require drush/drush:dev-master
+    composer global require drush/drush:dev-master
   else
     composer global require drush/drush:6.*
   fi
-  #brew install drush
 
   #Solr
   if [[ ${SOLR} =~ ^(y|Y)$ ]]; then

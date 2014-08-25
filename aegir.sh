@@ -213,6 +213,7 @@
         sudo mv /etc/resolv.dnsmasq.conf $BACKUPS_DIR
         sudo mv /usr/local/etc/dnsmasq.conf $BACKUPS_DIR
         sudo mv /etc/resolver/default $BACKUPS_DIR/resolver.default
+        sudo mv /etc/resolver/ld $BACKUPS_DIR/resolver.ld
         sudo mv /usr/local/etc/dnsmasq.hosts $BACKUPS_DIR
         sudo networksetup -setdnsservers AirPort empty
         sudo networksetup -setdnsservers Ethernet empty
@@ -565,16 +566,15 @@ nameserver 208.67.220.220
 nameserver 8.8.8.8
 nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
 
-  if [ -e "/etc/resolver/default" ] ; then
+  if [ -e "/etc/resolver/ld" ] ; then
     printf "# You already have a resolver set for when you are offline..\n# So this all works properly I'm going to backup and recreate it..\n########\n"
     say "You may be prompted for your password"
-    sudo mv /etc/resolver/default $BACKUPS_DIR
+    sudo mv /etc/resolver/ $BACKUPS_DIR
   fi
 
   printf "########\n# Making local domains resolve when your disconnected from net..\n########\n"
   sudo mkdir -p /etc/resolver
-  sudo sh -c 'echo "nameserver 127.0.0.1
-  domain ." >> /etc/resolver/default'
+  sudo sh -c 'echo "nameserver 127.0.0.1" >> /etc/resolver/ld'
 
   printf "# Setting known network interfaces to use 127.0.0.1 for DNS lookups,this may throw errors, that's ok...\n########\n"
   sudo networksetup -setdnsservers AirPort 127.0.0.1

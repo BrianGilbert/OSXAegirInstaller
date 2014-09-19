@@ -19,7 +19,7 @@
   USERNAME=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
   DRUSH='drush --php=/usr/local/bin/php'
   BACKUPS_DIR=~/Desktop/aegir-install-backup-$(date +"%Y-%m-%d")
-  OSX=`sw_vers -productVersion | cut -c 1-4`
+  OSX=`sw_vers -productVersion | cut -c 1-5`
 
   # Make sure that the script wasn't run as root.
   if [ ${USERNAME} = "root" ] ; then
@@ -92,7 +92,7 @@
   fi
 
   printf "\n########\n# Checking OS version..\n########\n"
-  if [ ${OSX} = 10.9 ] ; then
+  if [[ ${OSX} = 10.10 || ${OSX} = 10.9. ]] ; then
     printf "# You're using $OSX, so let's go!\n########\n"
   else
     printf "# ${OSX} isn't a supported version for this script\n# Update to 10.9+ and rerun the script, exiting.\n########\n"
@@ -626,7 +626,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
 
 if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php55..\n########\n"
-  brew install php55 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+  brew install php55 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php55-geoip
   brew install php55-imagick
   brew install php55-intl
@@ -704,7 +704,7 @@ fi
 
 if [[ ${PHP54} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php54..\n########\n"
-  brew install php54 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+  brew install php54 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php54-geoip
   brew install php54-imagick
   brew install php54-intl
@@ -785,7 +785,7 @@ if [[ ${PHP53} =~ ^(y|Y)$ ]]; then
   brew install bison27
   brew install libevent
   printf "\n########\n# Installing php53..\n########\n"
-  brew install php53 --without-apache --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+  brew install php53 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php53-geoip
   brew install php53-imagick
   brew install php53-intl

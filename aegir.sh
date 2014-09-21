@@ -635,7 +635,6 @@ if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
   brew install php55 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php55-geoip
   brew install php55-imagick
-  brew install php55-intl
   brew install php55-mcrypt
   brew install php55-uploadprogress
   brew install php55-xdebug
@@ -711,7 +710,6 @@ if [[ ${PHP54} =~ ^(y|Y)$ ]]; then
   brew install php54 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php54-geoip
   brew install php54-imagick
-  brew install php54-intl
   brew install php54-mcrypt
   brew install php54-uploadprogress
   brew install php54-xdebug
@@ -790,7 +788,6 @@ if [[ ${PHP53} =~ ^(y|Y)$ ]]; then
   brew install php53 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
   brew install php53-geoip
   brew install php53-imagick
-  brew install php53-intl
   brew install php53-mcrypt
   brew install php53-uploadprogress
   brew install php53-xdebug

@@ -18,7 +18,7 @@
   # Set some variables for username, installing aegir, backups dir, and the OS X version
   USERNAME=${USER-$LOGNAME} #`ps -o user= $(ps -o ppid= $PPID)`
   DRUSH='drush --php=/usr/local/bin/php'
-  BACKUPS_DIR=~/Desktop/aegir-install-backup-$(date +"%Y-%m-%d")
+  BACKUPS_DIR=~/Desktop/aegir-install-backup-$(date +"%Y-%m-%d.%H.%M.%S")
   OSX=`sw_vers -productVersion | cut -c 1-5`
 
   # Make sure that the script wasn't run as root.
@@ -106,7 +106,7 @@
     #exit # Remove this line when uninstall block below is fixed.
     # Possibly I'll allow reinstallations in the future..
     #
-    printf "# Should I backup some important bits then  remove it? \n# The option to re-install will be given after this. [Y/n]\n########\n"
+    printf "# Should I backup some important bits then remove it? \n# The option to re-install will be given after this. [Y/n]\n########\n"
     say "input required"
     read -n1 CLEAN
 
@@ -232,12 +232,6 @@
         sudo cp /etc/postfix/main.cf.orig /etc/postfix/main.cf
         rm ~/.forward
 
-        rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
-        brew uninstall mariadb
-        mv /usr/local/etc/my-drupal.cnf $BACKUPS_DIR
-        mv /usr/local/etc/my.cnf $BACKUPS_DIR/local.etc.my.cnf
-        mv  /usr/local/etc/my.cnf.d $BACKUPS_DIR
-        sudo mv /etc/my.cnf $BACKUPS_DIR/etc.my.cnf
         say "Do you want to create backups of your databases?"
         printf "# Do you want to backup all existing databases?\n# If you say no here make sure you have backups from your databases.\n# Answer [Y/n]\n########\n"
         read -n1 DBBACKUP
@@ -260,8 +254,17 @@
             done
           fi
         fi
-        printf "\n########\n# Now removing all databases..\n########\n"
+
+        printf "\n########\n# Now removing mariadb and all databases..\n########\n"
+        rm ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+        brew uninstall mariadb
+        mv /usr/local/etc/my-drupal.cnf $BACKUPS_DIR
+        mv /usr/local/etc/my.cnf $BACKUPS_DIR/local.etc.my.cnf
+        mv  /usr/local/etc/my.cnf.d $BACKUPS_DIR
+        sudo mv /etc/my.cnf $BACKUPS_DIR/etc.my.cnf
         rm -rf /usr/local/var/mysql
+        sudo killall mysqld
+
         brew uninstall autoconf
         brew uninstall cmake
         brew uninstall curl
@@ -279,6 +282,7 @@
         brew uninstall unixodbc
         brew uninstall zlib
         brew uninstall apple-gcc42
+        sudo killall php-fpm
 
         mv ~/Desktop/YourAegirSetup.txt $BACKUPS_DIR/YourAegirSetup.txt-.pre-uninstall-$(date +"%Y-%m-%d.%H.%M.%S")
 
@@ -613,6 +617,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   sudo mkdir -p /var/log/nginx
   sudo ln -s $(brew --prefix nginx)/logs/error.log /var/log/nginx/error.log
   sudo mkdir -p /var/lib/nginx
+  mkdir -p /usr/local/var/run/nginx/proxy_temp
 
   printf "\n########\n# Installing mariadb..\n########\n"
   brew install cmake
@@ -623,6 +628,7 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   curl https://gist.githubusercontent.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my-drupal.cnf
   say "You may be prompted for your password"
   sudo ln -s /usr/local/etc/my-drupal.cnf /etc/my.cnf
+  mkdir -p /usr/local/etc/my.cnf.d
 
 if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php55..\n########\n"
@@ -697,9 +703,7 @@ brew link php55
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go55
   chmod 755 /usr/local/bin/go55
 
-  if [[ ! ${PHP55DEF} =~ ^(y|Y)$ ]]; then
-    brew unlink php55
-  fi
+  brew unlink php55
 fi
 
 if [[ ${PHP54} =~ ^(y|Y)$ ]]; then
@@ -773,9 +777,7 @@ brew link php54
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go54
   chmod 755 /usr/local/bin/go54
 
-  if [[ ! ${PHP54DEF} =~ ^(y|Y)$ ]]; then
-    brew unlink php54
-  fi
+  brew unlink php54
 fi
 
 if [[ ${PHP53} =~ ^(y|Y)$ ]]; then
@@ -853,9 +855,17 @@ brew link php53
 sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go53
   chmod 755 /usr/local/bin/go53
 
-  if [[ ! ${PHP53DEF} =~ ^(y|Y)$ ]]; then
-    brew unlink php53
-  fi
+  brew unlink php53
+fi
+
+if [[ ${PHP53DEF} =~ ^(y|Y)$ ]]; then
+  brew link php53
+fi
+if [[ ${PHP54DEF} =~ ^(y|Y)$ ]]; then
+  brew link php54
+fi
+if [[ ${PHP55DEF} =~ ^(y|Y)$ ]]; then
+  brew link php55
 fi
 
   printf "\n########\n# Installing php code sniffer..\n########\n"

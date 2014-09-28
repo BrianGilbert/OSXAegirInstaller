@@ -210,6 +210,10 @@
 
         brew uninstall pcre geoip
         brew uninstall dnsmasq
+        sudo networksetup -setdnsservers AirPort empty
+        sudo networksetup -setdnsservers Ethernet empty
+        sudo networksetup -setdnsservers 'Thunderbolt Ethernet' empty
+        sudo networksetup -setdnsservers Wi-Fi empty
         sudo mv /etc/resolv.dnsmasq.conf $BACKUPS_DIR
         sudo mv /usr/local/etc/dnsmasq.conf $BACKUPS_DIR
         sudo mv /etc/resolver/default $BACKUPS_DIR/resolver.default

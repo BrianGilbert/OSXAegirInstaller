@@ -372,7 +372,7 @@
   else
     printf "# Nope! Installing Homebrew now..\n########\n"
     say "Installing homebrew now, you'll need to hit return when prompted"
-    ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go/install)"
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
     echo 'export PATH=/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:$PATH' >> ~/.bash_profile
     echo 'export PATH=/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:$PATH' >> ~/.zshrc
     source ~/.bash_profile

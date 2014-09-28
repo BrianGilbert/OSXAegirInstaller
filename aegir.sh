@@ -548,7 +548,7 @@ echo "
   printf "# Setting dnsmasq config..\n########\n"
   cp $(brew --prefix dnsmasq)/dnsmasq.conf.example /usr/local/etc/dnsmasq.conf
   echo '# Edited by OSX Aegir install script' | cat - /usr/local/etc/dnsmasq.conf > temp && mv temp /usr/local/etc/dnsmasq.conf
-  echo "resolv-file=/etc/resolv.dnsmasq.conf" >> /usr/local/etc/dnsmasq.conf
+  echo "\nresolv-file=/etc/resolv.dnsmasq.conf" >> /usr/local/etc/dnsmasq.conf
   echo "address=/.ld/127.0.0.1" >> /usr/local/etc/dnsmasq.conf
   echo "listen-address=127.0.0.1" >> /usr/local/etc/dnsmasq.conf
   echo "addn-hosts=/usr/local/etc/dnsmasq.hosts" >> /usr/local/etc/dnsmasq.conf

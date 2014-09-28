@@ -292,6 +292,7 @@
 
         printf "# Renaming your Aegir folder to /var/aegir.pre-uninstall-TI-ME-ST-AM-P....\n########\n"
         sudo mv /var/aegir $BACKUPS_DIR/aegir-config-pre-uninstall-$(date +"%Y-%m-%d.%H.%M.%S")
+        mv ~/.drush/provision $BACKUPS_DIR/aegir-config-pre-uninstall-$(date +"%Y-%m-%d.%H.%M.%S")
 
         say "input required"
         printf "# would you now like to re-install Aegir? [Y/n]\n########\n"
@@ -584,19 +585,6 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   sudo mkdir -p /etc/resolver
   sudo sh -c 'echo "nameserver 127.0.0.1" >> /etc/resolver/ld'
 
-  printf "# Setting known network interfaces to use 127.0.0.1 for DNS lookups,this may throw errors, that's ok...\n########\n"
-  sudo networksetup -setdnsservers AirPort 127.0.0.1
-  sudo networksetup -setdnsservers Ethernet 127.0.0.1
-  sudo networksetup -setdnsservers 'Thunderbolt Ethernet' 127.0.0.1
-  sudo networksetup -setdnsservers Wi-Fi 127.0.0.1
-
-  echo "
-########
-# Open your network settings now and confirm the DNS for
-# your active device is set to 127.0.0.1, or else things
-# will not work properly later in the script.
-########"
-  say "Open your network settings to confirm DNS for your active network device is set to 127.0.0.1, or else things will not work properly later in the script"
   printf "# Setting hostname to aegir.ld\n########\n"
   sudo scutil --set HostName aegir.ld
 
@@ -933,9 +921,9 @@ fi
   echo "########
 # Enter the following when prompted..
 #
-# Current password: [hit enter]
+# Current password: <hit enter>
 # Set root password?: [Y/n] y
-# New password: [make it easy, eg. mysql]
+# New password: <make it easy, eg. mysql>
 # Remove anonymous users? [Y/n] y
 # Disallow root login remotely? [Y/n] y
 # Remove test database and access to it? [Y/n] y
@@ -1031,6 +1019,20 @@ fi
     openssl req -x509 -nodes -days 7300 -subj "/C=US/ST=New York/O=Aegir/OU=Cloud/L=New York/CN=*.aegir.ld" -newkey rsa:2048 -keyout /usr/local/etc/ssl/private/nginx-wild-ssl.key -out /usr/local/etc/ssl/private/nginx-wild-ssl.crt -batch 2> /dev/null;
     curl https://gist.githubusercontent.com/BrianGilbert/7760457/raw/fa9163ecc533ae14ea1332b38444e03be00dd329/nginx_wild_ssl.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_wild_ssl.conf;
     sudo /usr/local/bin/nginx -s reload;
+
+    printf "# Setting known network interfaces to use 127.0.0.1 for DNS lookups,this may throw errors, that's ok...\n########\n"
+    sudo networksetup -setdnsservers AirPort 127.0.0.1
+    sudo networksetup -setdnsservers Ethernet 127.0.0.1
+    sudo networksetup -setdnsservers 'Thunderbolt Ethernet' 127.0.0.1
+    sudo networksetup -setdnsservers Wi-Fi 127.0.0.1
+
+    say "Open your network settings to confirm DNS for your active network device is set to 127.0.0.1, or else things will not work properly later in the script"
+    echo "
+  ########
+  # Open your network settings now and confirm the DNS for
+  # your active device is set to 127.0.0.1, or else things
+  # will not work properly later in the script.
+  ########"
 
     printf "\n########\n# Saving some instructional notes to ~/Desktop/YourAegirSetup.txt..\n########\n"
     say "saving some instructional notes to your desktop"

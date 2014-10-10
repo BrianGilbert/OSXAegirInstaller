@@ -616,11 +616,10 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   brew install mariadb
   unset TMPDIR
   printf "\n########\n# Configuring mariadb..\n########\n"
-  mysql_install_db --user=${USERNAME} --basedir="$(brew --prefix mariadb)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
-  curl https://gist.githubusercontent.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my-drupal.cnf
-  say "You may be prompted for your password"
-  sudo ln -s /usr/local/etc/my-drupal.cnf /etc/my.cnf
   mkdir -p /usr/local/etc/my.cnf.d
+  mysql_install_db --user=${USERNAME} --basedir="$(brew --prefix mariadb)" --datadir=/usr/local/var/mysql --tmpdir=/tmp
+  curl https://gist.githubusercontent.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my.cnf.d/my-drupal.cnf
+  say "You may be prompted for your password"
 
 if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php55..\n########\n"

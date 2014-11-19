@@ -314,7 +314,7 @@
       read UPGRADE
       if [[ $UPGRADE =~ ^(y|Y)$ ]]; then
 
-        printf "# Should I attempt an upgrade? [Y/n]\n########\n"
+        printf "# Should I install the dev version of Aegir? [Y/n]\n########\n"
         read DEV
         if [[ $DEV =~ ^(y|Y)$ ]]; then
           INSTALL = '7.x-3.x';
@@ -964,9 +964,9 @@ fi
   printf "# Aegir time..\n########\n"
   printf "# Downloading provision..\n########\n"
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
-    ${DRUSH} dl --destination=/Users/${USERNAME}/.drush provision-7.x-3.x
+    ${DRUSH} dl --package-handler=git_drupalorg --destination=/Users/${USERNAME}/.drush provision-7.x-3.x
   else
-    ${DRUSH} dl --destination=/Users/${USERNAME}/.drush provision-6.x-2.1
+    ${DRUSH} dl --package-handler=git_drupalorg --destination=/Users/${USERNAME}/.drush provision-6.x-2.1
   fi
   printf "\n########\n# Clearing drush caches..\n########\n"
   ${DRUSH} cache-clear drush
@@ -974,9 +974,9 @@ fi
 
   say "type the DB password you entered for my SQL earlier"
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
-    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.x' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
+    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.x' --http_service_type=nginx --aegir_host=aegir.ld --working-copy --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
   else
-    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.1' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
+    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.1' --http_service_type=nginx --aegir_host=aegir.ld --working-copy --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
   fi
 
   # This expect block works but the previous expect block doesn't so can't use this yet.

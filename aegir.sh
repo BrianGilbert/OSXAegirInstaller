@@ -397,6 +397,11 @@
 ########"
   say "input required"
   read -n1 AEGIR7X
+  if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
+    printf "# You entered Y\n########\n"
+  else
+    printf "# You entered N\n########\n"
+  fi
 
   echo "
 ########

@@ -66,7 +66,7 @@
   if [[ $? -eq 127 ]] ; then
     printf "########\n# macports isn't installed continuing..\n"
   else
-    printf "########\n# Attempting to uninstall macports..\nn"
+    printf "########\n# Attempting to uninstall macports..\n"
     say "you may need to enter your password"
     sudo port -fp uninstall installed > /dev/null 2&>1
     sudo rm -rf \
@@ -80,6 +80,14 @@
         /Library/Tcl/darwinports1.0 \
         /Library/Tcl/macports1.0 \
         ~/.macports > /dev/null 2&>1
+  fi
+
+  drush > /dev/null 2&>1
+  if [[ $? -eq 127 ]] ; then
+    printf "########\n# Great, Drush isn't already installed continuing..\n"
+  else
+    printf "########\n# Remove your existing version of drush first..\n########"
+    exit
   fi
 
   ps aux|grep "httpd"|grep -v grep > /dev/null
@@ -359,6 +367,15 @@
       fi
     fi
   fi
+
+  # printf "\n########\n# If xcode is installed check it's license has been agreed to..\n########\n"
+  # xcode-select -p > /dev/null 2&>1
+  # if [[ $? -eq 127 ]] ; then
+  #   printf "########\n# xcode isn't installed continuing..\n"
+  # else
+  #   printf "########\n# ensuring xcode license has been agreed to..\nn"
+  #   xcodebuild -license
+  # fi
 
   printf "\n########\n# Checking if Homebrew is installed..\n########\n"
   if type "brew" > /dev/null 2>&1; then

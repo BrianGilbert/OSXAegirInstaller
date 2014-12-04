@@ -381,7 +381,7 @@
   if type "brew" > /dev/null 2>&1; then
     printf "\n########\n# Affirmative! Let's make sure everything is up to date..\n# Just so you know, this may throw a few warnings..\n########\n"
     say "Making sure homebrew is up to date, you may see some errors in the output, that's ok."
-    export PATH=/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:${PATH}
+    export PATH=/usr/local/bin:/usr/local/sbin:${HOME}/.composer/vendor/bin:${PATH}
     brew prune
     brew update
     brew doctor
@@ -395,8 +395,8 @@
     printf "# Nope! Installing Homebrew now..\n########\n"
     say "Installing homebrew now, you'll need to hit return when prompted"
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-    echo 'export PATH=/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:$PATH' >> ~/.bash_profile
-    echo 'export PATH=/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:$PATH' >> ~/.zshrc
+    echo "export PATH=/usr/local/bin:/usr/local/sbin:${HOME}/.composer/vendor/bin:${PATH}" >> ~/.bash_profile
+    echo "export PATH=/usr/local/bin:/usr/local/sbin:${HOME}/.composer/vendor/bin:${PATH}" >> ~/.zshrc
     source ~/.bash_profile
   fi
 

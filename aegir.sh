@@ -62,10 +62,7 @@
 # goes wrong during install, No passwords are logged..
 ########\n"
 
-  port > /dev/null 2&>1
-  if [[ $? -eq 127 ]] ; then
-    printf "########\n# macports isn't installed continuing..\n"
-  else
+  if type "port" > /dev/null 2>&1; then
     printf "########\n# Attempting to uninstall macports..\n"
     say "you may need to enter your password"
     sudo port -fp uninstall installed > /dev/null 2&>1
@@ -80,14 +77,15 @@
         /Library/Tcl/darwinports1.0 \
         /Library/Tcl/macports1.0 \
         ~/.macports > /dev/null 2&>1
+  else
+    printf "########\n# macports isn't installed continuing..\n"
   fi
 
-  drush > /dev/null 2&>1
-  if [[ $? -eq 127 ]] ; then
-    printf "########\n# Great, Drush isn't already installed continuing..\n"
-  else
+  if type "drush" > /dev/null 2>&1; then
     printf "########\n# Remove your existing version of drush first..\n########"
     exit
+  else
+    printf "########\n# Great, Drush isn't already installed continuing..\n"
   fi
 
   ps aux|grep "httpd"|grep -v grep > /dev/null

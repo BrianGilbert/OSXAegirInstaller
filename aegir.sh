@@ -705,8 +705,8 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null
 launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
 
 # Brew link correct php version
-brew unlink php53
-brew unlink php54
+brew unlink php53 > /dev/null 2>&1
+brew unlink php54 > /dev/null 2>&1
 brew link php55
 
 # Restart nginx
@@ -778,8 +778,8 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null
 launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist
 
 # Brew link correct php version
-brew unlink php53
-brew unlink php55
+brew unlink php53 > /dev/null 2>&1
+brew unlink php55 > /dev/null 2>&1
 brew link php54
 
 # Restart nginx
@@ -855,8 +855,8 @@ launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null
 launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
 
 # Brew link correct php version
-brew unlink php54
-brew unlink php55
+brew unlink php54 > /dev/null 2>&1
+brew unlink php55 > /dev/null 2>&1
 brew link php53
 
 # Restart nginx

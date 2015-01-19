@@ -413,9 +413,9 @@
   say "input required"
   read -n1 AEGIR7X
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
-    printf "# You entered Y\n########\n"
+    printf "\n# You entered Y\n########\n"
   else
-    printf "# You entered N\n########\n"
+    printf "\n# You entered N\n########\n"
   fi
 
   echo "
@@ -427,9 +427,9 @@
   say "input required"
   read -n1 PHP53
   if [[ ${PHP53} =~ ^(y|Y)$ ]]; then
-    printf "# You entered Y\n########\n"
+    printf "\n# You entered Y\n########\n"
   else
-    printf "# You entered N\n########\n"
+    printf "\n# You entered N\n########\n"
   fi
 
   if [[ ${PHP53} =~ ^(y|Y)$ ]]; then
@@ -440,9 +440,9 @@
     say "input required"
     read -n1 PHP53DEF
     if [[ ${PHP53DEF} =~ ^(y|Y)$ ]]; then
-      printf "# You entered Y\n########\n"
+      printf "\n# You entered Y\n########\n"
     else
-      printf "# You entered N\n########\n"
+      printf "\n# You entered N\n########\n"
     fi
   fi
 
@@ -453,9 +453,9 @@
   say "input required"
   read -n1 PHP54
   if [[ ${PHP54} =~ ^(y|Y)$ ]]; then
-    printf "# You entered Y\n########\n"
+    printf "\n# You entered Y\n########\n"
   else
-    printf "# You entered N\n########\n"
+    printf "\n# You entered N\n########\n"
   fi
 
   if [[ ! ${PHP53DEF} =~ ^(y|Y)$ ]]; then
@@ -467,9 +467,9 @@
       say "input required"
       read -n1 PHP54DEF
       if [[ ${PHP54DEF} =~ ^(y|Y)$ ]]; then
-        printf "# You entered Y\n########\n"
+        printf "\n# You entered Y\n########\n"
       else
-        printf "# You entered N\n########\n"
+        printf "\n# You entered N\n########\n"
       fi
     fi
   fi
@@ -481,9 +481,9 @@
   say "input required"
   read -n1 PHP55
   if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
-    printf "# You entered Y\n########\n"
+    printf "\n# You entered Y\n########\n"
   else
-    printf "# You entered N\n########\n"
+    printf "\n# You entered N\n########\n"
   fi
 
   if [[ ${PHP53DEF} =~ ^(y|Y)$ || ${PHP54DEF} =~ ^(y|Y)$ ]]; then
@@ -496,9 +496,9 @@
     say "input required"
     read -n1 PHP55DEF
     if [[ ${PHP55DEF} =~ ^(y|Y)$ ]]; then
-      printf "# You entered Y\n########\n"
+      printf "\n# You entered Y\n########\n"
     else
-      printf "# You entered N\n########\n"
+      printf "\n# You entered N\n########\n"
     fi
   fi
 
@@ -521,18 +521,7 @@ echo "
   read -n1 SOLR
 
   if [[ ${SOLR} =~ ^(y|Y)$ ]]; then
-    printf "# You entered Y\n########\n"
-    echo "
-########
-# Do you want solr to run automatically on boot [Y/n]:
-########"
-    say "input required"
-    read -n1 SOLRBOOT
-    if [[ ${SOLRBOOT} =~ ^(y|Y)$ ]]; then
-      printf "# You entered Y\n########\n"
-    else
-      printf "# You entered N\n########\n"
-    fi
+    printf "\n# You entered Y\n########\n"
   fi
 
   # Tap required kegs
@@ -545,8 +534,13 @@ echo "
 
   # Install required formula's
   printf "# Installing required brew formulae..\n########\n"
+  printf "# Installing cask..\n########\n"
+  brew install caskroom/cask/brew-cask
   printf "# Installing gcc..\n########\n"
   brew install apple-gcc42
+  printf "\n########\n# Installing java8..\n########\n"
+  say "You may need to enter your password now"
+  brew cask install java
   printf "\n########\n# Installing wget..\n########\n"
   brew install wget
   printf "\n########\n# Installing gzip..\n########\n"
@@ -898,12 +892,10 @@ fi
 
   #Solr
   if [[ ${SOLR} =~ ^(y|Y)$ ]]; then
-  printf "\n########\n# Installing solr..\n########\n"
-  brew install solr
-  mkdir -p ~/Library/LaunchAgents
-  printf "\n########\n# Downloading solr launch daemon..\n########\n"
-  curl https://gist.githubusercontent.com/BrianGilbert/6208150/raw/dfe9d698aee2cdbe9eeae88437c5ec844774bdb4/com.apache.solr.plist > ~/Library/LaunchAgents/com.apache.solr.plist
-  sed -i '' 's/\[username\]/'${USERNAME}'/' ~/Library/LaunchAgents/com.apache.solr.plist
+    printf "\n########\n# Installing solr..\n########\n"
+    brew install solr
+    printf "\n########\n# Backing up default multicore config..\n########\n"
+    cp -rp $(brew --prefix solr)/example/multicore $(brew --prefix solr)/example/multicore.bak
   fi
 
   printf "\n########\n# Setting up launch daemons..\n########\n"
@@ -1045,7 +1037,7 @@ fi
     sudo networksetup -setdnsservers 'Thunderbolt Ethernet' 127.0.0.1
     sudo networksetup -setdnsservers Wi-Fi 127.0.0.1
 
-    say "Open your network settings to confirm DNS for your active network device is set to 127.0.0.1, or else things will not work properly later in the script"
+    say "Open your network settings to confirm DNS for your active network device is set to 127.0.0.1, or else things will not work properly"
     echo "
   ########
   # Open your network settings now and confirm the DNS for
@@ -1126,13 +1118,13 @@ You can access the Solr4 WebUI at:
 When you set up search_api_solr you will need to copy the contents
 of the 4.x version of the solr-conf files that come with the module
 into each core you set up, eg.:
- /usr/local/opt/solr/libexec/example/multicore/core0/conf
+ $(brew --prefix solr)/example/multicore/core0/conf
 
-If you did not elect to load solr on boot you can run it by executing
-the following in a terminal:
-launchctl load ~/Library/LaunchAgents/com.apache.solr.plist
-To stop it:
- launchctl unload ~/Library/LaunchAgents/com.apache.solr.plist
+You can run solr by executing the following in a terminal:
+solr start -e multicore -p 8099
+
+To stop solr:
+solr stop -all
 
 If things are not working after an OS update update then try the
 following steps, reset DNS to 127.0.0.1 and run following command:

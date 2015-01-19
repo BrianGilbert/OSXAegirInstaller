@@ -112,10 +112,9 @@
     #exit # Remove this line when uninstall block below is fixed.
     # Possibly I'll allow reinstallations in the future..
     #
-    printf "# Should I backup some important bits then remove it? \n# The option to re-install will be given after this. [Y/n]\n########\n"
+    printf "# Should I backup some important bits then remove it? \n# The option to re-install will be given after this, if you say no I'll prompt you to update the homebrew components. [Y/n]\n########\n"
     say "input required"
     read -n1 CLEAN
-
     if [[ ${CLEAN} =~ ^(y|Y)$ ]]; then
       printf "# You entered Y\n########\n"
       printf "# There is no turning back..\n# This will uninstall aegir and all related homebrew components, are you sure? [Y/n]\n########\n"
@@ -315,48 +314,166 @@
         exit
       fi
     else
-      printf "# Should I attempt an upgrade? [Y/n]\n########\n"
-      say "Should I remove it and do, a clean install?"
+      printf "# Should I attempt an upgrade of the homebrew components? [Y/n]\n########\n"
+      say "Should try an  of homebrews bits?"
       read UPGRADE
       if [[ $UPGRADE =~ ^(y|Y)$ ]]; then
 
-        printf "# Should I install the dev version of Aegir? [Y/n]\n########\n"
-        read DEV
-        if [[ $DEV =~ ^(y|Y)$ ]]; then
-          INSTALL = '7.x-3.x';
-        else
-          INSTALL = '6.x-2.1';
+        # printf "# Should I install the dev version of Aegir? [Y/n]\n########\n"
+        # read DEV
+        # if [[ $DEV =~ ^(y|Y)$ ]]; then
+        #   INSTALL = '7.x-3.x';
+        # else
+        #   INSTALL = '6.x-2.1';
+        # fi
+
+        # if [ -d "/var/aegir/hostmaster-6.x-2.x" ]; then
+        #   # Control will enter here if 6.x-2.0 directory exists.
+        #   CURRENTINSTALL = '/var/aegir/hostmaster-6.x-2.x';
+        # fi
+
+        # if [ -d "/var/aegir/hostmaster-6.x-2.0" ]; then
+        #   # Control will enter here if 6.x-2.0 directory exists.
+        #   CURRENTINSTALL = '/var/aegir/hostmaster-6.x-2.0';
+        # fi
+
+        # if [ -d "/var/aegir/hostmaster-6.x-2.1" ]; then
+        #   # Control will enter here if 6.x-2.0 directory exists.
+        #   CURRENTINSTALL = '/var/aegir/hostmaster-6.x-2.1';
+        # fi
+
+        # if [ -d "/var/aegir/hostmaster-7.x-3.x" ]; then
+        #   # Control will enter here if 7.x-3.x directory exists.
+        #   CURRENTINSTALL = '/var/aegir/hostmaster-7.x-3.x';
+        # fi
+
+        printf "# Upgrading homebrew components...\n########\n"
+        brew update
+        brew upgrade apple-gcc42
+        brew upgrade wget
+        brew upgrade gzip
+        brew upgrade libpng
+        brew upgrade dnsmasq
+        brew upgrade pcre geoip
+        brew upgrade nginx --with-debug --with-flv --with-geoip --with-http_dav_module --with-mp4 --with-spdy --with-ssl --with-upload-progress
+        echo "update path to nginx logfiles, you'll need to enter password here."
+        sudo mkdir -p $(brew --prefix nginx)/logs
+        sudo rm /var/log/nginx/error.log
+        sudo ln -s $(brew --prefix nginx)/logs/error.log /var/log/nginx/error.log
+
+        brew upgrade cmake
+
+        launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+        brew upgrade mariadb
+        launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+
+        PHPAVAIL=`ls -d /usr/local/Cellar/php5* | grep 'php5[0-9]$' | cut -c 22-24`
+        PHPLIVE=`php --version |grep 5|cut -c 5-7`
+
+        launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
+        rm ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
+        launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
+        rm ~/Library/LaunchAgents/homebrew.mxcl.php54.plist
+        launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+        rm ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
+
+        if [[ ${PHPAVAIL} == *"55"* ]] ; then
+          sudo rm -rf $(brew --prefix homebrew/php/php55)/var
+          brew unlink php53 > /dev/null 2>&1
+          brew unlink php54 > /dev/null 2>&1
+          brew link php55
+          brew upgrade php55 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+          brew upgrade php55-geoip
+          brew upgrade php55-imagick
+          brew upgrade php55-mcrypt
+          brew upgrade php55-uploadprogress
+          brew upgrade php55-xdebug
+          brew upgrade php55-xhprof
+          sudo rm /var/log/nginx/php55-fpm.log
+          sudo ln -s $(brew --prefix homebrew/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
+          cp $(brew --prefix homebrew/php/php55)/homebrew.mxcl.php55.plist ~/Library/LaunchAgents/
+          brew unlink php55
         fi
 
-        if [ -d "/var/aegir/hostmaster-6.x-2.x" ]; then
-          # Control will enter here if 6.x-2.0 directory exists.
-          CURRENTINSTALL = '/var/aegir/hostmaster-6.x-2.x';
+        if [[ ${PHPAVAIL} == *"54"* ]] ; then
+          sudo rm -rf $(brew --prefix homebrew/php/php54)/var
+          brew unlink php53 > /dev/null 2>&1
+          brew unlink php55 > /dev/null 2>&1
+          brew link php54
+          brew upgrade php54 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+          brew upgrade php54-geoip
+          brew upgrade php54-imagick
+          brew upgrade php54-mcrypt
+          brew upgrade php54-uploadprogress
+          brew upgrade php54-xdebug
+          brew upgrade php54-xhprof
+          sudo rm /var/log/nginx/php54-fpm.log
+          sudo ln -s $(brew --prefix homebrew/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
+          cp $(brew --prefix homebrew/php/php54)/homebrew.mxcl.php54.plist ~/Library/LaunchAgents/
+          brew unlink php54
         fi
 
-        if [ -d "/var/aegir/hostmaster-6.x-2.0" ]; then
-          # Control will enter here if 6.x-2.0 directory exists.
-          CURRENTINSTALL = '/var/aegir/hostmaster-6.x-2.0';
+        if [[ ${PHPAVAIL} == *"53"* ]] ; then
+          sudo rm -rf $(brew --prefix homebrew/php/php53)/var
+          brew unlink php54 > /dev/null 2>&1
+          brew unlink php55 > /dev/null 2>&1
+          brew link php53
+          brew upgrade re2c
+          brew upgrade flex
+          brew upgrade bison27
+          brew upgrade libevent
+          brew upgrade php53 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+          brew upgrade php53-geoip
+          brew upgrade php53-imagick
+          brew upgrade php53-mcrypt
+          brew upgrade php53-uploadprogress
+          brew upgrade php53-xdebug
+          brew upgrade php53-xhprof
+          sudo rm /var/log/nginx/php53-fpm.log
+          sudo ln -s $(brew --prefix homebrew/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
+          cp $(brew --prefix homebrew/php/php53)/homebrew.mxcl.php53.plist ~/Library/LaunchAgents/
+
+          brew unlink php53
         fi
 
-        if [ -d "/var/aegir/hostmaster-6.x-2.1" ]; then
-          # Control will enter here if 6.x-2.0 directory exists.
-          CURRENTINSTALL = '/var/aegir/hostmaster-6.x-2.1';
+        if [[ ${PHPAVAIL} == *"53"* ]] ; then
+          brew link php53
+          launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
         fi
 
-        if [ -d "/var/aegir/hostmaster-7.x-3.x" ]; then
-          # Control will enter here if 7.x-3.x directory exists.
-          CURRENTINSTALL = '/var/aegir/hostmaster-7.x-3.x';
+        if [[ ${PHPAVAIL} == *"54"* ]] ; then
+          brew link php54
+          launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist
         fi
 
-        # Aegir upgrade
-        say "Input will be required."
-        $DRUSH dl --destination=/Users/admin/.drush provision-{$INSTALL};
-        $DRUSH cache-clear drush
-        OLD_AEGIR_DIR={$CURRENTINSTALL};
-        AEGIR_VERSION={$INSTALL};
-        AEGIR_DOMAIN=aegir.ld;
-        cd $OLD_AEGIR_DIR;
-        drush hostmaster-migrate $AEGIR_DOMAIN /var/aegir/hostmaster-$AEGIR_VERSION --debug
+        if [[ ${PHPAVAIL} == *"55"* ]] ; then
+          brew link php55
+          launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
+        fi
+
+        brew upgrade php-code-sniffer
+        brew upgrade drupal-code-sniffer
+        brew upgrade phpunit
+        brew upgrade homebrew/php/composer
+        composer global require drush/drush:dev-master
+
+        SOLR=`ls -d /usr/local/Cellar/solr`
+
+        if [[ ${SOLR} == *"solr"* ]] ; then
+          brew upgrade solr
+        fi
+
+        brew cleanup
+
+        # # Aegir upgrade
+        # say "Input will be required."
+        # $DRUSH dl --destination=/Users/admin/.drush provision-{$INSTALL};
+        # $DRUSH cache-clear drush
+        # OLD_AEGIR_DIR={$CURRENTINSTALL};
+        # AEGIR_VERSION={$INSTALL};
+        # AEGIR_DOMAIN=aegir.ld;
+        # cd $OLD_AEGIR_DIR;
+        # drush hostmaster-migrate $AEGIR_DOMAIN /var/aegir/hostmaster-$AEGIR_VERSION --debug
         exit
       else
         printf "# Exiting..\n########\n"

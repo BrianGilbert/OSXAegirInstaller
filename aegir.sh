@@ -457,9 +457,9 @@
         brew upgrade homebrew/php/composer
         composer global require drush/drush:dev-master
 
-        SOLR=`ls -d /usr/local/Cellar/solr`
+        HAVESOLR=`ls -d /usr/local/Cellar/solr`
 
-        if [[ ${SOLR} == *"solr"* ]] ; then
+        if [[ ${HAVESOLR} == *"solr"* ]] ; then
           brew upgrade solr
         fi
 

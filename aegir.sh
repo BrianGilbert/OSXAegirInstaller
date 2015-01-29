@@ -200,6 +200,8 @@
         brew uninstall drupal-code-sniffer
         brew uninstall phpunit
 
+        brew untap josegonzalez/php
+
         brew uninstall re2c
         brew uninstall flex
         brew uninstall bison27

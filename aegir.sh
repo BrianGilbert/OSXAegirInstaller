@@ -1134,7 +1134,7 @@ fi
     curl https://gist.githubusercontent.com/BrianGilbert/9226172/raw/509f69711a5a2c61ec41b6d3b690a72096b26703/org.aegir.hosting.queued.plist > ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
     launchctl load -w ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
 
-    curl https://gist.githubusercontent.com/BrianGilbert/9282670/raw/3e77b7fc4baa5cb072b13156b943c9a4145eb86a/nginx_xhprof.ld.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_xhprof.ld.conf
+    curl https://gist.githubusercontent.com/BrianGilbert/9282670/raw/b5125abb144f683e75ea68696f8bf606b1631d07/nginx_xhprof.ld.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_xhprof.ld.conf
 
     printf "\n########\n# Installing registry_rebuild drush module\n########\n"
     drush dl registry_rebuild

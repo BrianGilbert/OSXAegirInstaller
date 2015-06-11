@@ -98,7 +98,7 @@
   fi
 
   printf "\n########\n# Checking OS version..\n########\n"
-  if [[ ${OSX} = 10.10 || ${OSX} = 10.9. ]] ; then
+  if [[ ${OSX} = 10.11 || ${OSX} = 10.10 || ${OSX} = 10.9. ]] ; then
     printf "# You're using $OSX, so let's go!\n########\n"
   else
     printf "# ${OSX} isn't a supported version for this script\n# Update to 10.9+ and rerun the script, exiting.\n########\n"
@@ -138,6 +138,11 @@
           sudo rm /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
         fi
 
+        if [ -e "/Library/LaunchDaemons/homebrew.mxcl.nginx-full.plist" ] ; then
+          sudo launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.nginx-full.plist
+          sudo rm /Library/LaunchDaemons/homebrew.mxcl.nginx-full.plist
+        fi
+
         if [ -e "~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist" ] ; then
           launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
           kill $(ps aux | grep 'mysqld' | awk '{print $2}')
@@ -172,6 +177,7 @@
         brew uninstall php53-xhprof
         brew uninstall php53
         sudo rm /var/log/nginx/php53-fpm.log
+        sudo rm /var/log/aegir/php53-fpm.log
         rm /usr/local/bin/go53
 
         brew uninstall php54-geoip
@@ -182,6 +188,7 @@
         brew uninstall php54-xhprof
         brew uninstall php54
         sudo rm /var/log/nginx/php54-fpm.log
+        sudo rm /var/log/aegir/php54-fpm.log
         rm /usr/local/bin/go54
 
         brew uninstall php55-geoip
@@ -192,6 +199,7 @@
         brew uninstall php55-xhprof
         brew uninstall php55
         sudo rm /var/log/nginx/php55-fpm.log
+        sudo rm /var/log/aegir/php55-fpm.log
         rm /usr/local/bin/go55
 
         rm -rf /usr/local/etc/php
@@ -209,13 +217,19 @@
         brew uninstall openssl
         brew uninstall solr
 
-        sudo mv $(brew --prefix nginx)/logs/error.log $BACKUPS_DIR/brew.nginx.error.log
+        sudo mv /var/log/nginx/access.log $BACKUPS_DIR/brew.nginx.access.log
+        sudo mv /var/log/nginx/error.log $BACKUPS_DIR/brew.nginx.error.log
+        sudo mv /var/log/aegir/access.log $BACKUPS_DIR/brew.nginx.access.log
+        sudo mv /var/log/aegir/error.log $BACKUPS_DIR/brew.nginx.error.log
         rm -rf /usr/local/etc/nginx
         rm -rf /usr/local/var/run/nginx
         sudo rm /var/log/nginx/error.log
+        sudo rm /var/log/aegir/error.log
         brew uninstall nginx
+        brew uninstall nginx-full
 
         brew uninstall pcre geoip
+        rm -rf /usr/local/share/GeoIP
         brew uninstall dnsmasq
         sudo networksetup -setdnsservers AirPort empty
         sudo networksetup -setdnsservers Ethernet empty
@@ -353,15 +367,21 @@
         brew update
         brew upgrade apple-gcc42
         brew upgrade wget
+        brew upgrade curl --with-homebrew-openssl
         brew upgrade gzip
         brew upgrade libpng
         brew upgrade dnsmasq
         brew upgrade pcre geoip
-        brew upgrade nginx --with-debug --with-flv --with-geoip --with-http_dav_module --with-mp4 --with-spdy --with-ssl --with-upload-progress
+        brew upgrade nginx-full --with-debug --with-flv --with-geoip --with-gzip-static --with-webdav --with-mp4 --with-spdy --with-ssl --with-status --with-upload-progress-module
+        if [ -e "/Library/LaunchDaemons/homebrew.mxcl.nginx.plist" ] ; then
+          sudo rm /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+          sudo cp $(brew --prefix nginx-full)/homebrew.mxcl.nginx-full.plist /Library/LaunchDaemons/
+        fi
         echo "update path to nginx logfiles, you'll need to enter password here."
-        sudo mkdir -p $(brew --prefix nginx)/logs
+        sudo mkdir -p /var/log/aegir
+        sudo chown -R ${USERNAME}:admin /var/log/aegir
         sudo rm /var/log/nginx/error.log
-        sudo ln -s $(brew --prefix nginx)/logs/error.log /var/log/nginx/error.log
+        sudo rm /var/log/aegir/nginx-error.log
 
         brew upgrade cmake
 
@@ -384,7 +404,7 @@
           brew unlink php53 > /dev/null 2>&1
           brew unlink php54 > /dev/null 2>&1
           brew link php55
-          brew upgrade php55 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+          brew upgrade php55 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-curl --with-homebrew-openssl
           brew upgrade php55-geoip
           brew upgrade php55-imagick
           brew upgrade php55-mcrypt
@@ -392,7 +412,7 @@
           brew upgrade php55-xdebug
           brew upgrade php55-xhprof
           sudo rm /var/log/nginx/php55-fpm.log
-          sudo ln -s $(brew --prefix homebrew/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
+          sudo rm /var/log/aegir/php55-fpm.log
           cp $(brew --prefix homebrew/php/php55)/homebrew.mxcl.php55.plist ~/Library/LaunchAgents/
           brew unlink php55
         fi
@@ -402,7 +422,7 @@
           brew unlink php53 > /dev/null 2>&1
           brew unlink php55 > /dev/null 2>&1
           brew link php54
-          brew upgrade php54 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+          brew upgrade php54 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-curl --with-homebrew-openssl
           brew upgrade php54-geoip
           brew upgrade php54-imagick
           brew upgrade php54-mcrypt
@@ -410,7 +430,7 @@
           brew upgrade php54-xdebug
           brew upgrade php54-xhprof
           sudo rm /var/log/nginx/php54-fpm.log
-          sudo ln -s $(brew --prefix homebrew/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
+          sudo rm /var/log/aegir/php54-fpm.log
           cp $(brew --prefix homebrew/php/php54)/homebrew.mxcl.php54.plist ~/Library/LaunchAgents/
           brew unlink php54
         fi
@@ -424,7 +444,7 @@
           brew upgrade flex
           brew upgrade bison27
           brew upgrade libevent
-          brew upgrade php53 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+          brew upgrade php53 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-curl --with-homebrew-openssl
           brew upgrade php53-geoip
           brew upgrade php53-imagick
           brew upgrade php53-mcrypt
@@ -432,7 +452,7 @@
           brew upgrade php53-xdebug
           brew upgrade php53-xhprof
           sudo rm /var/log/nginx/php53-fpm.log
-          sudo ln -s $(brew --prefix homebrew/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
+          sudo rm /var/log/aegir/php53-fpm.log
           cp $(brew --prefix homebrew/php/php53)/homebrew.mxcl.php53.plist ~/Library/LaunchAgents/
 
           brew unlink php53
@@ -452,6 +472,10 @@
           brew link php55
           launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
         fi
+
+        mkdir -p /usr/local/share/GeoIP
+        curl http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz > /usr/local/share/GeoIP/GeoIP.dat.gz
+        gunzip -f GeoIP.dat.gz &> /dev/null
 
         brew upgrade php-code-sniffer
         brew upgrade drupal-code-sniffer
@@ -648,6 +672,7 @@ echo "
   brew tap homebrew/versions
   brew tap homebrew/dupes
   brew tap homebrew/homebrew-php
+  brew tap homebrew/nginx
   brew update
   brew doctor
 
@@ -662,6 +687,8 @@ echo "
   brew cask install java
   printf "\n########\n# Installing wget..\n########\n"
   brew install wget
+  printf "\n########\n# Installing curl..\n########\n"
+  brew install --with-openssl curl
   printf "\n########\n# Installing gzip..\n########\n"
   brew install gzip
   printf "\n########\n# Installing libpng..\n########\n"
@@ -729,20 +756,25 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
 
   printf "\n########\n# Installing nginx..\n########\n"
   brew install pcre geoip
-  brew install nginx --with-debug --with-flv --with-geoip --with-http_dav_module --with-mp4 --with-spdy --with-ssl --with-upload-progress
+  brew install nginx-full --with-debug --with-flv --with-geoip --with-gzip-static --with-webdav --with-mp4 --with-spdy --with-ssl --with-status --with-upload-progress-module
   printf "\n########\n# Configuring nginx..\n########\n"
   if [ -e "/usr/local/etc/nginx/nginx.conf" ] ; then
   mv /usr/local/etc/nginx/nginx.conf /usr/local/etc/nginx/nginx.conf.bak
   fi
-  curl https://gist.githubusercontent.com/BrianGilbert/5908352/raw/2b6f9094348af7b8d64c3582a0e6e67164bd0168/nginx.conf > /usr/local/etc/nginx/nginx.conf
+  curl https://gist.githubusercontent.com/BrianGilbert/5908352/raw/097a8128efd6815dbbacd18339b60c0ad780f65f/nginx.conf > /usr/local/etc/nginx/nginx.conf
   sed -i '' 's/\[username\]/'${USERNAME}'/' /usr/local/etc/nginx/nginx.conf
 
+  mkdir -p /usr/local/etc/nginx/conf.d
+
   say "You may be prompted for your password"
-  sudo mkdir -p $(brew --prefix nginx)/logs
-  sudo mkdir -p /var/log/nginx
-  sudo ln -s $(brew --prefix nginx)/logs/error.log /var/log/nginx/error.log
+  sudo mkdir -p /var/log/aegir
+  sudo chown -R ${USERNAME}:admin /var/log/aegir
   sudo mkdir -p /var/lib/nginx
   mkdir -p /usr/local/var/run/nginx/proxy_temp
+
+  mkdir -p /usr/local/share/GeoIP
+  curl http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz > /usr/local/share/GeoIP/GeoIP.dat.gz
+  gunzip -f GeoIP.dat.gz &> /dev/null
 
   printf "\n########\n# Installing mariadb..\n########\n"
   brew install cmake
@@ -799,7 +831,7 @@ xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
 
   say "You may be prompted for your password"
-  sudo ln -s $(brew --prefix homebrew/php/php55)/var/log/php-fpm.log /var/log/nginx/php55-fpm.log
+  sudo ln -s $(brew --prefix homebrew/php/php55)/var/log/php-fpm.log /var/log/aegir/php55-fpm.log
 
   cp $(brew --prefix homebrew/php/php55)/homebrew.mxcl.php55.plist ~/Library/LaunchAgents/
 
@@ -871,7 +903,7 @@ xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.4/conf.d/ext-xdebug.ini
 
   say "You may be prompted for your password"
-  sudo ln -s $(brew --prefix homebrew/php/php54)/var/log/php-fpm.log /var/log/nginx/php54-fpm.log
+  sudo ln -s $(brew --prefix homebrew/php/php54)/var/log/php-fpm.log /var/log/aegir/php54-fpm.log
 
   mkdir -p ~/Library/LaunchAgents
   cp $(brew --prefix homebrew/php/php54)/homebrew.mxcl.php54.plist ~/Library/LaunchAgents/
@@ -949,7 +981,7 @@ xdebug.var_display_max_data = 2048
 xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
 
   say "You may be prompted for your password"
-  sudo ln -s $(brew --prefix homebrew/php/php53)/var/log/php-fpm.log /var/log/nginx/php53-fpm.log
+  sudo ln -s $(brew --prefix homebrew/php/php53)/var/log/php-fpm.log /var/log/aegir/php53-fpm.log
 
   cp $(brew --prefix homebrew/php/php53)/homebrew.mxcl.php53.plist ~/Library/LaunchAgents/
 
@@ -1012,22 +1044,25 @@ fi
   #Solr
   if [[ ${SOLR} =~ ^(y|Y)$ ]]; then
     printf "\n########\n# Installing solr..\n########\n"
-    brew install solr
+    brew install solr4
     printf "\n########\n# Backing up default multicore config..\n########\n"
-    cp -rp $(brew --prefix solr)/example/multicore $(brew --prefix solr)/example/multicore.bak
+    cp -rp $(brew --prefix solr4)/example/multicore $(brew --prefix solr4)/example/multicore.bak
+    mkdir -p /usr/local/etc/solr4
+    cp -rp $(brew --prefix solr4)/example/multicore /usr/local/etc/solr4/multicore
+    mkdir -p /usr/local/var/log/solr4
+    curl https://gist.githubusercontent.com/BrianGilbert/ddd8dd9be78dc3d0201d/raw/03b303cfd696026e26f738e9b1200ce45a36ee5f/homebrew.mxcl.solr4.plist > ~/Library/LaunchAgents/homebrew.mxcl.solr4.plist
   fi
 
   printf "\n########\n# Setting up launch daemons..\n########\n"
   say "you may be prompted for your password"
-  sudo cp $(brew --prefix nginx)/homebrew.mxcl.nginx.plist /Library/LaunchDaemons/
-  sudo chown root:wheel /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+  sudo cp $(brew --prefix nginx-full)/homebrew.mxcl.nginx-full.plist /Library/LaunchDaemons/
+  sudo chown root:wheel /Library/LaunchDaemons/homebrew.mxcl.nginx-full.plist
 
   cp $(brew --prefix mariadb)/homebrew.mxcl.mariadb.plist ~/Library/LaunchAgents/
 
-
   printf "\n########\n# Launching daemons now..\n########\n"
-  sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
-  launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
+  sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx-full.plist
+  yeah
   if [[ ${PHP55DEF} =~ ^(y|Y)$ ]]; then
     launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
@@ -1087,10 +1122,7 @@ fi
   #   expect eof"
 
   echo "${USERNAME} ALL=NOPASSWD: /usr/local/bin/nginx" | sudo tee -a  /etc/sudoers
-  ln -s /var/aegir/config/nginx.conf /usr/local/etc/nginx/aegir.conf
-
-  printf "\n########\n# Adding aegir.conf include to ngix.conf..\n"
-  ed -s /usr/local/etc/nginx/nginx.conf <<< $'g/#aegir/s!!include /usr/local/etc/nginx/aegir.conf;!\nw'
+  ln -s /var/aegir/config/nginx.conf /usr/local/etc/nginx/conf.d/aegir.conf
 
   printf "# Aegir time..\n########\n"
   printf "# Downloading provision..\n########\n"
@@ -1147,7 +1179,7 @@ fi
     printf "\n########\n# Enabling SSL for local sites..\n########\n"
     mkdir -p /usr/local/etc/ssl/private;
     openssl req -x509 -nodes -days 7300 -subj "/C=US/ST=New York/O=Aegir/OU=Cloud/L=New York/CN=*.aegir.ld" -newkey rsa:2048 -keyout /usr/local/etc/ssl/private/nginx-wild-ssl.key -out /usr/local/etc/ssl/private/nginx-wild-ssl.crt -batch 2> /dev/null;
-    curl https://gist.githubusercontent.com/BrianGilbert/7760457/raw/fa9163ecc533ae14ea1332b38444e03be00dd329/nginx_wild_ssl.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_wild_ssl.conf;
+    curl https://gist.githubusercontent.com/BrianGilbert/7760457/raw/267e582f7f5f7f87f194f508c745da353612e751/nginx_wild_ssl.conf > /var/aegir/config/server_master/nginx/pre.d/nginx_wild_ssl.conf;
     sudo /usr/local/bin/nginx -s reload;
 
     printf "# Setting known network interfaces to use 127.0.0.1 for DNS lookups,this may throw errors, that's ok...\n########\n"
@@ -1247,7 +1279,7 @@ solr stop -all
 
 If things are not working after an OS update update then try the
 following steps, reset DNS to 127.0.0.1 and run following command:
- sudo mkdir -p /var/log/nginx
+ sudo mkdir -p /var/log/aegir
 
 Then start nginx:
  sudo /usr/local/bin/nginx

@@ -786,6 +786,9 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   curl https://gist.githubusercontent.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my.cnf.d/my-drupal.cnf
   say "You may be prompted for your password"
 
+# Unlink php56 in case it's been installed by the user
+brew unlink php56
+
 if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php55..\n########\n"
   brew install php55 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl

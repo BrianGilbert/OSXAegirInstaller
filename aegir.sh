@@ -1036,9 +1036,9 @@ fi
   brew uninstall drush > /dev/null 2&>1
 
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
-    composer global require drush/drush:dev-master
+    composer global require drush/drush:7.x
   else
-    composer global require drush/drush:6.*
+    composer global require drush/drush:6.x
   fi
 
   #Solr

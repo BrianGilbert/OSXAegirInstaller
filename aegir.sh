@@ -163,6 +163,11 @@
           rm ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
         fi
 
+        if [ -e "~/Library/LaunchAgents/homebrew.mxcl.php56.plist" ] ; then
+          launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist
+          rm ~/Library/LaunchAgents/homebrew.mxcl.php56.plist
+        fi
+
         if [ -e "~/Library/LaunchAgents/org.aegir.hosting.queued.plist" ] ; then
           launchctl unload -w ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
           rm ~/Library/LaunchAgents/org.aegir.hosting.queued.plist
@@ -201,6 +206,17 @@
         sudo rm /var/log/nginx/php55-fpm.log
         sudo rm /var/log/aegir/php55-fpm.log
         rm /usr/local/bin/go55
+
+        brew uninstall php56-geoip
+        brew uninstall php56-imagick
+        brew uninstall php56-mcrypt
+        brew uninstall php56-uploadprogress
+        brew uninstall php56-xdebug
+        brew uninstall php56-xhprof
+        brew uninstall php56
+        sudo rm /var/log/nginx/php56-fpm.log
+        sudo rm /var/log/aegir/php56-fpm.log
+        rm /usr/local/bin/go56
 
         rm -rf /usr/local/etc/php
 
@@ -398,11 +414,33 @@
         rm ~/Library/LaunchAgents/homebrew.mxcl.php54.plist
         launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
         rm ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
+        launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist > /dev/null 2>&1
+        rm ~/Library/LaunchAgents/homebrew.mxcl.php56.plist
+
+        if [[ ${PHPAVAIL} == *"56"* ]] ; then
+          sudo rm -rf $(brew --prefix homebrew/php/php56)/var
+          brew unlink php53 > /dev/null 2>&1
+          brew unlink php54 > /dev/null 2>&1
+          brew unlink php55 > /dev/null 2>&1
+          brew link php56
+          brew upgrade php56 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-curl --with-homebrew-openssl
+          brew upgrade php56-geoip
+          brew upgrade php56-imagick
+          brew upgrade php56-mcrypt
+          brew upgrade php56-uploadprogress
+          brew upgrade php56-xdebug
+          brew upgrade php56-xhprof
+          sudo rm /var/log/nginx/php56-fpm.log
+          sudo rm /var/log/aegir/php56-fpm.log
+          cp $(brew --prefix homebrew/php/php56)/homebrew.mxcl.php56.plist ~/Library/LaunchAgents/
+          brew unlink php56
+        fi
 
         if [[ ${PHPAVAIL} == *"55"* ]] ; then
           sudo rm -rf $(brew --prefix homebrew/php/php55)/var
           brew unlink php53 > /dev/null 2>&1
           brew unlink php54 > /dev/null 2>&1
+          brew unlink php56 > /dev/null 2>&1
           brew link php55
           brew upgrade php55 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-curl --with-homebrew-openssl
           brew upgrade php55-geoip
@@ -421,6 +459,7 @@
           sudo rm -rf $(brew --prefix homebrew/php/php54)/var
           brew unlink php53 > /dev/null 2>&1
           brew unlink php55 > /dev/null 2>&1
+          brew unlink php56 > /dev/null 2>&1
           brew link php54
           brew upgrade php54 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-curl --with-homebrew-openssl
           brew upgrade php54-geoip
@@ -439,6 +478,7 @@
           sudo rm -rf $(brew --prefix homebrew/php/php53)/var
           brew unlink php54 > /dev/null 2>&1
           brew unlink php55 > /dev/null 2>&1
+          brew unlink php56 > /dev/null 2>&1
           brew link php53
           brew upgrade re2c
           brew upgrade flex
@@ -473,6 +513,10 @@
           launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
         fi
 
+        if [[ ${PHPAVAIL} == *"56"* ]] ; then
+          brew link php56
+          launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist
+        fi
         mkdir -p /usr/local/share/GeoIP
         curl http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz > /usr/local/share/GeoIP/GeoIP.dat.gz
         gunzip -f GeoIP.dat.gz &> /dev/null
@@ -563,7 +607,7 @@
 
   echo "
 ########
-# I can install multiple versions of PHP; 5.3, 5.4 and/or 5.5.
+# I can install multiple versions of PHP; 5.3, 5.4 5.5 and/or 5.6.
 # Let me know which versions you'd like installed.
 # Set up PHP 5.3 [Y/n]:
 ########"
@@ -645,13 +689,41 @@
     fi
   fi
 
+  echo "
+########
+# Set up PHP 5.6 [Y/n]:
+########"
+  say "input required"
+  read -n1 PHP56
+  if [[ ${PHP56} =~ ^(y|Y)$ ]]; then
+    printf "\n# You entered Y\n########\n"
+  else
+    printf "\n# You entered N\n########\n"
+  fi
+
+  if [[ ${PHP53DEF} =~ ^(y|Y)$ || ${PHP54DEF} =~ ^(y|Y)$ || ${PHP55DEF} =~ ^(y|Y)$ ]]; then
+    echo ""
+  else
+    echo "
+########
+# Make PHP 5.6 the default [Y/n]:
+########"
+    say "input required"
+    read -n1 PHP56DEF
+    if [[ ${PHP56DEF} =~ ^(y|Y)$ ]]; then
+      printf "\n# You entered Y\n########\n"
+    else
+      printf "\n# You entered N\n########\n"
+    fi
+  fi
+
   if [[ ! ${PHP53} =~ ^(y|Y)$ && ! ${PHP54} =~ ^(y|Y)$ && ! ${PHP55} =~ ^(y|Y)$ ]]; then
     echo "
 ########
-# You didn't select any version of PHP?!? So I'm installing PHP5.5
+# You didn't select any version of PHP?!? So I'm installing PHP5.6
 ########"
-  PHP55="Y"
-  PHP55DEF="Y"
+  PHP56="Y"
+  PHP56DEF="Y"
   fi
 
 echo "
@@ -786,8 +858,82 @@ nameserver 8.8.4.4" >> /etc/resolv.dnsmasq.conf'
   curl https://gist.githubusercontent.com/BrianGilbert/6207328/raw/10e298624ede46e361359b78a1020c82ddb8b943/my-drupal.cnf > /usr/local/etc/my.cnf.d/my-drupal.cnf
   say "You may be prompted for your password"
 
-# Unlink php56 in case it's been installed by the user
-brew unlink php56
+if [[ ${PHP56} =~ ^(y|Y)$ ]]; then
+  printf "\n########\n# Installing php56..\n########\n"
+  brew install php56 --without-snmp --with-fpm --with-gmp --with-imap --with-mysql --with-homebrew-curl --with-homebrew-libxslt --with-homebrew-openssl
+  brew install php56-geoip
+  brew install php56-imagick
+  brew install php56-mcrypt
+  brew install php56-uploadprogress
+  brew install php56-xdebug
+  brew install php56-xhprof
+
+  # Make sure LaunchAgents directory exists
+  mkdir -p ~/Library/LaunchAgents
+
+  printf "\n########\n# Configuring php56..\n########\n"
+  sed -i '' '/timezone =/ a\
+  date.timezone = Australia/Melbourne\
+  ' /usr/local/etc/php/5.6/php.ini
+  sed -i '' 's/post_max_size = .*/post_max_size = '50M'/' /usr/local/etc/php/5.6/php.ini
+  sed -i '' 's/upload_max_filesize = .*/upload_max_filesize = '10M'/' /usr/local/etc/php/5.6/php.ini
+  sed -i '' 's/max_execution_time = .*/max_execution_time = '90'/' /usr/local/etc/php/5.6/php.ini
+  sed -i '' 's/memory_limit = .*/memory_limit = '512M'/' /usr/local/etc/php/5.6/php.ini
+  sed -i '' 's/pdo_mysql.default_socket=.*/pdo_mysql.default_socket= \/tmp\/mysql.sock/' /usr/local/etc/php/5.6/php.ini
+  sed -i '' '/pid = run/ a\
+  pid = /usr/local/var/run/php-fpm.pid\
+  ' /usr/local/etc/php/5.6/php-fpm.conf
+
+  # Additions for xdebug to work with PHPStorm
+  echo "xdebug.max_nesting_level = 200
+
+xdebug.profiler_enable = 1
+xdebug.profiler_enable_trigger = 1
+xdebug.profiler_output_name = xdebug-profile-cachegrind.out-%H-%R
+xdebug.profiler_output_dir = /tmp/xdebug/
+
+xdebug.remote_autostart = 0
+xdebug.remote_enable=1
+xdebug.remote_connect_back = 1
+xdebug.remote_port = 9001
+xdebug.remote_host = localhost
+
+xdebug.var_display_max_children = 128
+xdebug.var_display_max_data = 2048
+xdebug.var_display_max_depth = 32" >> /usr/local/etc/php/5.6/conf.d/ext-xdebug.ini
+
+  say "You may be prompted for your password"
+  sudo ln -s $(brew --prefix homebrew/php/php56)/var/log/php-fpm.log /var/log/aegir/php56-fpm.log
+
+  cp $(brew --prefix homebrew/php/php56)/homebrew.mxcl.php56.plist ~/Library/LaunchAgents/
+
+  echo "#!/bin/sh
+# Written by Brian Gilbert @BrianGilbert_ https://github.com/BrianGilbert
+# of Realityloop @Realityloop http://realitylop.com/
+
+# Remove old symlink for xhprof and create correct one for this version of php
+rm /usr/local/opt/xhprof > /dev/null 2>&1
+ln -s  $(brew --prefix php56-xhprof) /usr/local/opt/xhprof
+
+# Stop php-fpm and start correct version
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist > /dev/null 2>&1
+launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist
+
+# Brew link correct php version
+brew unlink php53 > /dev/null 2>&1
+brew unlink php54 > /dev/null 2>&1
+brew unlink php55 > /dev/null 2>&1
+brew link php56
+
+# Restart nginx
+sudo /usr/local/bin/nginx -s reload" >> /usr/local/bin/go56
+  chmod 755 /usr/local/bin/go56
+
+  brew unlink php56
+fi
 
 if [[ ${PHP55} =~ ^(y|Y)$ ]]; then
   printf "\n########\n# Installing php55..\n########\n"
@@ -850,11 +996,13 @@ ln -s  $(brew --prefix php55-xhprof) /usr/local/opt/xhprof
 launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
 launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
 launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist > /dev/null 2>&1
 launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
 
 # Brew link correct php version
 brew unlink php53 > /dev/null 2>&1
 brew unlink php54 > /dev/null 2>&1
+brew unlink php56 > /dev/null 2>&1
 brew link php55
 
 # Restart nginx
@@ -923,11 +1071,13 @@ ln -s  $(brew --prefix php54-xhprof) /usr/local/opt/xhprof
 launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
 launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
 launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist > /dev/null 2>&1
 launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist
 
 # Brew link correct php version
 brew unlink php53 > /dev/null 2>&1
 brew unlink php55 > /dev/null 2>&1
+brew unlink php56 > /dev/null 2>&1
 brew link php54
 
 # Restart nginx
@@ -1000,11 +1150,13 @@ ln -s  $(brew --prefix php53-xhprof) /usr/local/opt/xhprof
 launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
 launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
 launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist > /dev/null 2>&1
 launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
 
 # Brew link correct php version
 brew unlink php54 > /dev/null 2>&1
 brew unlink php55 > /dev/null 2>&1
+brew unlink php56 > /dev/null 2>&1
 brew link php53
 
 # Restart nginx
@@ -1022,6 +1174,9 @@ if [[ ${PHP54DEF} =~ ^(y|Y)$ ]]; then
 fi
 if [[ ${PHP55DEF} =~ ^(y|Y)$ ]]; then
   brew link php55
+fi
+if [[ ${PHP56DEF} =~ ^(y|Y)$ ]]; then
+  brew link php56
 fi
 
   printf "\n########\n# Installing php code sniffer..\n########\n"
@@ -1041,7 +1196,7 @@ fi
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
     composer global require drush/drush:7.x
   else
-    composer global require drush/drush:6.x
+    composer global require drush/drush:7.x
   fi
 
   #Solr
@@ -1067,16 +1222,25 @@ fi
   sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx-full.plist
   yeah
   if [[ ${PHP55DEF} =~ ^(y|Y)$ ]]; then
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
+    launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist
+  fi
+  if [[ ${PHP55DEF} =~ ^(y|Y)$ ]]; then
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
     launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
   fi
   if [[ ${PHP54DEF} =~ ^(y|Y)$ ]]; then
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist > /dev/null 2>&1
     launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist
   fi
   if [[ ${PHP53DEF} =~ ^(y|Y)$ ]]; then
+    launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php56.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
     launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php53.plist
@@ -1132,7 +1296,7 @@ fi
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
     ${DRUSH} dl --package-handler=git_drupalorg --destination=/Users/${USERNAME}/.drush provision-7.x-3.x
   else
-    ${DRUSH} dl --package-handler=git_drupalorg --destination=/Users/${USERNAME}/.drush provision-6.x-2.1
+    ${DRUSH} dl --package-handler=git_drupalorg --destination=/Users/${USERNAME}/.drush provision-7.x-3.1
   fi
   printf "\n########\n# Clearing drush caches..\n########\n"
   ${DRUSH} cache-clear drush
@@ -1142,12 +1306,12 @@ fi
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
     ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.x' --http_service_type=nginx --aegir_host=aegir.ld --working-copy --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
   else
-    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.1' --http_service_type=nginx --aegir_host=aegir.ld --working-copy --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
+    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.1' --http_service_type=nginx --aegir_host=aegir.ld --working-copy --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
   fi
 
   # This expect block works but the previous expect block doesn't so can't use this yet.
   # expect -c "
-  #   drush hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-6.x-2.x-dev' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld
+  #   drush hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.1' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld
   #   expect \") password:\"
   #   send \"mysql\r\"
   #   expect \"Do you really want to proceed with the install (y/n):\"
@@ -1219,6 +1383,7 @@ type each of these in terminal and search for Melbourne:
  nano /usr/local/etc/php/5.3/php.ini
  nano /usr/local/etc/php/5.4/php.ini
  nano /usr/local/etc/php/5.5/php.ini
+ nano /usr/local/etc/php/5.6/php.ini
 
 Then restart nginx using:
  sudo /usr/local/bin/nginx -s reload
@@ -1228,6 +1393,7 @@ the following commands:
  go53
  go54
  go55
+ go56
 
 xdebug settings are configured as follows:
  xdebug.max_nesting_level = 200
@@ -1248,6 +1414,7 @@ The xdebug configuration files can be found at:
  /usr/local/etc/php/5.3/conf.d/ext-xdebug.ini
  /usr/local/etc/php/5.4/conf.d/ext-xdebug.ini
  /usr/local/etc/php/5.5/conf.d/ext-xdebug.ini
+ /usr/local/etc/php/5.6/conf.d/ext-xdebug.ini
 
 xhprof is setup for use with the devel module, configure and enable
 it using the following settings:

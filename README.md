@@ -16,14 +16,14 @@ What get's installed?
 This script installs/configures everything you need for Aegir to work on OSX, mostly via Homebrew:
 * wget
 * gzip
-* drush 6 or 7
+* drush 7
 * dnsmasq
 * nginx (with geoip and uploadprogress)
 * mariadb
-* php 5.3/5.4/5.5 (with uploadprogress, xhprof and xdebug)
+* php 5.3/5.4/5.5/5.6 (with uploadprogress, xhprof and xdebug)
 * solr4 (optional)
 
-And then installs Aegir 6.x-2.0 stable or Aegir 7.x-3.x
+And then installs Aegir 7.x-3.1 stable or Aegir 7.x-3.x
 
 Once installed you can access the Aegir dashboard at [http://aegir.ld](http://aegir.ld)
 Any site you create should ends in .ld or have an alias ending in .ld so that it will resolve to localhost and work within your browser.
@@ -51,6 +51,7 @@ After installation change php versions (and restart nginx) by running the follow
     go53
     go54
     go54
+    go56
 
 Uninstall
 -----------

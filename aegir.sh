@@ -1220,7 +1220,7 @@ fi
 
   printf "\n########\n# Launching daemons now..\n########\n"
   sudo launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx-full.plist
-  yeah
+  launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mariadb.plist
   if [[ ${PHP55DEF} =~ ^(y|Y)$ ]]; then
     launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist > /dev/null 2>&1
     launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php54.plist > /dev/null 2>&1

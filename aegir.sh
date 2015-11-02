@@ -1290,6 +1290,8 @@ fi
 
   echo "${USERNAME} ALL=NOPASSWD: /usr/local/bin/nginx" | sudo tee -a  /etc/sudoers
   ln -s /var/aegir/config/nginx.conf /usr/local/etc/nginx/conf.d/aegir.conf
+  mkdir -p /var/log/nginx
+  ln -s /var/log/nginx/access.log /var/log/aegir/nginx-access.log
 
   printf "# Aegir time..\n########\n"
   printf "# Downloading provision..\n########\n"

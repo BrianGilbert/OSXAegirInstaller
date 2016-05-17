@@ -1253,43 +1253,17 @@ fi
   fi
 
   printf "\n########\n# Finishing mariadb setup..\n########\n"
-  echo "########
-# Enter the following when prompted..
-#
-# Current password: <hit enter>
-# Set root password?: [Y/n] y
-# New password: <make it easy, eg. mysql>
-# Remove anonymous users? [Y/n] y
-# Disallow root login remotely? [Y/n] y
-# Remove test database and access to it? [Y/n] y
-# Reload privilege tables now? [Y/n] y
-########" #remove this echo when expects block below is fixed.
-  say "Read the block above and enter responses as shown when propted"
 
-  sudo PATH="/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:${PATH}" $(brew --prefix mariadb)/bin/mysql_secure_installation #remove this line when expects block below is fixed.
-  # This expect block throws error
-  # /usr/local/opt/mariadb/bin/mysql_secure_installation: line 379: find_mysql_client: command not found
-  # Any help greatly appreciated..
-  #
-  # expect -c "
-  #   spawn sudo PATH="/usr/local/bin:/usr/local/sbin:$PATH" /usr/local/opt/mariadb/bin/mysql_secure_installation
-  #   expect \"Enter current password for root (enter for none):\"
-  #   send \"\r\"
-  #   expect \"Set root password?: \\\\\\[Y/n\\\\\\]\"
-  #   send \"y\r\"
-  #   expect \"New password:\"
-  #   send \"mysql\r\"
-  #   expect \"Re-enter new password:\"
-  #   send \"mysql\r\"
-  #   expect \"Remove anonymous users? \\\\\\[Y/n\\\\\\]\"
-  #   send \"y\r\"
-  #   expect \"Disallow root login remotely? \\\\\\[Y/n\\\\\\]\"
-  #   send \"y\r\"
-  #   expect \"Remove test database and access to it? \\\\\\[Y/n\\\\\\]\"
-  #   send \"y\r\"
-  #   expect \"Reload privilege tables now? \\\\\\[Y/n\\\\\\]\"
-  #   send \"y\r\"
-  #   expect eof"
+  sudo PATH="/usr/local/bin:/usr/local/sbin:$HOME/.composer/vendor/bin:${PATH}" $(brew --prefix mariadb)/bin/mysql_secure_installation <<END
+
+y
+root
+root
+y
+y
+y
+y
+END
 
   echo "${USERNAME} ALL=NOPASSWD: /usr/local/bin/nginx" | sudo tee -a  /etc/sudoers
   ln -s /var/aegir/config/nginx.conf /usr/local/etc/nginx/conf.d/aegir.conf
@@ -1307,19 +1281,16 @@ fi
 
   say "type the DB password you entered for my SQL earlier"
   if [[ ${AEGIR7X} =~ ^(y|Y)$ ]]; then
-    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.x' --http_service_type=nginx --aegir_host=aegir.ld --working-copy --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
+    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.x' --http_service_type=nginx --aegir_host=aegir.ld --working-copy --client_email=${EMAIL} aegir.ld <<END
+root
+y
+END
   else
-    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.1' --http_service_type=nginx --aegir_host=aegir.ld --working-copy --client_email=${EMAIL} aegir.ld #remove this line when/if expects block below is enabled again.
+    ${DRUSH} hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.1' --http_service_type=nginx --aegir_host=aegir.ld --working-copy --client_email=${EMAIL} aegir.ld <<END
+root
+y
+END
   fi
-
-  # This expect block works but the previous expect block doesn't so can't use this yet.
-  # expect -c "
-  #   drush hostmaster-install --aegir_root='/var/aegir' --root='/var/aegir/hostmaster-7.x-3.1' --http_service_type=nginx --aegir_host=aegir.ld  --client_email=$email aegir.ld
-  #   expect \") password:\"
-  #   send \"mysql\r\"
-  #   expect \"Do you really want to proceed with the install (y/n):\"
-  #   send \"y\r\"
-  #   expect eof"
 
   if [[ $(wget http://aegir.ld > /dev/null 2>&1 | egrep "HTTP" | awk {'print $6'}) != "404" ]] ; then
     rm index.html > /dev/null 2>&1

@@ -1344,7 +1344,7 @@ END
 Here is some important information about your local Aegir setup.
 
 Creating and maintaining this takes a lot of time, you can help:
-  https://www.gittip.com/Brian%20Gilbert/
+  https://liberapay.com/briangilbert/donate
 
 The date.timezone value is set to Melbourne/Australia you may want
 to change it to something that suits you better.
@@ -1434,7 +1434,7 @@ http://twitter.com/BrianGilbert_
 Creating and maintaining this takes a lot of time, if it makes life easier
 for you please consider making a donation:
 Paypal: http://rl.cm/osxaegirdonation
-Gittip: https://www.gittip.com/Brian%20Gilbert/
+Librepay: https://liberapay.com/briangilbert/donate
 
 1. https://drupal.org/project/barracuda
 " >> ~/Desktop/YourAegirSetup.txt
